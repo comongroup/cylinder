@@ -172,8 +172,15 @@ module.exports = function (cylinder, _module) {
 	/**
 	 * Triggers a <code>resize</code> event on the instance this module is running on,
 	 * providing it the current width and height of the window.
+	 *
+	 * @param {Boolean} [triggerWindowResize] - If true, and if a "window" var exists, the method will trigger an event on the window instead.
 	 */
-	module.trigger = function () {
+	module.trigger = function (triggerWindowResize) {
+		if (triggerWindowResize) {
+			cylinder.dom.$window.trigger('resize');
+			return;
+		}
+
 		cylinder.trigger('resize', module.width, module.height);
 		module.done = true;
 	};
