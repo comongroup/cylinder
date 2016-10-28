@@ -4,12 +4,12 @@
  * Creates a new rule to be used with the Cylinder/Resize module.
  *
  * @class
- * @param  {Object}  options            - The options for this rule.
- * @param  {Number}  options.width_min  - The mininum width.
- * @param  {Number}  options.width_max  - The maximum width.
- * @param  {Number}  options.height_min - The mininum height.
- * @param  {Number}  options.height_max - The maximum height.
- * @param  {Function} options.callback<Number,Number,CylinderResizeRule> - A callback function defining the rule given a width and height. Must return a boolean.
+ * @param {Object}   options            - The options for this rule.
+ * @param {Number}   options.width_min  - The mininum width.
+ * @param {Number}   options.width_max  - The maximum width.
+ * @param {Number}   options.height_min - The mininum height.
+ * @param {Number}   options.height_max - The maximum height.
+ * @param {Function} options.callback<Number,Number,CylinderResizeRule> - A callback function defining the rule given a width and height. Must return a boolean.
  *
  * @example
  * // creates a new rule
@@ -30,7 +30,6 @@
  */
 function CylinderResizeRule (options) {
 	_.extend(this, {
-		name: null,
 		width_min: null,
 		width_max: null,
 		height_min: null,
