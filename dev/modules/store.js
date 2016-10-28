@@ -222,6 +222,15 @@ module.exports = function (cylinder, _module) {
 		module.clear = _.bind(model.clear, model);
 		module.toJSON = _.bind(model.toJSON, model);
 
+		// override module event methods
+		module.on = _.bind(model.on, model);
+		module.off = _.bind(model.off, model);
+		module.trigger = _.bind(model.trigger, model);
+		module.once = _.bind(model.once, model);
+		module.listenTo = _.bind(model.listenTo, model);
+		module.stopListening = _.bind(model.stopListening, model);
+		module.listenToOnce = _.bind(model.listenToOnce, model);
+
 		// apply the new context
 		context = model;
 		contextname = name;
