@@ -64,7 +64,7 @@ module.exports = function (cylinder, _module) {
 		if (predicate && position === -1) currentRules.push(name);
 		else if (!predicate && position !== -1) currentRules.splice(position, 1);
 
-		// 
+		// Add or remove class to/from the body element.
 		cylinder.dom.$body.toggleClass(name, predicate);
 		return predicate;
 	}
