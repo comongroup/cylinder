@@ -14,7 +14,7 @@ build:
     - browserify:dist # convert JS into CYLINDER file
     - mustache_render:dist # convert any necessary mustache tags
     - uglify:dist # minify our CYLINDER file
-    - uglify:pkgd # ALTERNATIVE - compile everything into one file
+    - concat:pkgd # ALTERNATIVE - compile everything into one file
     - compress:main # compress dist folder to zip
 
 docs:

@@ -8,6 +8,7 @@
  */
 function CylinderClass () {
 
+	var root = window; // root object on which cylinder should work
 	var instance = this; // get a reference to this instance!
 	var initialized = false;
 
@@ -77,7 +78,7 @@ function CylinderClass () {
 			var dependency_object = typeof dependency == 'object';
 			var dependency_mandatory = !dependency_object || dependency.optional != true;
 
-			var scope = dependency_object ? (dependency.scope || window) : window;
+			var scope = dependency_object ? (dependency.scope || root) : root;
 			var name = dependency_object ? dependency.name : dependency; // get the dependency name to output later
 			var tree = ('' + (dependency_object ? dependency.package : dependency)).split('.'); // split by dot
 

@@ -34,12 +34,14 @@ module.exports = function (cylinder, _module) {
 		for (var i = 0, n = pairs.length; i < n; i++) {
 			p = pairs[i].split('=');
 			idx = p[0];
-			if (obj[idx] === undefined) {
-				obj[idx] = decodeURIComponent(p[1]).replace(regex, ' ');
-			}
-			else {
-				if (typeof obj[idx] == "string") obj[idx] = [obj[idx]];
-				obj[idx].push(decodeURIComponent(p[1]).replace(regex, ' '));
+			if (idx.length > 0) {
+				if (obj[idx] === undefined) {
+					obj[idx] = decodeURIComponent(p[1]).replace(regex, ' ');
+				}
+				else {
+					if (typeof obj[idx] == "string") obj[idx] = [obj[idx]];
+					obj[idx].push(decodeURIComponent(p[1]).replace(regex, ' '));
+				}
 			}
 		}
 		return obj;
@@ -55,7 +57,7 @@ module.exports = function (cylinder, _module) {
 	module.query = function (key, serialized) {
 		var query = serialized || window.location.search.substring(1);
 		var vars = module.unserialize(query);
-		return _.has(vars, key) ? vars[key] : null;
+		return key in vars ? vars[key] : null;
 	};
 
 	return module; // finish

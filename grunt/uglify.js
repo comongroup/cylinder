@@ -15,20 +15,6 @@ module.exports = {
 				'<%= project.dist %>/cylinder.js'
 			]
 		}
-	},
-
-	pkgd: {
-		files: {
-			'<%= project.dist %>/cylinder.pkgd.js': [
-				'<%= project.bower %>/async/dist/async.js',
-				'<%= project.bower %>/jquery/dist/jquery.js',
-				'<%= project.bower %>/underscore/underscore.js',
-				'<%= project.bower %>/underscore.string/dist/underscore.string.js',
-				'<%= project.bower %>/backbone/backbone.js',
-				'<%= project.bower %>/mustache/mustache.js',
-				'<%= project.dist %>/cylinder.js'
-			]
-		}
 	}
 
 };

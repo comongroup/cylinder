@@ -1,6 +1,6 @@
 {
   "name": "cylinder",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "HTML and Javascript framework for web applications",
   "repository": {
     "type": "git",
@@ -10,11 +10,12 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/comondev/cylinder#readme",
   "devDependencies": {
-    "bower": "^1.7.9",
+    "bower": "^1.8.0",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "^1.0.0",
-    "grunt-contrib-compress": "^1.3.0",
+    "grunt-contrib-compress": "^1.4.1",
+    "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
