@@ -1,5 +1,5 @@
 /*
- * cylinder v0.14.0 (2016-10-28 15:42:30)
+ * cylinder v0.14.1 (2017-01-25 13:01:20)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -15,6 +15,7 @@
  */
 function CylinderClass () {
 
+	var root = window; // root object on which cylinder should work
 	var instance = this; // get a reference to this instance!
 	var initialized = false;
 
@@ -22,7 +23,7 @@ function CylinderClass () {
 	 * Framework version.
 	 * @return {String}
 	 */
-	this.version = '0.14.0';
+	this.version = '0.14.1';
 
 	/**
 	 * Checks if the framework has been initialized.
@@ -84,7 +85,7 @@ function CylinderClass () {
 			var dependency_object = typeof dependency == 'object';
 			var dependency_mandatory = !dependency_object || dependency.optional != true;
 
-			var scope = dependency_object ? (dependency.scope || window) : window;
+			var scope = dependency_object ? (dependency.scope || root) : root;
 			var name = dependency_object ? dependency.name : dependency; // get the dependency name to output later
 			var tree = ('' + (dependency_object ? dependency.package : dependency)).split('.'); // split by dot
 
@@ -2333,12 +2334,14 @@ module.exports = function (cylinder, _module) {
 		for (var i = 0, n = pairs.length; i < n; i++) {
 			p = pairs[i].split('=');
 			idx = p[0];
-			if (obj[idx] === undefined) {
-				obj[idx] = decodeURIComponent(p[1]).replace(regex, ' ');
-			}
-			else {
-				if (typeof obj[idx] == "string") obj[idx] = [obj[idx]];
-				obj[idx].push(decodeURIComponent(p[1]).replace(regex, ' '));
+			if (idx.length > 0) {
+				if (obj[idx] === undefined) {
+					obj[idx] = decodeURIComponent(p[1]).replace(regex, ' ');
+				}
+				else {
+					if (typeof obj[idx] == "string") obj[idx] = [obj[idx]];
+					obj[idx].push(decodeURIComponent(p[1]).replace(regex, ' '));
+				}
 			}
 		}
 		return obj;
@@ -2354,7 +2357,7 @@ module.exports = function (cylinder, _module) {
 	module.query = function (key, serialized) {
 		var query = serialized || window.location.search.substring(1);
 		var vars = module.unserialize(query);
-		return _.has(vars, key) ? vars[key] : null;
+		return key in vars ? vars[key] : null;
 	};
 
 	return module; // finish
