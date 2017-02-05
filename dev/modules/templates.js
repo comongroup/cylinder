@@ -8,19 +8,11 @@ module.exports = function (cylinder, _module) {
 	 */
 	var module = _.extend({}, _module);
 
-	// ALL DEPENDENCIES FIRST!
-	// If we don't do this, the framework will just
-	// die in the water. We don't want to die like that.
-	cylinder.dependency('Mustache');
-
 	var add_counter = 0; // counts how many templates have been added
 	var replace_counter = 0; // counts how many templates have been replaced by using replace()
 	var cache_templates = {}; // cache for templates!
 	var cache_partials = {}; // cache for partials!
 	var cache_replaced = {}; // cache for replaced html from replace()!
-
-	var load_jobs = {}; // object that will contain templates in loading!
-	var load_errored = {}; // object that will contain templates that couldn't be loaded!
 
 	/**
 	 * The options taken by the module.
@@ -29,15 +21,20 @@ module.exports = function (cylinder, _module) {
 	 * @property {Boolean}        detach      - If true, the <code>apply</code> and <code>replace</code> methods attempt to remove all children first.
 	 *                                          Be wary that this might provoke memory leaks by not unbinding any data or events from the children.
 	 * @property {String|Boolean} premades    - If not false, the module will look for a specific object variable for templates (default: JST).
+	 * @property {Function}       parse       - Callback for parsing templates. Receives a template object, which always has an `html` string parameter.
+	 *                                          This method is called right before an added template is rendered, and is meant for applying optimizations.
+	 * @property {Function}       render      - Callback for rendering a template. Receives a template object, which always has an `html` string parameter.
 	 */
 	module.options = {
 		fire_events: true,
 		detach: false,
-		premades: 'JST'
+		premades: 'JST',
+		parse: function (t) {},
+		render: function (t) { return (t || {}).html; }
 	};
 
 	/**
-	 * Default options for templates.
+	 * Default properties for templates.
 	 *
 	 * @type {Object}
 	 */
@@ -64,33 +61,39 @@ module.exports = function (cylinder, _module) {
 	 */
 	module.add = function (id, template, defaults, partials) {
 		var o = {
-			'id': id || 'temp' + add_counter,
-			'defaults': _.isObject(defaults) ? defaults : {},
-			'partials': _.isObject(partials) ? partials : {},
-			'html': (_.isString(template) ? template : '')
+			id: id || 'temp' + add_counter,
+			defaults: _.isObject(defaults) ? defaults : {},
+			partials: _.isObject(partials) ? partials : {},
+			parsed: false,
+			html: (_.isString(template) ? template : '')
 				.replace(/<javascript/gi, '<script type="text/javascript"')
 				.replace(/<\/javascript>/gi, '</script>')
 		};
 
-		//TODO: add parsing before adding the template object, for example: this.parse(o);
 		cache_templates[id] = o; // add to collection
+		cache_partials = _.object(_.keys(cache_templates), _.pluck(cache_templates, 'html')); // generate partial templates
 		add_counter++; // add counter
-
-		// generates partial templates
-		cache_partials = _.object(_.keys(cache_templates), _.pluck(cache_templates, 'html'));
 
 		return o;
 	};
 
 	/**
-	 * Returns a template if it exists, and attempts to fetch from the local DOM if it doesn't.
+	 * Returns a template if it exists, otherwise it'll return `null`.
 	 *
-	 * @param  {String} id - The template's unique identifier.
-	 * @return {Object} Returns the generated internal template module's object, or an empty object if not found.
+	 * @param  {String}      id - The template's unique identifier.
+	 * @return {Object|Null} Returns the template object, or null if not found.
 	 */
 	module.get = function (id) {
-		if (module.has(id)) return cache_templates[id];
+		return cache_templates[id] || null;
+	};
 
+	/**
+	 * Attempts to add templates to the module from `<script type="text/template">` objects.
+	 */
+	module.addFromDOM = function (id) {
+		throw 'Not implemented';
+
+		/*
 		var template_name = cylinder.s.replaceAll(id, '/', '_');
 		var $template = cylinder.$('#template_' + template_name);
 		if ($template.length > 0) {
@@ -108,8 +111,7 @@ module.exports = function (cylinder, _module) {
 			$template.remove(); // remove from DOM to reduce memory footprint...
 			return template; // and return the template!
 		}
-
-		return null; // template wasn't found!
+		*/
 	};
 
 	// helper function to simply return a jQuery object
@@ -141,29 +143,49 @@ module.exports = function (cylinder, _module) {
 	/**
 	 * Renders a template with the given ID.
 	 *
-	 * @param  {String}  id         - The unique identifier of the template to render.
-	 * @param  {Object}  [options]  - The object of options for the template to use.
-	 * @param  {Object}  [partials] - The object of partials the template can use.
-	 * @return {String} Returns the rendered template.
+	 * @param  {String}      id         - The unique identifier of the template to render.
+	 * @param  {Object}      [options]  - The object of options for the template to use.
+	 * @param  {Object}      [partials] - The object of partials the template can use.
+	 * @param  {Boolean}     [trigger]  - If false, the method won't fire any events.
+	 * @return {String|Null} Returns the rendered template.
 	 */
-	module.render = function (id, options, partials) {
-		var template = module.get(id) || { error: true, html: '!! Template "' + id + '" not found !!' };
-		var result = Mustache.render( //TODO: switch to generic callback method
-			template.html,
-			_.extend({}, module.defaults, template.defaults, options),
-			_.extend({}, cache_partials, template.partials, partials)
-		);
+	module.render = function (id, options, partials, trigger) {
+		var result = null;
+		var template = module.get(id) || {
+			error: true,
+			parsed: true,
+			html: '!! Template "' + id + '" not found !!'
+		};
 
-		if (module.options.fire_events && !template.error) {
+		// before actually rendering the result,
+		// we'll attempt to run a parse process on the template
+		if (!template.parsed && typeof module.options.parse === 'function') {
+			module.options.parse(template);
+			template.parsed = true;
+		}
+
+		// and now we'll actually attempt to render the template,
+		// using the specified options and partials, along with defaults
+		if (!template.error && typeof module.options.render === 'function') {
+			result = module.options.render(
+				template.html,
+				_.extend({}, module.defaults, template.defaults, options),
+				_.extend({}, cache_partials, template.partials, partials)
+			);
+		}
+
+		// and in the end, fire events if trigger !== false
+		// and the global option is enabled and no error occurred
+		if (module.options.fire_events && trigger !== false && result !== null) {
 			var parts = id.split('/');
-			cylinder.trigger('render', id, options, partials); // trigger the generic event...
 			_.reduce(parts, function (memo, part) {
-				// and then trigger specific events...
+				// trigger specific events...
 				// we'll do this based on namespace, for ease of programming!
 				memo = cylinder.s.trim(memo + '/' + part, '/');
 				cylinder.trigger('render:' + memo, options, partials);
 				return memo;
 			}, '');
+			cylinder.trigger('render', id, options, partials); // and then trigger the generic event!
 		}
 
 		return result;
@@ -188,8 +210,6 @@ module.exports = function (cylinder, _module) {
 		}
 
 		var ev = function (name) {
-			// this will trigger events
-			// so the developer can do interesting stuff!
 			var str = cylinder.s.trim(id, '/');
 			var parts = str.split('/');
 			_.reduceRight(parts, function (memo, part) {
@@ -204,7 +224,7 @@ module.exports = function (cylinder, _module) {
 
 		if (module.options.fire_events) ev('beforeapply'); // before applying, call "beforeapply" events...
 		detachAllChildrenFromElement($el); // detach every children first so they don't lose any data or events...
-		$el.html(module.render(id, options, partials)); // render the template... TODO: switch to generic callback method
+		$el.html(module.render(id, options, partials, false)); // render the template... TODO: switch to generic callback method
 		if (module.options.fire_events) ev('apply'); // and call "apply" events, just to finish!
 
 		return $el;
@@ -226,7 +246,7 @@ module.exports = function (cylinder, _module) {
 		// this time, we'll warn the developer that such element should not be null!
 		$el = getElementFromVariable($el);
 		if ($el === null || $el.length == 0) {
-			throw new CylinderException('Trying to replace contents on an empty or unknown jQuery element.');
+			throw new CylinderException('Trying to replace contents of an empty or unknown jQuery element.');
 		}
 
 		var ev = function (name) {
@@ -238,11 +258,12 @@ module.exports = function (cylinder, _module) {
 		// call "beforereplace" events before replacing...
 		if (module.options.fire_events) ev('beforereplace');
 
-		// this will be the HTML to render
+		// these will hold the final html to apply and the ID
 		var template = '';
-
-		// get the id and check against cache
+		var result = null;
 		var id = $el.data('template-id');
+
+		// check against cache
 		if (!cl.s.isBlank(id) && _.has(cache_replaced, id)) {
 			template = cache_replaced[id]; // get the HTML from cache
 		}
@@ -258,11 +279,13 @@ module.exports = function (cylinder, _module) {
 		detachAllChildrenFromElement($el);
 
 		// render the HTML
-		var result = Mustache.render( //TODO: switch to generic callback method
-			template,
-			_.extend({}, module.defaults, options),
-			_.extend({}, cache_partials, partials)
-		);
+		if (typeof module.options.render === 'function') {
+			result = module.options.render(
+				{ parsed: true, html: template },
+				_.extend({}, module.defaults, options),
+				_.extend({}, cache_partials, partials)
+			);
+		}
 
 		$el.html(result); // apply template...
 		if (module.options.fire_events) ev('replace'); // and call "replace" events, just to finish!
@@ -273,6 +296,7 @@ module.exports = function (cylinder, _module) {
 	if (module.options.premades !== false) {
 		// PRE-INITIALIZATION!
 		// if there is a "premades" object, then do it!
+		//TODO: move this to its own method
 		var variable = _.isString(module.options.premades) ? module.options.premades : 'JST';
 		_.each(_.isObject(window[variable]) ? window[variable] : {}, function (tpl, name) {
 			module.add(name, _.isFunction(tpl) ? tpl() : tpl); // add the template
