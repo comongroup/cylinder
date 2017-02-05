@@ -5,7 +5,7 @@ module.exports = function (cylinder, _module) {
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
 	// die in the water. We don't want to die like that.
-	cylinder.dependency('Cylinder.dom');
+	cylinder.dependency('Cylinder.dom', true);
 
 	// BASIC CONSTRUCTOR!
 	// This will build an object based on an element.
