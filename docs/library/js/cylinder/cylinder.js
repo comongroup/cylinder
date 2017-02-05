@@ -1,5 +1,5 @@
 /*
- * cylinder v0.14.1 (2017-02-05 18:15:24)
+ * cylinder v0.14.1 (2017-02-05 21:02:12)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -36,12 +36,32 @@ function CylinderClass () {
 	 * The framework will check if it exists in the global scope.
 	 *
 	 * @param  {...(String|Object)} dependencies - The names of the dependencies to be checked.
-	 * @param  {Boolean}            [silent]     - If true, the method will not throw an exception when a mandatory dependency is not found.
-	 * @return {Boolean} Returns true if it exists, and throws an exception if it doesn't (unless the last argument is <code>true</code>).
+	 * @param  {Boolean}            [loud]       - If `true`, the method will throw an exception when a specified dependency is not found.
+	 * @return {Boolean} Returns true or false depending whether the dependency exists. If `loud` is `true`, it throws an exception if the dependency doesn't exist.
 	 *
 	 * @example
-	 * // throws an exception because "asdf" is not declared.
-	 * // you can also specify objects for a cleaner exception output.
+	 * // you can check if a dependency exists or not,
+	 * // so you can gracefully handle missing dependencies
+	 *
+	 * if (Cylinder.dependency('$.fn.velocity')) {
+	 *     // velocity is present
+	 *     $('#element').velocity({ top: 0 });
+	 * }
+	 * else {
+	 *     // velocity.js is not defined
+	 *     // so you can use a fallback
+	 *     $('#element').animate({ top: 0 });
+	 * }
+	 *
+	 * @example
+	 * // you can check for dependencies inside a variable,
+	 * // and the whole family tree will be checked from top-level
+	 *
+	 * var everyDependency = Cylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
+	 *
+	 * @example
+	 * // you can also throw an exception if you pass `true` at the end.
+	 * // you can also specify objects if you want a cleaner exception output.
 	 *
 	 * Cylinder.dependency(
 	 *     'async',
@@ -49,34 +69,15 @@ function CylinderClass () {
 	 *     { package: '_', name: 'underscore.js' },
 	 *     { package: 's', name: 'underscore.string', scope: window, optional: true },
 	 *     'Backbone',
-	 *     'asdf'
+	 *     'asdf', // imagine this variable doesn't exist
+	 *     true
 	 * );
-	 *
-	 * @example
-	 * // you can check for dependencies inside a variable
-	 * // and the whole family tree will be checked from top-level
-	 *
-	 * Cylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
-	 *
-	 * @example
-	 * // if `true` is sent at the end, the method doesn't throw an exception
-	 * // and allows the programmer to gracefully handle missing dependencies
-	 *
-	 * if (Cylinder.dependency('$.fn.velocity', true)) {
-	 *     // velocity is present
-	 *     $('#element').velocity({ top: 0 });
-	 * }
-	 * else {
-	 *     // velocity.js is not defined
-	 *     // so the programmer can use a fallback
-	 *     $('#element').animate({ top: 0 });
-	 * }
 	 */
 	this.dependency = function () {
 		var args = Array.prototype.slice.call(arguments); // make a copy of all received arguments!
-		var loud = true; // this will make sure it will either throw an exception or just output a boolean.
+		var loud = false; // this will make sure it will either throw an exception or just output a boolean.
 		if (args.length > 0 && typeof args[args.length - 1] === 'boolean') {
-			loud = !args[args.length - 1]; // the last argument IS a boolean, so store its value.
+			loud = args[args.length - 1]; // the last argument IS a boolean, so store its value.
 			args.pop(); // in order to not have trash in our checks, remove the last argument!
 		}
 
@@ -116,7 +117,8 @@ function CylinderClass () {
 		'jQuery',
 		{ package: '_', name: 'underscore.js' },
 		{ package: 's', name: 'underscore.string' },
-		'Backbone'
+		'Backbone',
+		true
 	);
 
 	var extensions = []; // initializable extensions!
@@ -624,7 +626,7 @@ module.exports = function (cylinder, _module) {
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
 	// die in the water. We don't want to die like that.
-	cylinder.dependency('Cylinder.utils');
+	cylinder.dependency('Cylinder.utils', true);
 
 	/**
 	 * The options taken by the module.
@@ -724,7 +726,7 @@ module.exports = function (cylinder, _module) {
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
 	// die in the water. We don't want to die like that.
-	cylinder.dependency('Cylinder.dom');
+	cylinder.dependency('Cylinder.dom', true);
 
 	/**
 	 * Has the window been resized?
@@ -1365,7 +1367,7 @@ module.exports = function (cylinder, _module) {
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
 	// die in the water. We don't want to die like that.
-	cylinder.dependency('Cylinder.dom');
+	cylinder.dependency('Cylinder.dom', true);
 
 	// BASIC CONSTRUCTOR!
 	// This will build an object based on an element.
@@ -1820,7 +1822,7 @@ module.exports = function (cylinder, _module) {
 		fetch: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
-			if (cylinder.dependency('localStorage', false)) {
+			if (cylinder.dependency('localStorage')) {
 				// only get values from localstorage
 				// if we have localstorage enabled.
 				var collection = JSON.parse(localStorage.getItem(model.namespace));
@@ -1838,7 +1840,7 @@ module.exports = function (cylinder, _module) {
 		save: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
-			if (cylinder.dependency('localStorage', false)) {
+			if (cylinder.dependency('localStorage')) {
 				// only save values to localstorage
 				// if we have localstorage enabled.
 				var collection = model.toJSON();
@@ -1883,20 +1885,22 @@ module.exports = function (cylinder, _module) {
 	/**
 	 * The options taken by the module.
 	 * @type     {Object}
-	 * @property {Boolean}        fire_events - Fires all events when rendering or doing other things.
-	 * @property {Boolean}        detach      - If true, the <code>apply</code> and <code>replace</code> methods attempt to remove all children first.
-	 *                                          Be wary that this might provoke memory leaks by not unbinding any data or events from the children.
-	 * @property {String|Boolean} premades    - If not false, the module will look for a specific object variable for templates (default: JST).
-	 * @property {Function}       parse       - Callback for parsing templates. Receives a template object, which always has an `html` string parameter.
-	 *                                          This method is called right before an added template is rendered, and is meant for applying optimizations.
-	 * @property {Function}       render      - Callback for rendering a template. Receives a template object, which always has an `html` string parameter.
+	 * @property {Boolean}        fire_events  - Fires all events when rendering or doing other things.
+	 * @property {Boolean}        detach       - If true, the <code>apply</code> and <code>replace</code> methods attempt to remove all children first.
+	 *                                           Be wary that this might provoke memory leaks by not unbinding any data or events from the children.
+	 * @property {String}         dom_prefix   - Selector prefix for DOM element IDs when importing templates from DOM.
+	 * @property {String}         dom_selector - Default selector for DOM elements when importing templates from DOM.
+	 * @property {Function}       parse        - Callback for parsing templates. Receives a template object, which always has an `html` string parameter.
+	 *                                           This method is called right before an added template is rendered, and is meant for applying optimizations.
+	 * @property {Function}       render       - Callback for rendering a template. Receives a template object, which always has an `html` string parameter.
 	 */
 	module.options = {
 		fire_events: true,
 		detach: false,
-		premades: 'JST',
+		dom_prefix: '#template_',
+		dom_selector: 'script[type="text/template"]',
 		parse: function (t) {},
-		render: function (t) { return (t || {}).html; }
+		render: function (t) { return (t || { html: '' }).html; }
 	};
 
 	/**
@@ -1905,16 +1909,6 @@ module.exports = function (cylinder, _module) {
 	 * @type {Object}
 	 */
 	module.defaults = {};
-
-	/**
-	 * Checks if a template is in the local cache.
-	 *
-	 * @param  {String}  id - The template's unique identifier.
-	 * @return {Boolean}
-	 */
-	module.has = function (id) {
-		return cache_templates[id] != null;
-	};
 
 	/**
 	 * Adds a template to the local cache.
@@ -1944,6 +1938,70 @@ module.exports = function (cylinder, _module) {
 	};
 
 	/**
+	 * Attempts to import templates from a parent variable.
+	 *
+	 * @param  {Object}   parent      - The object to fetch the templates from.
+	 * @param  {Function} [iterator] - If a function is passed, the method will use it to iterate the object.
+	 * @return {Object} Returns the object with the same keys but with each value replaced by the actual template object added into the module.
+	 */
+	module.importFromObject = function (parent, iterator) {
+		if (typeof iterator !== 'function') {
+			iterator = function (template, index) {
+				var result = typeof template === 'function' ? template() : template;
+				return module.add(index, template); // add the template
+			};
+		}
+
+		return _.map(parent || {}, iterator);
+	};
+
+	/**
+	 * Attempts to import templates from `<script type="text/template">` objects.
+	 *
+	 * By default, every slash will be converted with an underscore when looking for a specific template by ID.
+	 * If no ID is provided, the module will attempt to look through every element that matches the selector in options.dom_selector,
+	 * and attempts to fetch a template ID and default options through `data-id` and `data-defaults` attributes respectively.
+	 *
+	 * @param  {String}   [id] - The ID of the template you wish to fetch from the DOM.
+	 * @return {Object[]} Returns an array of generated template objects.
+	 */
+	module.importFromDOM = function (id) {
+		var selector = typeof id === 'string' && id.length > 0
+			? module.options.dom_prefix + id.replace(/[\/\\]/g, '_') // replaces all slashes
+			: '';
+
+		return cylinder.$(module.options.dom_selector + selector).map(function () {
+			// try to get default values.
+			// if fail, it will return an empty object.
+			var $el = cylinder.$(this);
+			var name = $el.prop('id').replace(module.options.dom_prefix.replace(/[#.]/g, ''), '');
+			var html = cylinder.s.trim($el.html());
+			var defaults = {};
+
+			try {
+				// why eval? because template defaults might have functions,
+				// and JSON.parse wouldn't pass those to the object!
+				defaults = eval('(' + $el.attr('data-defaults') + ')');
+			}
+			catch (e) {}
+
+			$el.remove(); // remove from DOM to reduce memory footprint...
+			if (selector && name.length === 0) name = id; // if no name, then use the ID...
+			return module.add(name, html, defaults); // and return the template!
+		});
+	};
+
+	/**
+	 * Checks if a template is in the local cache.
+	 *
+	 * @param  {String}  id - The template's unique identifier.
+	 * @return {Boolean}
+	 */
+	module.has = function (id) {
+		return cache_templates[id] != null;
+	};
+
+	/**
 	 * Returns a template if it exists, otherwise it'll return `null`.
 	 *
 	 * @param  {String}      id - The template's unique identifier.
@@ -1951,33 +2009,6 @@ module.exports = function (cylinder, _module) {
 	 */
 	module.get = function (id) {
 		return cache_templates[id] || null;
-	};
-
-	/**
-	 * Attempts to add templates to the module from `<script type="text/template">` objects.
-	 */
-	module.addFromDOM = function (id) {
-		throw 'Not implemented';
-
-		/*
-		var template_name = cylinder.s.replaceAll(id, '/', '_');
-		var $template = cylinder.$('#template_' + template_name);
-		if ($template.length > 0) {
-			// try to get default values.
-			// if fail, it will return an empty object.
-			var d = {};
-			try {
-				// why eval? because template defaults might have functions,
-				// and JSON.parse wouldn't pass those to the object!
-				d = eval('(' + $template.attr('data-defaults') + ')');
-			}
-			catch (e) {}
-
-			var template = module.add(id, cylinder.s.trim($template.html()), d); // add it to the cache...
-			$template.remove(); // remove from DOM to reduce memory footprint...
-			return template; // and return the template!
-		}
-		*/
 	};
 
 	// helper function to simply return a jQuery object
@@ -2034,7 +2065,7 @@ module.exports = function (cylinder, _module) {
 		// using the specified options and partials, along with defaults
 		if (!template.error && typeof module.options.render === 'function') {
 			result = module.options.render(
-				template.html,
+				template,
 				_.extend({}, module.defaults, template.defaults, options),
 				_.extend({}, cache_partials, template.partials, partials)
 			);
@@ -2090,7 +2121,7 @@ module.exports = function (cylinder, _module) {
 
 		if (module.options.fire_events) ev('beforeapply'); // before applying, call "beforeapply" events...
 		detachAllChildrenFromElement($el); // detach every children first so they don't lose any data or events...
-		$el.html(module.render(id, options, partials, false)); // render the template... TODO: switch to generic callback method
+		$el.html(module.render(id, options, partials, false)); // render the template...
 		if (module.options.fire_events) ev('apply'); // and call "apply" events, just to finish!
 
 		return $el;
@@ -2147,7 +2178,7 @@ module.exports = function (cylinder, _module) {
 		// render the HTML
 		if (typeof module.options.render === 'function') {
 			result = module.options.render(
-				{ parsed: true, html: template },
+				{ id: id, parsed: true, html: template },
 				_.extend({}, module.defaults, options),
 				_.extend({}, cache_partials, partials)
 			);
@@ -2158,16 +2189,6 @@ module.exports = function (cylinder, _module) {
 
 		return $el;
 	};
-
-	if (module.options.premades !== false) {
-		// PRE-INITIALIZATION!
-		// if there is a "premades" object, then do it!
-		//TODO: move this to its own method
-		var variable = _.isString(module.options.premades) ? module.options.premades : 'JST';
-		_.each(_.isObject(window[variable]) ? window[variable] : {}, function (tpl, name) {
-			module.add(name, _.isFunction(tpl) ? tpl() : tpl); // add the template
-		});
-	}
 
 	return module; // finish
 

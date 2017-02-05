@@ -10,7 +10,7 @@
     * [._](#CylinderClass+_) : <code>Underscore</code>
     * [.s](#CylinderClass+s) : <code>UnderscoreString</code>
     * [.initialized()](#CylinderClass+initialized) ⇒ <code>Boolean</code>
-    * [.dependency(...dependencies, [silent])](#CylinderClass+dependency) ⇒ <code>Boolean</code>
+    * [.dependency(...dependencies, [loud])](#CylinderClass+dependency) ⇒ <code>Boolean</code>
     * [.extend(func, [extendOnInit])](#CylinderClass+extend) ⇒ <code>Mixed</code>
     * [.module(name, func)](#CylinderClass+module) ⇒ <code>Mixed</code>
     * [.modules()](#CylinderClass+modules) ⇒ <code>Object</code>
@@ -74,11 +74,11 @@ Checks if the framework has been initialized.
 
 <a name="CylinderClass+dependency"></a>
 
-### cylinderClass.dependency(...dependencies, [silent]) ⇒ <code>Boolean</code>
+### cylinderClass.dependency(...dependencies, [loud]) ⇒ <code>Boolean</code>
 Validate if a variable or a dependency exists.The framework will check if it exists in the global scope.
 
 **Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
-**Returns**: <code>Boolean</code> - Returns true if it exists, and throws an exception if it doesn't (unless the last argument is <code>true</code>).  
+**Returns**: <code>Boolean</code> - Returns true or false depending whether the dependency exists. If `loud` is `true`, it throws an exception if the dependency doesn't exist.  
 <table>
   <thead>
     <tr>
@@ -90,22 +90,22 @@ Validate if a variable or a dependency exists.The framework will check if it ex
     <td>...dependencies</td><td><code>String</code> | <code>Object</code></td><td><p>The names of the dependencies to be checked.</p>
 </td>
     </tr><tr>
-    <td>[silent]</td><td><code>Boolean</code></td><td><p>If true, the method will not throw an exception when a mandatory dependency is not found.</p>
+    <td>[loud]</td><td><code>Boolean</code></td><td><p>If <code>true</code>, the method will throw an exception when a specified dependency is not found.</p>
 </td>
     </tr>  </tbody>
 </table>
 
 **Example**  
 ```js
-// throws an exception because "asdf" is not declared.// you can also specify objects for a cleaner exception output.Cylinder.dependency(    'async',    'jQuery',    { package: '_', name: 'underscore.js' },    { package: 's', name: 'underscore.string', scope: window, optional: true },    'Backbone',    'asdf');
+// you can check if a dependency exists or not,// so you can gracefully handle missing dependenciesif (Cylinder.dependency('$.fn.velocity')) {    // velocity is present    $('#element').velocity({ top: 0 });}else {    // velocity.js is not defined    // so you can use a fallback    $('#element').animate({ top: 0 });}
 ```
 **Example**  
 ```js
-// you can check for dependencies inside a variable// and the whole family tree will be checked from top-levelCylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
+// you can check for dependencies inside a variable,// and the whole family tree will be checked from top-levelvar everyDependency = Cylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
 ```
 **Example**  
 ```js
-// if `true` is sent at the end, the method doesn't throw an exception// and allows the programmer to gracefully handle missing dependenciesif (Cylinder.dependency('$.fn.velocity', true)) {    // velocity is present    $('#element').velocity({ top: 0 });}else {    // velocity.js is not defined    // so the programmer can use a fallback    $('#element').animate({ top: 0 });}
+// you can also throw an exception if you pass `true` at the end.// you can also specify objects if you want a cleaner exception output.Cylinder.dependency(    'async',    'jQuery',    { package: '_', name: 'underscore.js' },    { package: 's', name: 'underscore.string', scope: window, optional: true },    'Backbone',    'asdf', // imagine this variable doesn't exist    true);
 ```
 
 * * *

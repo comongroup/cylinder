@@ -4,7 +4,7 @@ var cl = Cylinder.init(function () {
 	cl.$container = cl.$('.container');
 
 	// templates config
-	cl.templates.options.parse = function (t) { Mustache.parse(t); };
+	cl.templates.options.parse = function (t) { Mustache.parse(t.html); };
 	cl.templates.options.render = function (t, o, p) { return Mustache.render(t.html, o, p); };
 	cl.templates.defaults['markdown'] = function () {
 		// parse markdown with renderer above
@@ -14,6 +14,9 @@ var cl = Cylinder.init(function () {
 			return marked(content);
 		};
 	};
+
+	// attempt to import all templates from DOM
+	cl.templates.importFromDOM();
 
 	// router config
 	cl.router.options.push = false; // tell it we want hash navigation

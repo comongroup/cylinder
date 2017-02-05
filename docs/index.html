@@ -52,6 +52,19 @@
 	</nav>
 
 	<div class="container">
+		Loading...
+	</div>
+
+	<!-- example template in DOM -->
+	<script type="text/template" id="template_error">
+		<h1><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{status}}</h1>
+		<ul>
+			<li><a href="#">back to home</a></li>
+		</ul>
+	</script>
+
+	<!-- another template in DOM -->
+	<script type="text/template" id="template_docs">
 		<div class="row">
 			<div class="col col-md-9 markdown-body pb-3">
 				{{# markdown}}{{& content}}{{/ markdown}}
@@ -88,14 +101,6 @@
 				</ul>
 			</div>
 		</div>
-	</div>
-
-	<!-- example template in DOM -->
-	<script type="text/template" id="template_error">
-		<h1><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{status}}</h1>
-		<ul>
-			<li><a href="#">back to home</a></li>
-		</ul>
 	</script>
 
 	<!-- dependencies (including cylinder) -->

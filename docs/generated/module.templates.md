@@ -7,10 +7,11 @@ Templates module for CylinderClass.
 * [templates](#module_templates)
     * [.options](#module_templates.options) : <code>Object</code>
     * [.defaults](#module_templates.defaults) : <code>Object</code>
-    * [.has(id)](#module_templates.has) ⇒ <code>Boolean</code>
     * [.add(id, template, [defaults], [partials])](#module_templates.add) ⇒ <code>Object</code>
+    * [.importFromObject(parent, [iterator])](#module_templates.importFromObject) ⇒ <code>Object</code>
+    * [.importFromDOM([id])](#module_templates.importFromDOM) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.has(id)](#module_templates.has) ⇒ <code>Boolean</code>
     * [.get(id)](#module_templates.get) ⇒ <code>Object</code> &#124; <code>Null</code>
-    * [.addFromDOM()](#module_templates.addFromDOM)
     * [.render(id, [options], [partials], [trigger])](#module_templates.render) ⇒ <code>String</code> &#124; <code>Null</code>
     * [.apply($el, id, [options], [partials])](#module_templates.apply) ⇒ <code>jQueryObject</code>
     * [.replace($el, [options], [partials])](#module_templates.replace) ⇒ <code>jQueryObject</code>
@@ -38,14 +39,17 @@ The options taken by the module.
 </td>
     </tr><tr>
     <td>detach</td><td><code>Boolean</code></td><td><p>If true, the <code>apply</code> and <code>replace</code> methods attempt to remove all children first.
-                                         Be wary that this might provoke memory leaks by not unbinding any data or events from the children.</p>
+                                          Be wary that this might provoke memory leaks by not unbinding any data or events from the children.</p>
 </td>
     </tr><tr>
-    <td>premades</td><td><code>String</code> | <code>Boolean</code></td><td><p>If not false, the module will look for a specific object variable for templates (default: JST).</p>
+    <td>dom_prefix</td><td><code>String</code></td><td><p>Selector prefix for DOM element IDs when importing templates from DOM.</p>
+</td>
+    </tr><tr>
+    <td>dom_selector</td><td><code>String</code></td><td><p>Default selector for DOM elements when importing templates from DOM.</p>
 </td>
     </tr><tr>
     <td>parse</td><td><code>function</code></td><td><p>Callback for parsing templates. Receives a template object, which always has an <code>html</code> string parameter.
-                                         This method is called right before an added template is rendered, and is meant for applying optimizations.</p>
+                                          This method is called right before an added template is rendered, and is meant for applying optimizations.</p>
 </td>
     </tr><tr>
     <td>render</td><td><code>function</code></td><td><p>Callback for rendering a template. Receives a template object, which always has an <code>html</code> string parameter.</p>
@@ -62,28 +66,6 @@ The options taken by the module.
 Default properties for templates.
 
 **Kind**: static property of <code>[templates](#module_templates)</code>  
-
-* * *
-
-<a name="module_templates.has"></a>
-
-### templates.has(id) ⇒ <code>Boolean</code>
-Checks if a template is in the local cache.
-
-**Kind**: static method of <code>[templates](#module_templates)</code>  
-<table>
-  <thead>
-    <tr>
-      <th>Param</th><th>Type</th><th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-<tr>
-    <td>id</td><td><code>String</code></td><td><p>The template&#39;s unique identifier.</p>
-</td>
-    </tr>  </tbody>
-</table>
-
 
 * * *
 
@@ -119,6 +101,77 @@ Adds a template to the local cache.
 
 * * *
 
+<a name="module_templates.importFromObject"></a>
+
+### templates.importFromObject(parent, [iterator]) ⇒ <code>Object</code>
+Attempts to import templates from a parent variable.
+
+**Kind**: static method of <code>[templates](#module_templates)</code>  
+**Returns**: <code>Object</code> - Returns the object with the same keys but with each value replaced by the actual template object added into the module.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>parent</td><td><code>Object</code></td><td><p>The object to fetch the templates from.</p>
+</td>
+    </tr><tr>
+    <td>[iterator]</td><td><code>function</code></td><td><p>If a function is passed, the method will use it to iterate the object.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
+<a name="module_templates.importFromDOM"></a>
+
+### templates.importFromDOM([id]) ⇒ <code>Array.&lt;Object&gt;</code>
+Attempts to import templates from `<script type="text/template">` objects.By default, every slash will be converted with an underscore when looking for a specific template by ID.If no ID is provided, the module will attempt to look through every element that matches the selector in options.dom_selector,and attempts to fetch a template ID and default options through `data-id` and `data-defaults` attributes respectively.
+
+**Kind**: static method of <code>[templates](#module_templates)</code>  
+**Returns**: <code>Array.&lt;Object&gt;</code> - Returns an array of generated template objects.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>[id]</td><td><code>String</code></td><td><p>The ID of the template you wish to fetch from the DOM.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
+<a name="module_templates.has"></a>
+
+### templates.has(id) ⇒ <code>Boolean</code>
+Checks if a template is in the local cache.
+
+**Kind**: static method of <code>[templates](#module_templates)</code>  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>id</td><td><code>String</code></td><td><p>The template&#39;s unique identifier.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
 <a name="module_templates.get"></a>
 
 ### templates.get(id) ⇒ <code>Object</code> &#124; <code>Null</code>
@@ -139,15 +192,6 @@ Returns a template if it exists, otherwise it'll return `null`.
     </tr>  </tbody>
 </table>
 
-
-* * *
-
-<a name="module_templates.addFromDOM"></a>
-
-### templates.addFromDOM()
-Attempts to add templates to the module from `<script type="text/template">` objects.
-
-**Kind**: static method of <code>[templates](#module_templates)</code>  
 
 * * *
 
