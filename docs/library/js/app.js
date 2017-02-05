@@ -3,12 +3,9 @@ var cl = Cylinder.init(function () {
 	// add $container to cylinder
 	cl.$container = cl.$('.container');
 
-	// store config
-	cl.store.fetch();
-
 	// templates config
-	cl.templates.options.load = true;
-	cl.templates.options.load_base_path = 'library/tpl/';
+	cl.templates.options.parse = function (t) { Mustache.parse(t.html); };
+	cl.templates.options.render = function (t, o, p) { return Mustache.render(t.html, o, p); };
 	cl.templates.defaults['markdown'] = function () {
 		// parse markdown with renderer above
 		// ATTENTION: trim the value, otherwise the first part will turn into a code block!
@@ -17,6 +14,9 @@ var cl = Cylinder.init(function () {
 			return marked(content);
 		};
 	};
+
+	// attempt to import all templates from DOM
+	cl.templates.importFromDOM();
 
 	// router config
 	cl.router.options.push = false; // tell it we want hash navigation

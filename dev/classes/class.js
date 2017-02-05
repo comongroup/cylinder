@@ -29,12 +29,32 @@ function CylinderClass () {
 	 * The framework will check if it exists in the global scope.
 	 *
 	 * @param  {...(String|Object)} dependencies - The names of the dependencies to be checked.
-	 * @param  {Boolean}            [silent]     - If true, the method will not throw an exception when a mandatory dependency is not found.
-	 * @return {Boolean} Returns true if it exists, and throws an exception if it doesn't (unless the last argument is <code>true</code>).
+	 * @param  {Boolean}            [loud]       - If `true`, the method will throw an exception when a specified dependency is not found.
+	 * @return {Boolean} Returns true or false depending whether the dependency exists. If `loud` is `true`, it throws an exception if the dependency doesn't exist.
 	 *
 	 * @example
-	 * // throws an exception because "asdf" is not declared.
-	 * // you can also specify objects for a cleaner exception output.
+	 * // you can check if a dependency exists or not,
+	 * // so you can gracefully handle missing dependencies
+	 *
+	 * if (Cylinder.dependency('$.fn.velocity')) {
+	 *     // velocity is present
+	 *     $('#element').velocity({ top: 0 });
+	 * }
+	 * else {
+	 *     // velocity.js is not defined
+	 *     // so you can use a fallback
+	 *     $('#element').animate({ top: 0 });
+	 * }
+	 *
+	 * @example
+	 * // you can check for dependencies inside a variable,
+	 * // and the whole family tree will be checked from top-level
+	 *
+	 * var everyDependency = Cylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
+	 *
+	 * @example
+	 * // you can also throw an exception if you pass `true` at the end.
+	 * // you can also specify objects if you want a cleaner exception output.
 	 *
 	 * Cylinder.dependency(
 	 *     'async',
@@ -42,34 +62,15 @@ function CylinderClass () {
 	 *     { package: '_', name: 'underscore.js' },
 	 *     { package: 's', name: 'underscore.string', scope: window, optional: true },
 	 *     'Backbone',
-	 *     'asdf'
+	 *     'asdf', // imagine this variable doesn't exist
+	 *     true
 	 * );
-	 *
-	 * @example
-	 * // you can check for dependencies inside a variable
-	 * // and the whole family tree will be checked from top-level
-	 *
-	 * Cylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
-	 *
-	 * @example
-	 * // if `true` is sent at the end, the method doesn't throw an exception
-	 * // and allows the programmer to gracefully handle missing dependencies
-	 *
-	 * if (Cylinder.dependency('$.fn.velocity', true)) {
-	 *     // velocity is present
-	 *     $('#element').velocity({ top: 0 });
-	 * }
-	 * else {
-	 *     // velocity.js is not defined
-	 *     // so the programmer can use a fallback
-	 *     $('#element').animate({ top: 0 });
-	 * }
 	 */
 	this.dependency = function () {
 		var args = Array.prototype.slice.call(arguments); // make a copy of all received arguments!
-		var loud = true; // this will make sure it will either throw an exception or just output a boolean.
+		var loud = false; // this will make sure it will either throw an exception or just output a boolean.
 		if (args.length > 0 && typeof args[args.length - 1] === 'boolean') {
-			loud = !args[args.length - 1]; // the last argument IS a boolean, so store its value.
+			loud = args[args.length - 1]; // the last argument IS a boolean, so store its value.
 			args.pop(); // in order to not have trash in our checks, remove the last argument!
 		}
 
@@ -109,7 +110,8 @@ function CylinderClass () {
 		'jQuery',
 		{ package: '_', name: 'underscore.js' },
 		{ package: 's', name: 'underscore.string' },
-		'Backbone'
+		'Backbone',
+		true
 	);
 
 	var extensions = []; // initializable extensions!

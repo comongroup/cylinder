@@ -11,7 +11,7 @@ module.exports = function (cylinder, _module) {
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
 	// die in the water. We don't want to die like that.
-	cylinder.dependency('Cylinder.utils');
+	cylinder.dependency('Cylinder.utils', true);
 
 	/**
 	 * The options taken by the module.

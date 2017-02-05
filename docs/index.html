@@ -11,7 +11,7 @@
 
 	<!-- extra -->
 	<script src="https://use.fontawesome.com/fbae49b36d.js"></script>
-	<link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 	<link rel="stylesheet" href="library/css/github.css">
 
 	<!-- analytics -->
@@ -23,22 +23,35 @@
 		ga('create', 'UA-80591792-1', 'auto');
 	</script>
 
+	<!-- self styles -->
+	<style type="text/css">
+		.docs.nav .current {
+			font-weight: bold;
+		}
+	</style>
+
 </head>
 
 <body>
 
-	<nav class="navbar navbar-full navbar-dark bg-inverse">
+	<nav class="navbar navbar-toggleable-sm navbar-inverse bg-inverse">
+		<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
 		<a class="navbar-brand" href="#">Cylinder</a>
-		<ul class="nav navbar-nav">
-			<li class="nav-item"> <a class="nav-link" href="#">Home</a> </li>
-			<li class="nav-item"> <a class="nav-link" href="library/js/cylinder/cylinder.min.js" target="_blank">Download</a> </li>
-			<li class="nav-item" data-route-indicator>
-				<small class="nav-link text-muted" style="padding-top: .59rem; padding-bottom: .59rem;">Current route is {{route}}</small>
-			</li>
-		</ul>
+		<div class="collapse navbar-collapse" id="navbarText">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+				<li class="nav-item"><a class="nav-link" href="library/js/cylinder/cylinder.min.js" target="_blank">Download</a></li>
+				<li class="nav-item" data-route-indicator>
+					<small class="nav-link text-muted" style="padding-top: .66rem;">Current route is {{route}}</small>
+				</li>
+			</ul>
+		</div>
 	</nav>
 
-	<div class="container m-t-2">
+	<div class="container">
 		Loading...
 	</div>
 
@@ -50,6 +63,46 @@
 		</ul>
 	</script>
 
+	<!-- another template in DOM -->
+	<script type="text/template" id="template_docs">
+		<div class="row">
+			<div class="col col-md-9 markdown-body pb-3">
+				{{# markdown}}{{& content}}{{/ markdown}}
+			</div>
+			<div class="col col-md-3 pt-5">
+				<ul class="docs">
+					<li>
+						<h6 class="text-muted">Classes</h6>
+						<ul class="my-2">
+							<li><a href="#ref/classes/class">CylinderClass</a></li>
+							<li><a href="#ref/classes/exception">CylinderException</a></li>
+							<li><a href="#ref/classes/resizerule">CylinderResizeRule</a></li>
+						</ul>
+					</li>
+					<li>
+						<h6 class="text-muted">Extensions</h6>
+						<ul class="my-2">
+							<li><a href="#ref/extension/controllers">Controllers</a></li>
+						</ul>
+					</li>
+					<li>
+						<h6 class="text-muted">Modules</h6>
+						<ul class="my-2">
+							<li><a href="#ref/module/analytics">Analytics</a></li>
+							<li><a href="#ref/module/dom">DOM</a></li>
+							<li><a href="#ref/module/resize">Resize</a></li>
+							<li><a href="#ref/module/router">Router</a></li>
+							<li><a href="#ref/module/scroll">Scroll</a></li>
+							<li><a href="#ref/module/store">Store</a></li>
+							<li><a href="#ref/module/templates">Templates</a></li>
+							<li><a href="#ref/module/utils">Utils</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</script>
+
 	<!-- dependencies (including cylinder) -->
 	<script src="library/js/cylinder/vendor/async.min.js"></script>
 	<script src="library/js/cylinder/vendor/jquery.min.js"></script>
@@ -57,13 +110,13 @@
 	<script src="library/js/cylinder/vendor/underscore-min.js"></script>
 	<script src="library/js/cylinder/vendor/underscore.string.min.js"></script>
 	<script src="library/js/cylinder/vendor/backbone-min.js"></script>
-	<script src="library/js/cylinder/vendor/mustache.min.js"></script>
-	<script src="library/js/cylinder/cylinder.min.js"></script>
+	<script src="library/js/cylinder/cylinder.js"></script>
 
 	<!-- extra stuff -->
-	<script src="library/js/inc/marked.min.js"></script>
-	<script src="library/js/inc/tether.min.js"></script>
-	<script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js" integrity="sha256-iaqfO5ue0VbSGcEiQn+OeXxnxAMK2+QgHXIDA5bWtGI=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js" integrity="sha256-mJAzKDq6kSoKqZKnA6UNLtPaIj8zT2mFnWu/GSouhgQ=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
 	<!-- self: controllers -->
 	<script src="library/js/controllers/docs.js"></script>

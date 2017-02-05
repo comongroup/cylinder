@@ -41,14 +41,6 @@ module.exports = {
 				cwd: '<%= project.bower %>/backbone/',
 				src: [ 'backbone-min.js', 'backbone-min.map' ],
 				dest: '<%= project.dist_vendor %>'
-			},
-
-			// copy mustache.js
-			{
-				expand: true,
-				cwd: '<%= project.bower %>/mustache.js/',
-				src: [ 'mustache.min.js' ],
-				dest: '<%= project.dist_vendor %>'
 			}
 
 		]
@@ -59,7 +51,7 @@ module.exports = {
 			{
 				expand: true,
 				cwd: '<%= project.dist %>',
-				src: [ 'vendor/*', 'cylinder.min.js', 'cylinder.min.js.map' ],
+				src: [ 'vendor/*', 'cylinder.js' ],
 				dest: '<%= project.docs_vendor %>'
 			}
 		]
