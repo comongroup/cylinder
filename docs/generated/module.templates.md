@@ -9,11 +9,11 @@ Templates module for CylinderClass.
     * [.defaults](#module_templates.defaults) : <code>Object</code>
     * [.has(id)](#module_templates.has) ⇒ <code>Boolean</code>
     * [.add(id, template, [defaults], [partials])](#module_templates.add) ⇒ <code>Object</code>
-    * [.get(id)](#module_templates.get) ⇒ <code>Object</code>
-    * [.load(...ids, [request])](#module_templates.load) ⇒ <code>Promise</code>
-    * [.render(id, [options], [partials])](#module_templates.render) ⇒ <code>String</code>
-    * [.apply($el, id, [options], [partials])](#module_templates.apply) ⇒ <code>Promise</code>
-    * [.replace($el, [options], [partials])](#module_templates.replace) ⇒ <code>Promise</code>
+    * [.get(id)](#module_templates.get) ⇒ <code>Object</code> &#124; <code>Null</code>
+    * [.addFromDOM()](#module_templates.addFromDOM)
+    * [.render(id, [options], [partials], [trigger])](#module_templates.render) ⇒ <code>String</code> &#124; <code>Null</code>
+    * [.apply($el, id, [options], [partials])](#module_templates.apply) ⇒ <code>jQueryObject</code>
+    * [.replace($el, [options], [partials])](#module_templates.replace) ⇒ <code>jQueryObject</code>
 
 
 * * *
@@ -34,29 +34,21 @@ The options taken by the module.
   </thead>
   <tbody>
 <tr>
-    <td>load</td><td><code>Boolean</code></td><td><p>If true, the module will try to load templates automatically.</p>
-</td>
-    </tr><tr>
-    <td>load_cache</td><td><code>Boolean</code></td><td><p>If true, the browser will cache any remotely-fetched templates.</p>
-</td>
-    </tr><tr>
-    <td>load_base_path</td><td><code>Boolean</code></td><td><p>Remote template base path.</p>
-</td>
-    </tr><tr>
-    <td>load_extension</td><td><code>Boolean</code></td><td><p>Remote template file extension.</p>
-</td>
-    </tr><tr>
     <td>fire_events</td><td><code>Boolean</code></td><td><p>Fires all events when rendering or doing other things.</p>
 </td>
     </tr><tr>
     <td>detach</td><td><code>Boolean</code></td><td><p>If true, the <code>apply</code> and <code>replace</code> methods attempt to remove all children first.
-                                            Be wary that this might provoke memory leaks by not unbinding any data or events from the children.</p>
-</td>
-    </tr><tr>
-    <td>partials</td><td><code>Boolean</code></td><td><p>All templates will always be available as partials.</p>
+                                         Be wary that this might provoke memory leaks by not unbinding any data or events from the children.</p>
 </td>
     </tr><tr>
     <td>premades</td><td><code>String</code> | <code>Boolean</code></td><td><p>If not false, the module will look for a specific object variable for templates (default: JST).</p>
+</td>
+    </tr><tr>
+    <td>parse</td><td><code>function</code></td><td><p>Callback for parsing templates. Receives a template object, which always has an <code>html</code> string parameter.
+                                         This method is called right before an added template is rendered, and is meant for applying optimizations.</p>
+</td>
+    </tr><tr>
+    <td>render</td><td><code>function</code></td><td><p>Callback for rendering a template. Receives a template object, which always has an <code>html</code> string parameter.</p>
 </td>
     </tr>  </tbody>
 </table>
@@ -67,7 +59,7 @@ The options taken by the module.
 <a name="module_templates.defaults"></a>
 
 ### templates.defaults : <code>Object</code>
-Default options for templates.
+Default properties for templates.
 
 **Kind**: static property of <code>[templates](#module_templates)</code>  
 
@@ -129,11 +121,11 @@ Adds a template to the local cache.
 
 <a name="module_templates.get"></a>
 
-### templates.get(id) ⇒ <code>Object</code>
-Returns a template if it exists, and attempts to fetch from the local DOM if it doesn't.
+### templates.get(id) ⇒ <code>Object</code> &#124; <code>Null</code>
+Returns a template if it exists, otherwise it'll return `null`.
 
 **Kind**: static method of <code>[templates](#module_templates)</code>  
-**Returns**: <code>Object</code> - Returns the generated internal template module's object, or an empty object if not found.  
+**Returns**: <code>Object</code> &#124; <code>Null</code> - Returns the template object, or null if not found.  
 <table>
   <thead>
     <tr>
@@ -150,39 +142,22 @@ Returns a template if it exists, and attempts to fetch from the local DOM if it 
 
 * * *
 
-<a name="module_templates.load"></a>
+<a name="module_templates.addFromDOM"></a>
 
-### templates.load(...ids, [request]) ⇒ <code>Promise</code>
-Attempts to load a remote template.<br />If multiple strings are provided, the method will call <code>Promise.fail(err)</code> if one of them fails to load, regardless of whether others succeeded.<br /><br />Notice: this method should be considered and used as an asynchronous method.
+### templates.addFromDOM()
+Attempts to add templates to the module from `<script type="text/template">` objects.
 
 **Kind**: static method of <code>[templates](#module_templates)</code>  
-**Returns**: <code>Promise</code> - Returns a Promise object.  
-<table>
-  <thead>
-    <tr>
-      <th>Param</th><th>Type</th><th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-<tr>
-    <td>...ids</td><td><code>String</code></td><td><p>The unique identifier(s) of the template(s) to load.</p>
-</td>
-    </tr><tr>
-    <td>[request]</td><td><code>Object</code></td><td><p>Additional parameters for the AJAX request. This argument will not be accepted if there are multiple IDs to be loaded.</p>
-</td>
-    </tr>  </tbody>
-</table>
-
 
 * * *
 
 <a name="module_templates.render"></a>
 
-### templates.render(id, [options], [partials]) ⇒ <code>String</code>
-Renders a template.
+### templates.render(id, [options], [partials], [trigger]) ⇒ <code>String</code> &#124; <code>Null</code>
+Renders a template with the given ID.
 
 **Kind**: static method of <code>[templates](#module_templates)</code>  
-**Returns**: <code>String</code> - Returns the rendered template.  
+**Returns**: <code>String</code> &#124; <code>Null</code> - Returns the rendered template.  
 <table>
   <thead>
     <tr>
@@ -199,6 +174,9 @@ Renders a template.
     </tr><tr>
     <td>[partials]</td><td><code>Object</code></td><td><p>The object of partials the template can use.</p>
 </td>
+    </tr><tr>
+    <td>[trigger]</td><td><code>Boolean</code></td><td><p>If false, the method won&#39;t fire any events.</p>
+</td>
     </tr>  </tbody>
 </table>
 
@@ -207,11 +185,11 @@ Renders a template.
 
 <a name="module_templates.apply"></a>
 
-### templates.apply($el, id, [options], [partials]) ⇒ <code>Promise</code>
-Renders a template and applies it to a jQuery element.<br /><br />If the element is not a jQuery element, it will throw an exception.<br />If the template does not exist and 'options.load' is enabled, then it will attempt to load the template first.<br /><br />Notice: this method should be considered and used as an asynchronous method.
+### templates.apply($el, id, [options], [partials]) ⇒ <code>jQueryObject</code>
+Renders a template and applies it to a jQuery element.<br /><br />If the element is not a jQuery element, it will throw an exception.
 
 **Kind**: static method of <code>[templates](#module_templates)</code>  
-**Returns**: <code>Promise</code> - Returns a Promise object.  
+**Returns**: <code>jQueryObject</code> - Returns the provided jQuery object.  
 <table>
   <thead>
     <tr>
@@ -239,11 +217,11 @@ Renders a template and applies it to a jQuery element.<br /><br />If the elemen
 
 <a name="module_templates.replace"></a>
 
-### templates.replace($el, [options], [partials]) ⇒ <code>Promise</code>
-Replaces the entire HTML of an element with a rendered version of it.<br /><br />This method will store the original HTML of the selected element in cache.If replace is called again on the same element, it will reuse that HTML instead of rendering on top of that rendered result.<br />If the element is not a jQuery element, it will throw an exception.<br /><br />Notice: this method is synchronous, however it still returns a promise objectin order to keep consistency between it and <code>apply()</code>, and should be used as such.
+### templates.replace($el, [options], [partials]) ⇒ <code>jQueryObject</code>
+Replaces the entire HTML of an element with a rendered version of it.<br /><br />This method will store the original HTML of the selected element in cache.If replace is called again on the same element, it will reuse that HTML instead of rendering on top of that rendered result.<br />If the element is not a jQuery element, it will throw an exception.
 
 **Kind**: static method of <code>[templates](#module_templates)</code>  
-**Returns**: <code>Promise</code> - Returns a Promise object.  
+**Returns**: <code>jQueryObject</code> - Returns the provided jQuery object.  
 <table>
   <thead>
     <tr>

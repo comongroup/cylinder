@@ -26,7 +26,7 @@ Cylinder.controller('docs', function (cl, controller) {
 			success: function (result) {
 				var options = { content: result };
 				options['is_' + path.replace('.', '_')] = true;
-				cl.templates.apply(cl.$container, 'docs', options);
+				cl.templates.replace(cl.$container, options);
 			}
 		});
 	};
