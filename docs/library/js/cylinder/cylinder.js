@@ -1,5 +1,5 @@
 /*
- * cylinder v0.14.1 (2017-02-06 16:31:09)
+ * cylinder v1.0.0-alpha.1 (2017-02-06 16:39:00)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -23,7 +23,7 @@ function CylinderClass () {
 	 * Framework version.
 	 * @return {String}
 	 */
-	this.version = '0.14.1';
+	this.version = '1.0.0-alpha.1';
 
 	/**
 	 * Checks if the framework has been initialized.
@@ -442,7 +442,7 @@ module.exports = function (instance) {
 	 * // either from Cylinder's own method...
 	 * Cylinder.controllers().myctrl.alert('hello!');
 	 *
-	 * // or through the global scope, like we added up.
+	 * // or through the global scope, like we added above.
 	 * MyCtrl.alert('hello, world!');
 	 */
 	instance.controller = function (name, ctor) {

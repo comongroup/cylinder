@@ -42,7 +42,7 @@ module.exports = function (instance) {
 	 * // either from Cylinder's own method...
 	 * Cylinder.controllers().myctrl.alert('hello!');
 	 *
-	 * // or through the global scope, like we added up.
+	 * // or through the global scope, like we added above.
 	 * MyCtrl.alert('hello, world!');
 	 */
 	instance.controller = function (name, ctor) {

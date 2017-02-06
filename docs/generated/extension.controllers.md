@@ -36,7 +36,7 @@ Extends the framework with a specific named controller.<br />The controller's c
 
 **Example**  
 ```js
-Cylinder.controller('myctrl', function (cl, controller) {    // you can add the controller to the global scope, if you want.    // this way, you'll be able to access it easily.    window.MyCtrl = controller;    // controller logic goes here!    controller.alert = function (str) {        alert('abc');    };    // always return the parent variable itself in the end,    // because this is what Cylinder will recognize as the controller to add.    return controller;});// you now have two ways to access controllers,// either from Cylinder's own method...Cylinder.controllers().myctrl.alert('hello!');// or through the global scope, like we added up.MyCtrl.alert('hello, world!');
+Cylinder.controller('myctrl', function (cl, controller) {    // you can add the controller to the global scope, if you want.    // this way, you'll be able to access it easily.    window.MyCtrl = controller;    // controller logic goes here!    controller.alert = function (str) {        alert('abc');    };    // always return the parent variable itself in the end,    // because this is what Cylinder will recognize as the controller to add.    return controller;});// you now have two ways to access controllers,// either from Cylinder's own method...Cylinder.controllers().myctrl.alert('hello!');// or through the global scope, like we added above.MyCtrl.alert('hello, world!');
 ```
 
 * * *
