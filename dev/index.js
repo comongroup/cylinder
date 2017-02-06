@@ -10,7 +10,6 @@
 	scope.CylinderClass.ModuleUtils = require('./modules/utils');
 	scope.CylinderClass.ModuleDom = require('./modules/dom');
 	scope.CylinderClass.ModuleStore = require('./modules/store');
-	scope.CylinderClass.ModuleAnalytics = require('./modules/analytics');
 	scope.CylinderClass.ModuleTemplates = require('./modules/templates');
 	scope.CylinderClass.ModuleRouter = require('./modules/router');
 	scope.CylinderClass.ModuleResize = require('./modules/resize');
@@ -22,7 +21,6 @@
 	scope.Cylinder.module('utils', scope.CylinderClass.ModuleUtils);
 	scope.Cylinder.module('dom', scope.CylinderClass.ModuleDom);
 	scope.Cylinder.module('store', scope.CylinderClass.ModuleStore);
-	scope.Cylinder.module('analytics', scope.CylinderClass.ModuleAnalytics);
 	scope.Cylinder.module('templates', scope.CylinderClass.ModuleTemplates);
 	scope.Cylinder.module('router', scope.CylinderClass.ModuleRouter);
 	scope.Cylinder.module('resize', scope.CylinderClass.ModuleResize);

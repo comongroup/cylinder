@@ -1,5 +1,5 @@
 /*
- * cylinder v0.14.1 (2017-02-06 13:35:17)
+ * cylinder v0.14.1 (2017-02-06 14:34:20)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -514,7 +514,6 @@ module.exports = function (instance) {
 	scope.CylinderClass.ModuleUtils = require('./modules/utils');
 	scope.CylinderClass.ModuleDom = require('./modules/dom');
 	scope.CylinderClass.ModuleStore = require('./modules/store');
-	scope.CylinderClass.ModuleAnalytics = require('./modules/analytics');
 	scope.CylinderClass.ModuleTemplates = require('./modules/templates');
 	scope.CylinderClass.ModuleRouter = require('./modules/router');
 	scope.CylinderClass.ModuleResize = require('./modules/resize');
@@ -526,7 +525,6 @@ module.exports = function (instance) {
 	scope.Cylinder.module('utils', scope.CylinderClass.ModuleUtils);
 	scope.Cylinder.module('dom', scope.CylinderClass.ModuleDom);
 	scope.Cylinder.module('store', scope.CylinderClass.ModuleStore);
-	scope.Cylinder.module('analytics', scope.CylinderClass.ModuleAnalytics);
 	scope.Cylinder.module('templates', scope.CylinderClass.ModuleTemplates);
 	scope.Cylinder.module('router', scope.CylinderClass.ModuleRouter);
 	scope.Cylinder.module('resize', scope.CylinderClass.ModuleResize);
@@ -534,83 +532,7 @@ module.exports = function (instance) {
 
 })(window);
 
-},{"./classes/class":1,"./classes/exception":2,"./classes/resizerule":3,"./extensions/controllers":4,"./modules/analytics":6,"./modules/dom":7,"./modules/resize":8,"./modules/router":9,"./modules/scroll":10,"./modules/store":11,"./modules/templates":12,"./modules/utils":13}],6:[function(require,module,exports){
-'use strict';
-
-module.exports = function (cylinder, _module) {
-
-	/**
-	 * Analytics module for CylinderClass.
-	 * @exports analytics
-	 */
-	var module = _.extend({}, _module);
-
-	/**
-	 * The options taken by the module.
-	 * @type     {Object}
-	 * @property {Boolean} debug - If true, requests won't be sent.
-	 * @property {Boolean} log   - Should the module log into the console?
-	 */
-	module.options = {
-		debug: false,
-		log: false
-	};
-
-	// compiles a ga(...) function and executes it
-	// this will read the method's parameters
-	function call_ga (args) {
-		if (typeof ga == 'undefined' || _.isNull(ga) || !_.isFunction(ga)) return null;
-
-		var s = '\'' + args.join('\',\'') + '\'';
-		return !module.options.debug // execute if debug == false
-			? eval('ga(' + s + ')')
-			: 'ga(' + s + ')';
-	};
-
-	// compiles a _gaq.push([...]) function and executes it
-	// this will read the method's parameters
-	function call_gaq (args) {
-		if (typeof _gaq == 'undefined' || _.isNull(_gaq)) return null;
-
-		var s = '\'' + args.join('\',\'') + '\'';
-		return !module.options.debug // execute if debug == false
-			? _gaq.push(args)
-			: '_gaq.push([' + s + '])';
-	};
-
-	/**
-	 * Send an Analytics pageview to both <code>ga.js</code> and <code>analytics.js</code>.
-	 * @param {String} path - The path to send to analytics.
-	 */
-	module.pageview = function (path) {
-		if (module.options.log && !_.isUndefined(console.log))
-			console.log('Pageview: ' + path);
-
-		call_ga([ 'send', 'pageview', path ]);
-		call_gaq([ '_trackEvent', path ]);
-	};
-
-	/**
-	 * Send an Analytics event to both <code>ga.js</code> and <code>analytics.js</code>.
-	 * @param {String|Number} category - The event's category.
-	 * @param {String|Number} action   - The event's action.
-	 * @param {String|Number} [label]  - The event's label for that action.
-	 * @param {String|Number} [value]  - The event's value for that action.
-	 */
-	module.event = function (category, action, label, value) {
-		if (module.options.log && !_.isUndefined(console.log))
-			console.log('Event: ' + category + ' ' + action + ' ' + label + ' ' + value);
-
-		var args = _.toArray(arguments);
-		call_ga( _.union([ 'send', 'event' ], args) );
-		call_gaq( _.union([ '_trackEvent' ], args) );
-	};
-
-	return module; // finish
-
-};
-
-},{}],7:[function(require,module,exports){
+},{"./classes/class":1,"./classes/exception":2,"./classes/resizerule":3,"./extensions/controllers":4,"./modules/dom":6,"./modules/resize":7,"./modules/router":8,"./modules/scroll":9,"./modules/store":10,"./modules/templates":11,"./modules/utils":12}],6:[function(require,module,exports){
 'use strict';
 
 module.exports = function (cylinder, _module) {
@@ -705,7 +627,7 @@ module.exports = function (cylinder, _module) {
 
 };
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 /*! viewportSize | Author: Tyson Matanich, 2013 | License: MIT */
@@ -905,7 +827,7 @@ module.exports = function (cylinder, _module) {
 
 };
 
-},{"../classes/resizerule":3}],9:[function(require,module,exports){
+},{"../classes/resizerule":3}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = function (cylinder, _module) {
@@ -1437,7 +1359,7 @@ module.exports = function (cylinder, _module) {
 
 };
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 module.exports = function (cylinder, _module) {
@@ -1651,7 +1573,7 @@ module.exports = function (cylinder, _module) {
 
 };
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 module.exports = function (cylinder, _module) {
@@ -1943,7 +1865,7 @@ module.exports = function (cylinder, _module) {
 
 };
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 module.exports = function (cylinder, _module) {
@@ -2272,7 +2194,7 @@ module.exports = function (cylinder, _module) {
 
 };
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 module.exports = function (cylinder, _module) {

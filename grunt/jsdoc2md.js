@@ -6,7 +6,6 @@ module.exports = {
 			{ src: '<%= project.dev_classes %>/exception.js', dest: '<%= project.docs_generated %>/classes.exception.md' },
 			{ src: '<%= project.dev_classes %>/resizerule.js', dest: '<%= project.docs_generated %>/classes.resizerule.md' },
 			{ src: '<%= project.dev_extensions %>/controllers.js', dest: '<%= project.docs_generated %>/extension.controllers.md' },
-			{ src: '<%= project.dev_modules %>/analytics.js', dest: '<%= project.docs_generated %>/module.analytics.md' },
 			{ src: '<%= project.dev_modules %>/dom.js', dest: '<%= project.docs_generated %>/module.dom.md' },
 			{ src: '<%= project.dev_modules %>/resize.js', dest: '<%= project.docs_generated %>/module.resize.md' },
 			{ src: '<%= project.dev_modules %>/router.js', dest: '<%= project.docs_generated %>/module.router.md' },
