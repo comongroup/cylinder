@@ -23,7 +23,7 @@ var cl = Cylinder.init(function () {
 	cl.router.addHandler(); // setup the default handler
 
 	// middleware
-	cl.router.use(function (next, route) {
+	cl.router.use(function (route, args, next) {
 		cl.templates.replace('[data-route-indicator]', { route: route });
 		ga('send', 'pageview', cl.router.url); // analytics
 		next();

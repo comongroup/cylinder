@@ -105,7 +105,7 @@ Validate if a variable or a dependency exists.The framework will check if it ex
 ```
 **Example**  
 ```js
-// you can also throw an exception if you pass `true` at the end.// you can also specify objects if you want a cleaner exception output.Cylinder.dependency(    'async',    'jQuery',    { package: '_', name: 'underscore.js' },    { package: 's', name: 'underscore.string', scope: window, optional: true },    'Backbone',    'asdf', // imagine this variable doesn't exist    true);
+// you can also throw an exception if you pass `true` at the end.// you can also specify objects if you want a cleaner exception output.Cylinder.dependency(    'jQuery',    { package: '_', name: 'underscore.js' },    { package: 's', name: 'underscore.string', scope: window, optional: true },    'Backbone',    'asdf', // imagine this variable doesn't exist    true);
 ```
 
 * * *
