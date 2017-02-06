@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Router module for CylinderClass.
 	 * @exports router
 	 */
-	var module = _.extend({}, _module);
+	var router = cylinder.extend({}, module);
 
 	var routes = {}; // this will contain all routes and middleware!
 	var middleware = []; // this will contain all global middleware that is ALWAYS executed on route change!
@@ -18,7 +18,7 @@ module.exports = function (cylinder, _module) {
 	function getCurrentUrl () {
 		// this attempts to return the current url
 		// so it can be used by other methods
-		return (module.options.push)
+		return router.options.push
 			? Backbone.history.location.pathname.replace(path_root, '')
 			: Backbone.history.location.hash.replace('!', '').replace('#', '')
 	};
@@ -42,7 +42,7 @@ module.exports = function (cylinder, _module) {
 
 		asyncSeries(middleware, function (method, done) {
 			if (!_.isFunction(method)) done();
-			else method.apply(module, [ composition.name, args, done ]);
+			else method.apply(router, [ composition.name, args, done ]);
 		}, function (err) {
 			return finish();
 		});
@@ -57,7 +57,7 @@ module.exports = function (cylinder, _module) {
 
 		asyncSeries(composition.middleware, function (method, done) {
 			if (!_.isFunction(method)) done();
-			else method.apply(module, [].concat(args, done));
+			else method.apply(router, [].concat(args, done));
 		}, function (err) {
 			return finish();
 		});
@@ -65,7 +65,6 @@ module.exports = function (cylinder, _module) {
 
 	function execute (callback, args, name) {
 		var composition = routes[name]; // current composed route
-		var router = this; // recommended context
 
 		// trim the argument list,
 		// since it always returns a "null" element
@@ -74,36 +73,36 @@ module.exports = function (cylinder, _module) {
 		// here we run through potential global middleware,
 		// and then specific middleware, followed by the actual route callback!
 		return middlewareGlobal(composition, args, function () {
-			module.previous_route = module.route; // save the previous route...
-			module.route = name; // set the current route...
+			router.previous_route = router.route; // save the previous route...
+			router.route = name; // set the current route...
 
-			module.previous_args = module.args; // save the previous arguments...
-			module.args = args; // set the current arguments...
+			router.previous_args = router.args; // save the previous arguments...
+			router.args = args; // set the current arguments...
 
-			module.previous_url = module.url; // save the previous url...
-			module.url = getCurrentUrl(); // set the new url...
+			router.previous_url = router.url; // save the previous url...
+			router.url = getCurrentUrl(); // set the new url...
 
-			if (module.previous_route) {
+			if (router.previous_route) {
 				// events for the previous route
-				if (module.previous_route !== module.route) { // only run if we're actually LEAVING the route
-					cylinder.trigger('routeout:' + module.previous_route, module.previous_args); // trigger a specific event for the framework...
-					cylinder.trigger('routeout', module.previous_route, module.previous_args); // trigger a global event for the framework...
+				if (router.previous_route !== router.route) { // only run if we're actually LEAVING the route
+					cylinder.trigger('routeout:' + router.previous_route, router.previous_args); // trigger a specific event for the framework...
+					cylinder.trigger('routeout', router.previous_route, router.previous_args); // trigger a global event for the framework...
 				}
 
 				// events for the route change with specific previous_route naming
-				cylinder.trigger('routechange:' + module.previous_route + ':' + name, module.previous_args, args); // trigger specific event 1 for the framework...
-				cylinder.trigger('routechange:' + module.previous_route, module.previous_args, name, args); // trigger specific event 2 for the framework...
+				cylinder.trigger('routechange:' + router.previous_route + ':' + name, router.previous_args, args); // trigger specific event 1 for the framework...
+				cylinder.trigger('routechange:' + router.previous_route, router.previous_args, name, args); // trigger specific event 2 for the framework...
 			}
 
 			// global event for the route change (even if previous_route & previous_args is null)
-			cylinder.trigger('routechange', module.previous_route, module.previous_args, name, args); // trigger a global event for the framework...
+			cylinder.trigger('routechange', router.previous_route, router.previous_args, name, args); // trigger a global event for the framework...
 
 			// events for the new route
 			cylinder.trigger('route:' + name, args); // trigger a specific event for the framework...
 			cylinder.trigger('route', name, args); // trigger a global event for the framework...
 
 			// signal the module that a route has been triggered...
-			module.done = true;
+			router.done = true;
 
 			// call the specific middleware now, and we're done!
 			return middlewareSpecific(composition, args);
@@ -121,7 +120,7 @@ module.exports = function (cylinder, _module) {
 	 * @property {Boolean} selector - The default element selector for the click handler given by <code>addHandler()</code>.
 	 * @property {Boolean} navigate_defaults - Allows for default properties to be passed to the module's internal Backbone.Router on <code>go()</code>.
 	 */
-	module.options = {
+	router.options = {
 		push: false, // is pushState navigation on?
 		clicks: true, // is the hyperlink event handler on?
 		prefix: '', // should there be a prefix for all links?
@@ -137,61 +136,61 @@ module.exports = function (cylinder, _module) {
 	 * Has the router triggered?
 	 * @type {Boolean}
 	 */
-	module.done = false;
+	router.done = false;
 
 	/**
 	 * Current router URL.
 	 * @type {String}
 	 */
-	module.url = null;
+	router.url = null;
 
 	/**
 	 * Current route name.
 	 * @type {String}
 	 */
-	module.route = null;
+	router.route = null;
 
 	/**
 	 * Current route arguments.
 	 * @type {Array}
 	 */
-	module.args = null;
+	router.args = null;
 
 	/**
 	 * Previous router URL.
 	 * @type {String}
 	 */
-	module.previous_url = null;
+	router.previous_url = null;
 
 	/**
 	 * Previous route name.
 	 * @type {String}
 	 */
-	module.previous_route = null;
+	router.previous_route = null;
 
 	/**
 	 * Previous route arguments.
 	 * @type {Array}
 	 */
-	module.previous_args = null;
+	router.previous_args = null;
 
 	/**
 	 * Returns the current router's domain.
 	 * @return {String}
 	 */
-	module.domain = function () { return path_domain; };
+	router.domain = function () { return path_domain; };
 
 	/**
 	 * Returns the current router's root path.
 	 * @return {String}
 	 */
-	module.root = function () { return path_root; };
+	router.root = function () { return path_root; };
 
 	/**
 	 * Returns the current router's full path (domain + root).
 	 * @return {String}
 	 */
-	module.path = function () { return path_full; };
+	router.path = function () { return path_full; };
 
 	// this will be the router itself!
 	// it will manage all routes and even callbacks!
@@ -208,7 +207,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String} [root]   - The base path (after domain, the immutable part) for this router.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.setup = function (domain, root) {
+	router.setup = function (domain, root) {
 		// reuse current variables!
 		if (!_.isString(domain)) domain = path_domain;
 		if (!_.isString(root)) root = path_root;
@@ -234,9 +233,9 @@ module.exports = function (cylinder, _module) {
 
 		// if the router had already been started,
 		// restart it so that we don't operate on an older domain/path!
-		if (Backbone.History.started) module.start(true);
+		if (Backbone.History.started) router.start(true);
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -246,16 +245,16 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Boolean} [silent] - Determines whether the router should fire initial events or not.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.start = function (silent) {
-		module.stop(); // stop the router first before doing anything else!
+	router.start = function (silent) {
+		router.stop(); // stop the router first before doing anything else!
 
 		Backbone.history.start({
-			pushState: module.options.push,
+			pushState: router.options.push,
 			root: path_root,
 			silent: silent || false
 		});
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -263,12 +262,12 @@ module.exports = function (cylinder, _module) {
 	 *
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.stop = function () {
+	router.stop = function () {
 		if (Backbone.History.started) {
 			Backbone.history.stop();
 		}
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -323,9 +322,9 @@ module.exports = function (cylinder, _module) {
 	 *                                   `next` callback at the end, in order to skip to the next function in the chain.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.use = function (functions) {
+	router.use = function (functions) {
 		middleware.push(functions); // push the callback to the array
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -335,9 +334,9 @@ module.exports = function (cylinder, _module) {
 	 * @param  {...Function} functions - The callbacks to remove.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.unuse = function (functions) {
+	router.unuse = function (functions) {
 		middleware = _.without(middleware, functions); // remove the callback from the array
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -374,7 +373,7 @@ module.exports = function (cylinder, _module) {
 	 *                                  The methods themselves will receive all of the arguments passed into the syntax, along with a
 	 *                                  `next` callback at the end, in order to skip to the next function in the callback list.
 	 */
-	module.add = function () {
+	router.add = function () {
 		var args = _.flatten(arguments);
 
 		// get the name and the syntax
@@ -388,7 +387,7 @@ module.exports = function (cylinder, _module) {
 		name = cylinder.s.slugify(name);
 
 		// calculate the prefix
-		var prefix = module.options.prefix || '';
+		var prefix = router.options.prefix || '';
 		if (
 			!cylinder.s.isBlank(prefix) && cylinder.s.endsWith(prefix, '/') &&
 			(cylinder.s.startsWith(syntax, '/') || cylinder.s.startsWith(syntax, '(/)'))
@@ -417,12 +416,12 @@ module.exports = function (cylinder, _module) {
 	 *                               If empty, the method will provide the selector from <code>options.selector</code>.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.addHandler = function (selector) {
+	router.addHandler = function (selector) {
 		var callback = _.last(_.flatten(arguments)); // check for the last argument
 		if (!_.isFunction(callback)) callback = null; // reset to null!
 
-		cylinder.dom.$document.on('click.clrouter', _.isString(selector) && !cylinder.s.isBlank(selector) ? selector : module.options.selector, function (e) {
-			if (!module.options.clicks) return; // don't do a thing if the event isn't allowed!
+		cylinder.dom.$document.on('click.clrouter', _.isString(selector) && !cylinder.s.isBlank(selector) ? selector : router.options.selector, function (e) {
+			if (!router.options.clicks) return; // don't do a thing if the event isn't allowed!
 
 			var $this = cylinder.$(this);
 			var href = {
@@ -432,22 +431,22 @@ module.exports = function (cylinder, _module) {
 			};
 
 			if (!(cylinder.s.isBlank(href.target) || href.target == '_self')) return; // do not route if target is different than own page or blank link
-			if (href.attr == '#' && module.options.push) return e.preventDefault(); // do not route if it's a regular hash, but don't let Backbone catch this event either!
+			if (href.attr == '#' && router.options.push) return e.preventDefault(); // do not route if it's a regular hash, but don't let Backbone catch this event either!
 
 			// checks if there is a valid address in the hyperlink.
 			// then, it checks whether or not the address is in the local domain!
 			if (
 				href.prop &&
 				href.prop.slice(0, path_full.length) === path_full &&
-				href.prop.indexOf(module.options.prefix) !== -1
+				href.prop.indexOf(router.options.prefix) !== -1
 			) {
 				e.preventDefault();
-				module.go(href.prop.replace(path_full, ''));
+				router.go(href.prop.replace(path_full, ''));
 				if (_.isFunction(callback)) callback($this, href);
 			}
 		});
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -457,9 +456,9 @@ module.exports = function (cylinder, _module) {
 	 *                               If empty, the method will provide the selector from <code>options.selector</code>.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.removeHandler = function (selector) {
-		cylinder.dom.$document.off('click.clrouter', _.isString(selector) && !cylinder.s.isBlank(selector) ? selector : module.options.selector);
-		return module; // return the module itself.
+	router.removeHandler = function (selector) {
+		cylinder.dom.$document.off('click.clrouter', _.isString(selector) && !cylinder.s.isBlank(selector) ? selector : router.options.selector);
+		return router; // return the module itself.
 	};
 
 	/**
@@ -471,28 +470,28 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Boolean} [prefix]  - Should the method include the prefix set in the module's <code>options.prefix</code>?
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.go = function (url, options, prefix) {
+	router.go = function (url, options, prefix) {
 		options = options || {}; // turn into a valid object
 
 		if (!_.isString(url)) {
-			var args = module.args.concat([ null ]);
-			var composition = routes[module.route];
-			if (composition !== null) execute.apply(obj, [ composition.callback, args, module.route ]);
-			return module;
+			var args = router.args.concat([ null ]);
+			var composition = routes[router.route];
+			if (composition !== null) execute.apply(obj, [ composition.callback, args, router.route ]);
+			return router;
 		}
 
 		if (!Backbone.History.started) {
-			if (module.options.push) window.location = path_full + url; // change full location!
+			if (router.options.push) window.location = path_full + url; // change full location!
 			else window.location.hash = '#' + url; // only do it if using hash-navigation!
-			return module; // return the module itself.
+			return router; // return the module itself.
 		}
 
 		obj.navigate(
-			(prefix !== false ? module.options.prefix : '') + url,
-			_.extend({}, module.options.navigate_defaults, options)
+			(prefix !== false ? router.options.prefix : '') + url,
+			cylinder.extend({}, router.options.navigate_defaults, options)
 		);
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -501,13 +500,13 @@ module.exports = function (cylinder, _module) {
 	 * @param {Number|Boolean} [delay] - The delay of the reload, in seconds.
 	 *                                   If "false" is passed, the timeout will be cancelled and the page won't be reloaded.
 	 */
-	module.reload = function (delay) {
+	router.reload = function (delay) {
 		reload_timeout = clearTimeout(reload_timeout);
 
 		// if a delay is defined,
 		// do a timeout and return it.
 		if (_.isNumber(delay) && delay > 0) {
-			reload_timeout = setTimeout(function () { module.reload(); }, delay);
+			reload_timeout = setTimeout(function () { router.reload(); }, delay);
 			return reload_timeout;
 		}
 		else if (delay === false) {
@@ -523,8 +522,8 @@ module.exports = function (cylinder, _module) {
 
 	// run the setup at least once
 	// so we can have some proper values at start
-	module.setup('', cylinder.$(location).attr('pathname'));
+	router.setup('', cylinder.$(location).attr('pathname'));
 
-	return module; // finish
+	return router; // finish
 
 };

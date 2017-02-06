@@ -5,13 +5,13 @@
 
 var CylinderResizeRule = require('../classes/resizerule');
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Resize module for CylinderClass.
 	 * @exports resize
 	 */
-	var module = _.extend({}, _module);
+	var resize = cylinder.extend({}, module);
 
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
@@ -22,31 +22,31 @@ module.exports = function (cylinder, _module) {
 	 * Has the window been resized?
 	 * @type {Boolean}
 	 */
-	module.done = false;
+	resize.done = false;
 
 	/**
 	 * Current window width.
 	 * @type {Number}
 	 */
-	module.width = null;
+	resize.width = null;
 
 	/**
 	 * Current window height.
 	 * @type {Number}
 	 */
-	module.height = null;
+	resize.height = null;
 
 	/**
 	 * Previous window width.
 	 * @type {Number}
 	 */
-	module.previous_width = null;
+	resize.previous_width = null;
 
 	/**
 	 * Previous window height.
 	 * @type {Number}
 	 */
-	module.previous_height = null;
+	resize.previous_height = null;
 
 	// just a default rule callback
 	// for the rules we define below.
@@ -84,7 +84,7 @@ module.exports = function (cylinder, _module) {
 	 * Returns a collection of names and their CylinderResizeRules.
 	 * @return {Array.<CylinderResizeRule>} The collection of rules.
 	 */
-	module.rules = function () {
+	resize.rules = function () {
 		return rules;
 	};
 
@@ -94,7 +94,7 @@ module.exports = function (cylinder, _module) {
 	 * @param {String}             name - The name of the rule to add.
 	 * @param {CylinderResizeRule} rule - The rule object to add.
 	 */
-	module.addRule = function (name, rule) {
+	resize.addRule = function (name, rule) {
 		// if the passed rule is not an instance of CylinderResizeRule,
 		// then we'll just throw an exception.
 		if (!(rule instanceof CylinderResizeRule)) {
@@ -104,10 +104,10 @@ module.exports = function (cylinder, _module) {
 		// add the rule
 		rules[name] = rule;
 
-		if (module.width !== null && module.height !== null) {
+		if (resize.width !== null && resize.height !== null) {
 			// if the module already triggered a resize event,
 			// then, from now on, we'll always evaluate new rules as soon as they're added.
-			evaluateRule(module.width, module.height, rule, name);
+			evaluateRule(resize.width, resize.height, rule, name);
 		}
 	};
 
@@ -117,7 +117,7 @@ module.exports = function (cylinder, _module) {
 	 * @param   {String} name - The name of the rule to return.
 	 * @returns {CylinderResizeRule} Rule instance.
 	 */
-	module.getRule = function (name) {
+	resize.getRule = function (name) {
 		return rules[name] || null;
 	};
 
@@ -129,7 +129,7 @@ module.exports = function (cylinder, _module) {
 	 * @param   {Boolean} objects - If true, the method will return the rules themselves.
 	 * @returns {Array|Object} List (or dictionary) of currently applied rules.
 	 */
-	module.getCurrentRules = function (objects) {
+	resize.getCurrentRules = function (objects) {
 		if (objects !== true) {
 			return currentRules;
 		}
@@ -143,7 +143,7 @@ module.exports = function (cylinder, _module) {
 	 *
 	 * @param {String} name - The name of the rule to remove.
 	 */
-	module.removeRule = function (name) {
+	resize.removeRule = function (name) {
 		delete rules[name];
 	};
 
@@ -151,22 +151,22 @@ module.exports = function (cylinder, _module) {
 	// will calc values, call styles according to rules,
 	// and call events for components
 	function handler (trigger) {
-		module.previous_width = module.width;
-		module.previous_height = module.height;
+		resize.previous_width = resize.width;
+		resize.previous_height = resize.height;
 
 		// calc current values!
-		module.width = viewportSize.getWidth();
-		module.height = viewportSize.getHeight();
+		resize.width = viewportSize.getWidth();
+		resize.height = viewportSize.getHeight();
 
 		// check every rule to see if we should add classes to the body.
 		// we'll use the 'callback' property to evaluate that.
 		_.each(rules, function (rule, name) {
 			if (!(rule instanceof CylinderResizeRule)) return;
-			evaluateRule(module.width, module.height, rule, name);
+			evaluateRule(resize.width, resize.height, rule, name);
 		});
 
 		// call the event!
-		if (trigger) module.trigger();
+		if (trigger) resize.trigger();
 	};
 
 	/**
@@ -175,14 +175,14 @@ module.exports = function (cylinder, _module) {
 	 *
 	 * @param {Boolean} [triggerWindowResize] - If true, and if a "window" var exists, the method will trigger an event on the window instead.
 	 */
-	module.trigger = function (triggerWindowResize) {
+	resize.trigger = function (triggerWindowResize) {
 		if (triggerWindowResize) {
 			cylinder.dom.$window.trigger('resize');
 			return;
 		}
 
-		cylinder.trigger('resize', module.width, module.height);
-		module.done = true;
+		cylinder.trigger('resize', resize.width, resize.height);
+		resize.done = true;
 	};
 
 	// final setup.
@@ -193,6 +193,6 @@ module.exports = function (cylinder, _module) {
 	// just so we have proper values!
 	handler(false);
 
-	return module; // finish
+	return resize; // finish
 
 };

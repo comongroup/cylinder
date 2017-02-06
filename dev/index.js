@@ -17,7 +17,7 @@
 
 	// instantiate
 	scope.Cylinder = scope.cylinder = new CylinderClass();
-	scope.Cylinder.extend(scope.CylinderClass.ExtensionControllers);
+	scope.Cylinder.mix(scope.CylinderClass.ExtensionControllers);
 	scope.Cylinder.module('utils', scope.CylinderClass.ModuleUtils);
 	scope.Cylinder.module('dom', scope.CylinderClass.ModuleDom);
 	scope.Cylinder.module('store', scope.CylinderClass.ModuleStore);

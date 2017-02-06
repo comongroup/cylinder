@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
@@ -16,7 +16,7 @@ module.exports = function (cylinder, _module) {
 		 * This module extends on <a target="_blank" href="http://backbonejs.org/#Events">Backbone.Events</a>.
 		 * @exports scroll
 		 */
-		var obj = _.extend({}, Backbone.Events);
+		var obj = cylinder.extend({}, Backbone.Events);
 
 		/**
 		 * The main element being targeted.
@@ -207,6 +207,6 @@ module.exports = function (cylinder, _module) {
 
 	// and because we want to maintain consistency,
 	// we'll return this module as a "window" instance
-	return _.extend(initialize(cylinder.dom.$window), { initialize: initialize });
+	return cylinder.extend({ initialize: initialize }, module, initialize(cylinder.dom.$window));
 
 };

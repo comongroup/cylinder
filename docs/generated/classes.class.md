@@ -10,9 +10,10 @@
     * [._](#CylinderClass+_) : <code>Underscore</code>
     * [.s](#CylinderClass+s) : <code>UnderscoreString</code>
     * [.initialized()](#CylinderClass+initialized) ⇒ <code>Boolean</code>
+    * [.extend(destination, ...sources)](#CylinderClass+extend) ⇒ <code>Object</code>
     * [.dependency(...dependencies, [loud])](#CylinderClass+dependency) ⇒ <code>Boolean</code>
-    * [.extend(func, [extendOnInit])](#CylinderClass+extend) ⇒ <code>Mixed</code>
-    * [.module(name, func)](#CylinderClass+module) ⇒ <code>Mixed</code>
+    * [.mix(func, [mixOnInit])](#CylinderClass+mix) ⇒ <code>Mixed</code>
+    * [.module(name, func)](#CylinderClass+module) ⇒ <code>Any</code>
     * [.modules()](#CylinderClass+modules) ⇒ <code>Object</code>
     * [.init([callback])](#CylinderClass+init) ⇒ <code>[CylinderClass](#CylinderClass)</code>
 
@@ -72,6 +73,32 @@ Checks if the framework has been initialized.
 
 * * *
 
+<a name="CylinderClass+extend"></a>
+
+### cylinderClass.extend(destination, ...sources) ⇒ <code>Object</code>
+Performs a shallow copy of all properties in the **source** objects over to the **destination** object.Any nested objects or arrays will not be duplicated.The method respects the order of the given objects, so the last object's properties will always prevail over previous source objects.
+
+**Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
+**Returns**: <code>Object</code> - The same object passed in destination, but with properties from sources.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>destination</td><td><code>Object</code></td><td><p>Object to be extended.</p>
+</td>
+    </tr><tr>
+    <td>...sources</td><td><code>Object</code></td><td><p>Objects to extend the destination object with.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
 <a name="CylinderClass+dependency"></a>
 
 ### cylinderClass.dependency(...dependencies, [loud]) ⇒ <code>Boolean</code>
@@ -110,10 +137,10 @@ Validate if a variable or a dependency exists.The framework will check if it ex
 
 * * *
 
-<a name="CylinderClass+extend"></a>
+<a name="CylinderClass+mix"></a>
 
-### cylinderClass.extend(func, [extendOnInit]) ⇒ <code>Mixed</code>
-Extends the framework's core.<br />If <code>extendOnInit</code> is true, then the framework won't be extended until properly initialized.
+### cylinderClass.mix(func, [mixOnInit]) ⇒ <code>Mixed</code>
+Extends the framework's core with an object or the result of a callback.<br />If <code>mixOnInit</code> is true, then the framework won't be mixed until properly initialized.
 
 **Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
 **Returns**: <code>Mixed</code> - Returns the result of 'func' after evaluated.  
@@ -128,25 +155,25 @@ Extends the framework's core.<br />If <code>extendOnInit</code> is true, then t
     <td>func</td><td><code>function</code> | <code>Object</code></td><td><p>The extension&#39;s constructor.</p>
 </td>
     </tr><tr>
-    <td>[extendOnInit]</td><td><code>Boolean</code></td><td><p>If true, the framework will only add &#39;func&#39; after &#39;init&#39; is called.</p>
+    <td>[mixOnInit]</td><td><code>Boolean</code></td><td><p>If true, the framework will only add &#39;func&#39; after &#39;init&#39; is called.</p>
 </td>
     </tr>  </tbody>
 </table>
 
 **Example**  
 ```js
-Cylinder.extend(function (cl) {    var extension = {};    extension.abc = 123;    extension.dfg = 456;    return extension;});console.log(Cylinder.abc); // 123console.log(Cylinder.dfg); // 456
+Cylinder.mix(function (cl) {    var extension = {};    extension.abc = 123;    extension.dfg = 456;    return extension;});console.log(Cylinder.abc); // 123console.log(Cylinder.dfg); // 456
 ```
 
 * * *
 
 <a name="CylinderClass+module"></a>
 
-### cylinderClass.module(name, func) ⇒ <code>Mixed</code>
+### cylinderClass.module(name, func) ⇒ <code>Any</code>
 Extends the framework with a specific named module.<br />The module won't be added until the framework is properly initialized.When, or if, <code>initialize()</code> is called, then the module will be added as well.
 
 **Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
-**Returns**: <code>Mixed</code> - Returns the result of 'func' after evaluated.  
+**Returns**: <code>Any</code> - Returns the result of 'func' after evaluated.  
 <table>
   <thead>
     <tr>
@@ -182,7 +209,7 @@ Returns a list of existing modules.
 <a name="CylinderClass+init"></a>
 
 ### cylinderClass.init([callback]) ⇒ <code>[CylinderClass](#CylinderClass)</code>
-Properly initializes the framework and all of the modules and extensions added to it.<br />Keep in mind that modules will be initialized before any extensions whose <code>extendOnInit</code> property is true.<br />This method is based on jQuery's <code>$(document).ready()</code> shorthand.
+Properly initializes the framework and all of the modules and extensions added to it.<br />Keep in mind that modules will be initialized before any extensions whose <code>mixOnInit</code> property is true.<br />This method is based on jQuery's <code>$(document).ready()</code> shorthand.
 
 **Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
 **Returns**: <code>[CylinderClass](#CylinderClass)</code> - Returns the instance itself.  

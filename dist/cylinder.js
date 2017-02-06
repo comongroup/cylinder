@@ -1,5 +1,5 @@
 /*
- * cylinder v0.14.1 (2017-02-06 14:34:20)
+ * cylinder v0.14.1 (2017-02-06 16:31:09)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -30,6 +30,27 @@ function CylinderClass () {
 	 * @return {Boolean}
 	 */
 	this.initialized = function () { return initialized; };
+
+	/**
+	 * Performs a shallow copy of all properties in the **source** objects over to the **destination** object.
+	 * Any nested objects or arrays will not be duplicated.
+	 * The method respects the order of the given objects, so the last object's properties will always prevail over previous source objects.
+	 *
+	 * @param  {Object}    destination - Object to be extended.
+	 * @param  {...Object} sources     - Objects to extend the destination object with.
+	 * @return {Object} The same object passed in destination, but with properties from sources.
+	 */
+	this.extend = function () {
+		var destination = arguments[0] || {};
+		for (var i = 1; i < arguments.length; i++) {
+			for (var key in arguments[i]) {
+				if (arguments[i].hasOwnProperty(key)) {
+					destination[key] = arguments[i][key];
+				}
+			}
+		}
+		return destination;
+	};
 
 	/**
 	 * Validate if a variable or a dependency exists.
@@ -143,19 +164,19 @@ function CylinderClass () {
 	// We'll mix in the underscore and underscore.string modules,
 	// so that we don't have to mess with external files.
 	// We'll also add event handling to Cylinder.
-	_.extend(this._, { str: this.s }); // add underscore.string to underscore
-	_.extend(this, Backbone.Events); // add events
+	this.extend(this._, { str: this.s }); // add underscore.string to underscore (legacy)
+	this.extend(this, Backbone.Events); // add events
 
 	/**
-	 * Extends the framework's core.<br />
-	 * If <code>extendOnInit</code> is true, then the framework won't be extended until properly initialized.
+	 * Extends the framework's core with an object or the result of a callback.<br />
+	 * If <code>mixOnInit</code> is true, then the framework won't be mixed until properly initialized.
 	 *
-	 * @param  {Function|Object} func           - The extension's constructor.
-	 * @param  {Boolean}         [extendOnInit] - If true, the framework will only add 'func' after 'init' is called.
+	 * @param  {Function|Object} func        - The extension's constructor.
+	 * @param  {Boolean}         [mixOnInit] - If true, the framework will only add 'func' after 'init' is called.
 	 * @return {Mixed} Returns the result of 'func' after evaluated.
 	 *
 	 * @example
-	 * Cylinder.extend(function (cl) {
+	 * Cylinder.mix(function (cl) {
 	 *     var extension = {};
 	 *     extension.abc = 123;
 	 *     extension.dfg = 456;
@@ -165,15 +186,15 @@ function CylinderClass () {
 	 * console.log(Cylinder.abc); // 123
 	 * console.log(Cylinder.dfg); // 456
 	 */
-	this.extend = function (func, extendOnInit) {
-		if (!initialized && extendOnInit) {
+	this.mix = function (func, mixOnInit) {
+		if (!initialized && mixOnInit) {
 			if (!_.contains(extensions, func)) extensions.push(func); // add extension to cache
 			return instance; // return the framework instance!
 		}
 
 		if (typeof func == 'function') func = func(instance); // run the function first...
-		if (arguments.length < 3) instance.trigger('extend', func); // trigger an event for when extended...
-		_.extend(instance, func); // add it to the framework...
+		if (arguments.length < 3 || arguments[2] === true) instance.trigger('mix', func); // trigger an event for when mixed...
+		instance.extend(instance, func); // add it to the framework...
 		return func; // and return the object itself!
 	};
 
@@ -184,7 +205,7 @@ function CylinderClass () {
 	 *
 	 * @param  {String}   name - The module's name.
 	 * @param  {Function} func - The module's constructor.
-	 * @return {Mixed} Returns the result of 'func' after evaluated.
+	 * @return {Any} Returns the result of 'func' after evaluated.
 	 *
 	 * @example
 	 * Cylinder.module('mymodule', function (cl, module) {
@@ -219,9 +240,9 @@ function CylinderClass () {
 
 		var obj = {}; // the final object to extend with the framework.
 		obj[name] = result; // apply to the instance...
-		instance.extend(obj, true, false); // add it to the framework...
-		instance.trigger('module', name, result); // trigger a global event for when extended...
-		instance.trigger('module:' + name, result); // trigger a specific event for when extended...
+		instance.mix(obj, true, false); // add it to the framework...
+		instance.trigger('module', name, result); // trigger a global event for when mixed...
+		instance.trigger('module:' + name, result); // trigger a specific event for when mixed...
 		return result; // and return the module itself!
 	};
 
@@ -237,7 +258,7 @@ function CylinderClass () {
 
 	/**
 	 * Properly initializes the framework and all of the modules and extensions added to it.<br />
-	 * Keep in mind that modules will be initialized before any extensions whose <code>extendOnInit</code> property is true.<br />
+	 * Keep in mind that modules will be initialized before any extensions whose <code>mixOnInit</code> property is true.<br />
 	 * This method is based on jQuery's <code>$(document).ready()</code> shorthand.
 	 *
 	 * @param  {Function} [callback] - Function to run after initialization.
@@ -265,7 +286,7 @@ function CylinderClass () {
 			// runs through each initializable extension
 			// and finally initializes it!
 			_.each(extensions, function (func) {
-				instance.extend(func);
+				instance.mix(func);
 			});
 
 			// call event so other parts of the app
@@ -521,7 +542,7 @@ module.exports = function (instance) {
 
 	// instantiate
 	scope.Cylinder = scope.cylinder = new CylinderClass();
-	scope.Cylinder.extend(scope.CylinderClass.ExtensionControllers);
+	scope.Cylinder.mix(scope.CylinderClass.ExtensionControllers);
 	scope.Cylinder.module('utils', scope.CylinderClass.ModuleUtils);
 	scope.Cylinder.module('dom', scope.CylinderClass.ModuleDom);
 	scope.Cylinder.module('store', scope.CylinderClass.ModuleStore);
@@ -535,66 +556,61 @@ module.exports = function (instance) {
 },{"./classes/class":1,"./classes/exception":2,"./classes/resizerule":3,"./extensions/controllers":4,"./modules/dom":6,"./modules/resize":7,"./modules/router":8,"./modules/scroll":9,"./modules/store":10,"./modules/templates":11,"./modules/utils":12}],6:[function(require,module,exports){
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * DOM management module for CylinderClass.
 	 * @exports dom
 	 */
-	var module = _.extend({}, _module);
-
-	// ALL DEPENDENCIES FIRST!
-	// If we don't do this, the framework will just
-	// die in the water. We don't want to die like that.
-	cylinder.dependency('Cylinder.utils', true);
+	var dom = cylinder.extend({}, module);
 
 	/**
 	 * The options taken by the module.
 	 * @type     {Object}
 	 * @property {String} title - The app's default title.
 	 */
-	module.options = {
+	dom.options = {
 		title: 'Cylinder'
 	};
 
 	/**
-	 * The cached jQuery element for the <code>window</code> DOM object.
+	 * The cached element for the <code>window</code> DOM object.
 	 * @type {jQueryObject}
 	 */
-	module.$window = cylinder.$(window);
+	dom.$window = cylinder.$(window);
 
 	/**
-	 * The cached jQuery element for the <code>document</code> DOM object.
+	 * The cached element for the <code>document</code> DOM object.
 	 * @type {jQueryObject}
 	 */
-	module.$document = cylinder.$(document);
+	dom.$document = cylinder.$(document);
 
 	/**
-	 * The cached jQuery element for <code>&lt;html&gt;</code>.
+	 * The cached element for <code>&lt;html&gt;</code>.
 	 * @type {jQueryObject}
 	 */
-	module.$html = module.$document.find('html');
+	dom.$html = dom.$document.find('html');
 
 	/**
-	 * The cached jQuery element for <code>&lt;head&gt;</code>.
+	 * The cached element for <code>&lt;head&gt;</code>.
 	 * @type {jQueryObject}
 	 */
-	module.$head = module.$document.find('head');
+	dom.$head = dom.$document.find('head');
 
 	/**
-	 * The cached jQuery element for <code>&lt;body&gt;</code>.
+	 * The cached element for <code>&lt;body&gt;</code>.
 	 * @type {jQueryObject}
 	 */
-	module.$body = module.$document.find('body');
+	dom.$body = dom.$document.find('body');
 
 	/**
 	 * Changes the tab's title and unescapes characters as needed.
 	 * @param {String} value     - The title to apply.
 	 * @param {Boolean} override - If true, the app's default title won't be suffixed.
 	 */
-	module.title = function (value, override) {
+	dom.title = function (value, override) {
 		var value_exists = !cylinder.s.isBlank(value);
-		var value_suffix = (value_exists ? ' - ' : '') + module.options.title;
+		var value_suffix = (value_exists ? ' - ' : '') + dom.options.title;
 		if (override && value_exists) value_suffix = ''; // remove suffix if overriden
 		if (!value_exists) value = ''; // so it doesn't show up as "undefinedWebsite"...
 		document.title = cylinder.s.unescapeHTML(value + value_suffix); // change the title!
@@ -604,8 +620,8 @@ module.exports = function (cylinder, _module) {
 	 * Changes meta tags.
 	 * @param {Object} obj - A collection of meta-tag names and values.
 	 */
-	module.meta = function (obj) {
-		if (!_.isObject(obj)) {
+	dom.meta = function (obj) {
+		if (typeof obj !== 'object') {
 			if (arguments.length < 2) return;
 			else {
 				obj = {}; // set it as object so we can set arguments manually
@@ -614,16 +630,13 @@ module.exports = function (cylinder, _module) {
 		}
 
 		_.each(obj, function (v, k) {
-			var $el = module.$head.find('meta[name="' + k + '"], meta[property="' + k + '"]');
-			if ($el.length < 1) {
-				console.warn('CYLINDER.DOM: tried to change meta "' + k + '" but it doesn\'t exist');
-				return;
-			}
-			$el.attr('content', v);
+			dom.$head
+				.find('meta[name="' + k + '"], meta[property="' + k + '"]')
+				.attr('content', v);
 		});
 	};
 
-	return module; // finish
+	return dom; // finish
 
 };
 
@@ -635,13 +648,13 @@ module.exports = function (cylinder, _module) {
 
 var CylinderResizeRule = require('../classes/resizerule');
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Resize module for CylinderClass.
 	 * @exports resize
 	 */
-	var module = _.extend({}, _module);
+	var resize = cylinder.extend({}, module);
 
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
@@ -652,31 +665,31 @@ module.exports = function (cylinder, _module) {
 	 * Has the window been resized?
 	 * @type {Boolean}
 	 */
-	module.done = false;
+	resize.done = false;
 
 	/**
 	 * Current window width.
 	 * @type {Number}
 	 */
-	module.width = null;
+	resize.width = null;
 
 	/**
 	 * Current window height.
 	 * @type {Number}
 	 */
-	module.height = null;
+	resize.height = null;
 
 	/**
 	 * Previous window width.
 	 * @type {Number}
 	 */
-	module.previous_width = null;
+	resize.previous_width = null;
 
 	/**
 	 * Previous window height.
 	 * @type {Number}
 	 */
-	module.previous_height = null;
+	resize.previous_height = null;
 
 	// just a default rule callback
 	// for the rules we define below.
@@ -714,7 +727,7 @@ module.exports = function (cylinder, _module) {
 	 * Returns a collection of names and their CylinderResizeRules.
 	 * @return {Array.<CylinderResizeRule>} The collection of rules.
 	 */
-	module.rules = function () {
+	resize.rules = function () {
 		return rules;
 	};
 
@@ -724,7 +737,7 @@ module.exports = function (cylinder, _module) {
 	 * @param {String}             name - The name of the rule to add.
 	 * @param {CylinderResizeRule} rule - The rule object to add.
 	 */
-	module.addRule = function (name, rule) {
+	resize.addRule = function (name, rule) {
 		// if the passed rule is not an instance of CylinderResizeRule,
 		// then we'll just throw an exception.
 		if (!(rule instanceof CylinderResizeRule)) {
@@ -734,10 +747,10 @@ module.exports = function (cylinder, _module) {
 		// add the rule
 		rules[name] = rule;
 
-		if (module.width !== null && module.height !== null) {
+		if (resize.width !== null && resize.height !== null) {
 			// if the module already triggered a resize event,
 			// then, from now on, we'll always evaluate new rules as soon as they're added.
-			evaluateRule(module.width, module.height, rule, name);
+			evaluateRule(resize.width, resize.height, rule, name);
 		}
 	};
 
@@ -747,7 +760,7 @@ module.exports = function (cylinder, _module) {
 	 * @param   {String} name - The name of the rule to return.
 	 * @returns {CylinderResizeRule} Rule instance.
 	 */
-	module.getRule = function (name) {
+	resize.getRule = function (name) {
 		return rules[name] || null;
 	};
 
@@ -759,7 +772,7 @@ module.exports = function (cylinder, _module) {
 	 * @param   {Boolean} objects - If true, the method will return the rules themselves.
 	 * @returns {Array|Object} List (or dictionary) of currently applied rules.
 	 */
-	module.getCurrentRules = function (objects) {
+	resize.getCurrentRules = function (objects) {
 		if (objects !== true) {
 			return currentRules;
 		}
@@ -773,7 +786,7 @@ module.exports = function (cylinder, _module) {
 	 *
 	 * @param {String} name - The name of the rule to remove.
 	 */
-	module.removeRule = function (name) {
+	resize.removeRule = function (name) {
 		delete rules[name];
 	};
 
@@ -781,22 +794,22 @@ module.exports = function (cylinder, _module) {
 	// will calc values, call styles according to rules,
 	// and call events for components
 	function handler (trigger) {
-		module.previous_width = module.width;
-		module.previous_height = module.height;
+		resize.previous_width = resize.width;
+		resize.previous_height = resize.height;
 
 		// calc current values!
-		module.width = viewportSize.getWidth();
-		module.height = viewportSize.getHeight();
+		resize.width = viewportSize.getWidth();
+		resize.height = viewportSize.getHeight();
 
 		// check every rule to see if we should add classes to the body.
 		// we'll use the 'callback' property to evaluate that.
 		_.each(rules, function (rule, name) {
 			if (!(rule instanceof CylinderResizeRule)) return;
-			evaluateRule(module.width, module.height, rule, name);
+			evaluateRule(resize.width, resize.height, rule, name);
 		});
 
 		// call the event!
-		if (trigger) module.trigger();
+		if (trigger) resize.trigger();
 	};
 
 	/**
@@ -805,14 +818,14 @@ module.exports = function (cylinder, _module) {
 	 *
 	 * @param {Boolean} [triggerWindowResize] - If true, and if a "window" var exists, the method will trigger an event on the window instead.
 	 */
-	module.trigger = function (triggerWindowResize) {
+	resize.trigger = function (triggerWindowResize) {
 		if (triggerWindowResize) {
 			cylinder.dom.$window.trigger('resize');
 			return;
 		}
 
-		cylinder.trigger('resize', module.width, module.height);
-		module.done = true;
+		cylinder.trigger('resize', resize.width, resize.height);
+		resize.done = true;
 	};
 
 	// final setup.
@@ -823,20 +836,20 @@ module.exports = function (cylinder, _module) {
 	// just so we have proper values!
 	handler(false);
 
-	return module; // finish
+	return resize; // finish
 
 };
 
 },{"../classes/resizerule":3}],8:[function(require,module,exports){
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Router module for CylinderClass.
 	 * @exports router
 	 */
-	var module = _.extend({}, _module);
+	var router = cylinder.extend({}, module);
 
 	var routes = {}; // this will contain all routes and middleware!
 	var middleware = []; // this will contain all global middleware that is ALWAYS executed on route change!
@@ -848,7 +861,7 @@ module.exports = function (cylinder, _module) {
 	function getCurrentUrl () {
 		// this attempts to return the current url
 		// so it can be used by other methods
-		return (module.options.push)
+		return router.options.push
 			? Backbone.history.location.pathname.replace(path_root, '')
 			: Backbone.history.location.hash.replace('!', '').replace('#', '')
 	};
@@ -872,7 +885,7 @@ module.exports = function (cylinder, _module) {
 
 		asyncSeries(middleware, function (method, done) {
 			if (!_.isFunction(method)) done();
-			else method.apply(module, [ composition.name, args, done ]);
+			else method.apply(router, [ composition.name, args, done ]);
 		}, function (err) {
 			return finish();
 		});
@@ -887,7 +900,7 @@ module.exports = function (cylinder, _module) {
 
 		asyncSeries(composition.middleware, function (method, done) {
 			if (!_.isFunction(method)) done();
-			else method.apply(module, [].concat(args, done));
+			else method.apply(router, [].concat(args, done));
 		}, function (err) {
 			return finish();
 		});
@@ -895,7 +908,6 @@ module.exports = function (cylinder, _module) {
 
 	function execute (callback, args, name) {
 		var composition = routes[name]; // current composed route
-		var router = this; // recommended context
 
 		// trim the argument list,
 		// since it always returns a "null" element
@@ -904,36 +916,36 @@ module.exports = function (cylinder, _module) {
 		// here we run through potential global middleware,
 		// and then specific middleware, followed by the actual route callback!
 		return middlewareGlobal(composition, args, function () {
-			module.previous_route = module.route; // save the previous route...
-			module.route = name; // set the current route...
+			router.previous_route = router.route; // save the previous route...
+			router.route = name; // set the current route...
 
-			module.previous_args = module.args; // save the previous arguments...
-			module.args = args; // set the current arguments...
+			router.previous_args = router.args; // save the previous arguments...
+			router.args = args; // set the current arguments...
 
-			module.previous_url = module.url; // save the previous url...
-			module.url = getCurrentUrl(); // set the new url...
+			router.previous_url = router.url; // save the previous url...
+			router.url = getCurrentUrl(); // set the new url...
 
-			if (module.previous_route) {
+			if (router.previous_route) {
 				// events for the previous route
-				if (module.previous_route !== module.route) { // only run if we're actually LEAVING the route
-					cylinder.trigger('routeout:' + module.previous_route, module.previous_args); // trigger a specific event for the framework...
-					cylinder.trigger('routeout', module.previous_route, module.previous_args); // trigger a global event for the framework...
+				if (router.previous_route !== router.route) { // only run if we're actually LEAVING the route
+					cylinder.trigger('routeout:' + router.previous_route, router.previous_args); // trigger a specific event for the framework...
+					cylinder.trigger('routeout', router.previous_route, router.previous_args); // trigger a global event for the framework...
 				}
 
 				// events for the route change with specific previous_route naming
-				cylinder.trigger('routechange:' + module.previous_route + ':' + name, module.previous_args, args); // trigger specific event 1 for the framework...
-				cylinder.trigger('routechange:' + module.previous_route, module.previous_args, name, args); // trigger specific event 2 for the framework...
+				cylinder.trigger('routechange:' + router.previous_route + ':' + name, router.previous_args, args); // trigger specific event 1 for the framework...
+				cylinder.trigger('routechange:' + router.previous_route, router.previous_args, name, args); // trigger specific event 2 for the framework...
 			}
 
 			// global event for the route change (even if previous_route & previous_args is null)
-			cylinder.trigger('routechange', module.previous_route, module.previous_args, name, args); // trigger a global event for the framework...
+			cylinder.trigger('routechange', router.previous_route, router.previous_args, name, args); // trigger a global event for the framework...
 
 			// events for the new route
 			cylinder.trigger('route:' + name, args); // trigger a specific event for the framework...
 			cylinder.trigger('route', name, args); // trigger a global event for the framework...
 
 			// signal the module that a route has been triggered...
-			module.done = true;
+			router.done = true;
 
 			// call the specific middleware now, and we're done!
 			return middlewareSpecific(composition, args);
@@ -951,7 +963,7 @@ module.exports = function (cylinder, _module) {
 	 * @property {Boolean} selector - The default element selector for the click handler given by <code>addHandler()</code>.
 	 * @property {Boolean} navigate_defaults - Allows for default properties to be passed to the module's internal Backbone.Router on <code>go()</code>.
 	 */
-	module.options = {
+	router.options = {
 		push: false, // is pushState navigation on?
 		clicks: true, // is the hyperlink event handler on?
 		prefix: '', // should there be a prefix for all links?
@@ -967,61 +979,61 @@ module.exports = function (cylinder, _module) {
 	 * Has the router triggered?
 	 * @type {Boolean}
 	 */
-	module.done = false;
+	router.done = false;
 
 	/**
 	 * Current router URL.
 	 * @type {String}
 	 */
-	module.url = null;
+	router.url = null;
 
 	/**
 	 * Current route name.
 	 * @type {String}
 	 */
-	module.route = null;
+	router.route = null;
 
 	/**
 	 * Current route arguments.
 	 * @type {Array}
 	 */
-	module.args = null;
+	router.args = null;
 
 	/**
 	 * Previous router URL.
 	 * @type {String}
 	 */
-	module.previous_url = null;
+	router.previous_url = null;
 
 	/**
 	 * Previous route name.
 	 * @type {String}
 	 */
-	module.previous_route = null;
+	router.previous_route = null;
 
 	/**
 	 * Previous route arguments.
 	 * @type {Array}
 	 */
-	module.previous_args = null;
+	router.previous_args = null;
 
 	/**
 	 * Returns the current router's domain.
 	 * @return {String}
 	 */
-	module.domain = function () { return path_domain; };
+	router.domain = function () { return path_domain; };
 
 	/**
 	 * Returns the current router's root path.
 	 * @return {String}
 	 */
-	module.root = function () { return path_root; };
+	router.root = function () { return path_root; };
 
 	/**
 	 * Returns the current router's full path (domain + root).
 	 * @return {String}
 	 */
-	module.path = function () { return path_full; };
+	router.path = function () { return path_full; };
 
 	// this will be the router itself!
 	// it will manage all routes and even callbacks!
@@ -1038,7 +1050,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String} [root]   - The base path (after domain, the immutable part) for this router.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.setup = function (domain, root) {
+	router.setup = function (domain, root) {
 		// reuse current variables!
 		if (!_.isString(domain)) domain = path_domain;
 		if (!_.isString(root)) root = path_root;
@@ -1064,9 +1076,9 @@ module.exports = function (cylinder, _module) {
 
 		// if the router had already been started,
 		// restart it so that we don't operate on an older domain/path!
-		if (Backbone.History.started) module.start(true);
+		if (Backbone.History.started) router.start(true);
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -1076,16 +1088,16 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Boolean} [silent] - Determines whether the router should fire initial events or not.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.start = function (silent) {
-		module.stop(); // stop the router first before doing anything else!
+	router.start = function (silent) {
+		router.stop(); // stop the router first before doing anything else!
 
 		Backbone.history.start({
-			pushState: module.options.push,
+			pushState: router.options.push,
 			root: path_root,
 			silent: silent || false
 		});
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -1093,12 +1105,12 @@ module.exports = function (cylinder, _module) {
 	 *
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.stop = function () {
+	router.stop = function () {
 		if (Backbone.History.started) {
 			Backbone.history.stop();
 		}
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -1153,9 +1165,9 @@ module.exports = function (cylinder, _module) {
 	 *                                   `next` callback at the end, in order to skip to the next function in the chain.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.use = function (functions) {
+	router.use = function (functions) {
 		middleware.push(functions); // push the callback to the array
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -1165,9 +1177,9 @@ module.exports = function (cylinder, _module) {
 	 * @param  {...Function} functions - The callbacks to remove.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.unuse = function (functions) {
+	router.unuse = function (functions) {
 		middleware = _.without(middleware, functions); // remove the callback from the array
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -1204,7 +1216,7 @@ module.exports = function (cylinder, _module) {
 	 *                                  The methods themselves will receive all of the arguments passed into the syntax, along with a
 	 *                                  `next` callback at the end, in order to skip to the next function in the callback list.
 	 */
-	module.add = function () {
+	router.add = function () {
 		var args = _.flatten(arguments);
 
 		// get the name and the syntax
@@ -1218,7 +1230,7 @@ module.exports = function (cylinder, _module) {
 		name = cylinder.s.slugify(name);
 
 		// calculate the prefix
-		var prefix = module.options.prefix || '';
+		var prefix = router.options.prefix || '';
 		if (
 			!cylinder.s.isBlank(prefix) && cylinder.s.endsWith(prefix, '/') &&
 			(cylinder.s.startsWith(syntax, '/') || cylinder.s.startsWith(syntax, '(/)'))
@@ -1247,12 +1259,12 @@ module.exports = function (cylinder, _module) {
 	 *                               If empty, the method will provide the selector from <code>options.selector</code>.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.addHandler = function (selector) {
+	router.addHandler = function (selector) {
 		var callback = _.last(_.flatten(arguments)); // check for the last argument
 		if (!_.isFunction(callback)) callback = null; // reset to null!
 
-		cylinder.dom.$document.on('click.clrouter', _.isString(selector) && !cylinder.s.isBlank(selector) ? selector : module.options.selector, function (e) {
-			if (!module.options.clicks) return; // don't do a thing if the event isn't allowed!
+		cylinder.dom.$document.on('click.clrouter', _.isString(selector) && !cylinder.s.isBlank(selector) ? selector : router.options.selector, function (e) {
+			if (!router.options.clicks) return; // don't do a thing if the event isn't allowed!
 
 			var $this = cylinder.$(this);
 			var href = {
@@ -1262,22 +1274,22 @@ module.exports = function (cylinder, _module) {
 			};
 
 			if (!(cylinder.s.isBlank(href.target) || href.target == '_self')) return; // do not route if target is different than own page or blank link
-			if (href.attr == '#' && module.options.push) return e.preventDefault(); // do not route if it's a regular hash, but don't let Backbone catch this event either!
+			if (href.attr == '#' && router.options.push) return e.preventDefault(); // do not route if it's a regular hash, but don't let Backbone catch this event either!
 
 			// checks if there is a valid address in the hyperlink.
 			// then, it checks whether or not the address is in the local domain!
 			if (
 				href.prop &&
 				href.prop.slice(0, path_full.length) === path_full &&
-				href.prop.indexOf(module.options.prefix) !== -1
+				href.prop.indexOf(router.options.prefix) !== -1
 			) {
 				e.preventDefault();
-				module.go(href.prop.replace(path_full, ''));
+				router.go(href.prop.replace(path_full, ''));
 				if (_.isFunction(callback)) callback($this, href);
 			}
 		});
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -1287,9 +1299,9 @@ module.exports = function (cylinder, _module) {
 	 *                               If empty, the method will provide the selector from <code>options.selector</code>.
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.removeHandler = function (selector) {
-		cylinder.dom.$document.off('click.clrouter', _.isString(selector) && !cylinder.s.isBlank(selector) ? selector : module.options.selector);
-		return module; // return the module itself.
+	router.removeHandler = function (selector) {
+		cylinder.dom.$document.off('click.clrouter', _.isString(selector) && !cylinder.s.isBlank(selector) ? selector : router.options.selector);
+		return router; // return the module itself.
 	};
 
 	/**
@@ -1301,28 +1313,28 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Boolean} [prefix]  - Should the method include the prefix set in the module's <code>options.prefix</code>?
 	 * @return {router} Returns the module itself, to ease chaining.
 	 */
-	module.go = function (url, options, prefix) {
+	router.go = function (url, options, prefix) {
 		options = options || {}; // turn into a valid object
 
 		if (!_.isString(url)) {
-			var args = module.args.concat([ null ]);
-			var composition = routes[module.route];
-			if (composition !== null) execute.apply(obj, [ composition.callback, args, module.route ]);
-			return module;
+			var args = router.args.concat([ null ]);
+			var composition = routes[router.route];
+			if (composition !== null) execute.apply(obj, [ composition.callback, args, router.route ]);
+			return router;
 		}
 
 		if (!Backbone.History.started) {
-			if (module.options.push) window.location = path_full + url; // change full location!
+			if (router.options.push) window.location = path_full + url; // change full location!
 			else window.location.hash = '#' + url; // only do it if using hash-navigation!
-			return module; // return the module itself.
+			return router; // return the module itself.
 		}
 
 		obj.navigate(
-			(prefix !== false ? module.options.prefix : '') + url,
-			_.extend({}, module.options.navigate_defaults, options)
+			(prefix !== false ? router.options.prefix : '') + url,
+			cylinder.extend({}, router.options.navigate_defaults, options)
 		);
 
-		return module; // return the module itself.
+		return router; // return the module itself.
 	};
 
 	/**
@@ -1331,13 +1343,13 @@ module.exports = function (cylinder, _module) {
 	 * @param {Number|Boolean} [delay] - The delay of the reload, in seconds.
 	 *                                   If "false" is passed, the timeout will be cancelled and the page won't be reloaded.
 	 */
-	module.reload = function (delay) {
+	router.reload = function (delay) {
 		reload_timeout = clearTimeout(reload_timeout);
 
 		// if a delay is defined,
 		// do a timeout and return it.
 		if (_.isNumber(delay) && delay > 0) {
-			reload_timeout = setTimeout(function () { module.reload(); }, delay);
+			reload_timeout = setTimeout(function () { router.reload(); }, delay);
 			return reload_timeout;
 		}
 		else if (delay === false) {
@@ -1353,16 +1365,16 @@ module.exports = function (cylinder, _module) {
 
 	// run the setup at least once
 	// so we can have some proper values at start
-	module.setup('', cylinder.$(location).attr('pathname'));
+	router.setup('', cylinder.$(location).attr('pathname'));
 
-	return module; // finish
+	return router; // finish
 
 };
 
 },{}],9:[function(require,module,exports){
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	// ALL DEPENDENCIES FIRST!
 	// If we don't do this, the framework will just
@@ -1378,7 +1390,7 @@ module.exports = function (cylinder, _module) {
 		 * This module extends on <a target="_blank" href="http://backbonejs.org/#Events">Backbone.Events</a>.
 		 * @exports scroll
 		 */
-		var obj = _.extend({}, Backbone.Events);
+		var obj = cylinder.extend({}, Backbone.Events);
 
 		/**
 		 * The main element being targeted.
@@ -1569,20 +1581,20 @@ module.exports = function (cylinder, _module) {
 
 	// and because we want to maintain consistency,
 	// we'll return this module as a "window" instance
-	return _.extend(initialize(cylinder.dom.$window), { initialize: initialize });
+	return cylinder.extend({ initialize: initialize }, module, initialize(cylinder.dom.$window));
 
 };
 
 },{}],10:[function(require,module,exports){
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Store module for CylinderClass.
 	 * @exports store
 	 */
-	var module = _.extend({}, _module);
+	var store = cylinder.extend({}, module);
 
 	// registered models list
 	// and current store context
@@ -1648,7 +1660,7 @@ module.exports = function (cylinder, _module) {
 	 * Cylinder.store.switch('localstorage');
 	 * Cylinder.store.set('abc', 123);
 	 */
-	module.Model = Backbone.Model.extend({
+	store.Model = Backbone.Model.extend({
 		initialize: function () {
 			// on this barebones initialize method,
 			// we'll make the model save itself when something changes
@@ -1672,7 +1684,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Model|Object} obj  - The model to add.
 	 * @return {Model} Returns the model itself after being added and initialized.
 	 */
-	module.use = function (name, obj) {
+	store.use = function (name, obj) {
 		var model = null;
 
 		if (obj instanceof Backbone.Model) {
@@ -1683,13 +1695,13 @@ module.exports = function (cylinder, _module) {
 		else if (obj.constructor === Backbone.Model.constructor) {
 			// we have a backbone model, uninstanced
 			// so we'll start a new instance and add it!
-			model = new obj;
+			model = new obj();
 		}
 		else if (!_.isEmpty(obj)) {
 			// we have a plain old object
 			// so we create a new model with its properties
-			var objmodel = module.Model.extend(obj);
-			model = new objmodel;
+			var objmodel = store.Model.extend(obj);
+			model = new objmodel();
 		}
 
 		models[name] = model;
@@ -1701,7 +1713,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String} name - The name of the data model to remove.
 	 * @return {Model} Returns the model itself after being removed.
 	 */
-	module.unuse = function (name) {
+	store.unuse = function (name) {
 		// we're gonna have to check
 		// if the model exists or not
 		if (!_.has(models, name)) {
@@ -1727,7 +1739,7 @@ module.exports = function (cylinder, _module) {
 	 * Returns a list of existing models.
 	 * @return {Array}
 	 */
-	module.models = function () {
+	store.models = function () {
 		return _.mapObject(models, function (model, name) {
 			return model;
 		});
@@ -1740,7 +1752,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Boolean} exception - If false, the method won't throw an exception if the model is not found.
 	 * @return {Model} Returns the model itself, or null if it's not found and <code>exception</code> is <code>false</code>.
 	 */
-	module.with = function (name, exception) {
+	store.with = function (name, exception) {
 		// we're gonna have to check
 		// if the model exists or not
 		if (!_.has(models, name)) {
@@ -1775,8 +1787,8 @@ module.exports = function (cylinder, _module) {
 	 * Cylinder.store.set('abc', 123); // sets 'abc' on localStorage
 	 * Cylinder.store.get('abc'); // => 123
 	 */
-	module.switch = function (name) {
-		var model = module.with(name, false);
+	store.switch = function (name) {
+		var model = store.with(name, false);
 
 		// we're gonna have to check
 		// if the model exists or not
@@ -1785,27 +1797,27 @@ module.exports = function (cylinder, _module) {
 		}
 
 		// override module main methods
-		module.fetch = _.bind(model.fetch, model);
-		module.save = _.bind(model.save, model);
-		module.destroy = _.bind(model.destroy, model);
+		store.fetch = _.bind(model.fetch, model);
+		store.save = _.bind(model.save, model);
+		store.destroy = _.bind(model.destroy, model);
 
 		// overwrite module operation methods
-		module.get = _.bind(model.get, model);
-		module.escape = _.bind(model.escape, model);
-		module.set = _.bind(model.set, model);
-		module.has = _.bind(model.has, model);
-		module.unset = _.bind(model.unset, model);
-		module.clear = _.bind(model.clear, model);
-		module.toJSON = _.bind(model.toJSON, model);
+		store.get = _.bind(model.get, model);
+		store.escape = _.bind(model.escape, model);
+		store.set = _.bind(model.set, model);
+		store.has = _.bind(model.has, model);
+		store.unset = _.bind(model.unset, model);
+		store.clear = _.bind(model.clear, model);
+		store.toJSON = _.bind(model.toJSON, model);
 
 		// override module event methods
-		module.on = _.bind(model.on, model);
-		module.off = _.bind(model.off, model);
-		module.trigger = _.bind(model.trigger, model);
-		module.once = _.bind(model.once, model);
-		module.listenTo = _.bind(model.listenTo, model);
-		module.stopListening = _.bind(model.stopListening, model);
-		module.listenToOnce = _.bind(model.listenToOnce, model);
+		store.on = _.bind(model.on, model);
+		store.off = _.bind(model.off, model);
+		store.trigger = _.bind(model.trigger, model);
+		store.once = _.bind(model.once, model);
+		store.listenTo = _.bind(model.listenTo, model);
+		store.stopListening = _.bind(model.stopListening, model);
+		store.listenToOnce = _.bind(model.listenToOnce, model);
 
 		// apply the new context
 		context = model;
@@ -1815,10 +1827,8 @@ module.exports = function (cylinder, _module) {
 
 	// based on the Model interface above,
 	// we'll create a new one for localstorage
-	module.use('localstorage', {
-
+	store.use('localstorage', {
 		namespace: 'cylinder_data', // namespace to which we'll save all data
-
 		fetch: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
@@ -1836,7 +1846,6 @@ module.exports = function (cylinder, _module) {
 			}
 			return deferred;
 		},
-
 		save: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
@@ -1855,26 +1864,25 @@ module.exports = function (cylinder, _module) {
 			}
 			return deferred;
 		}
-
 	});
 
 	// now switch context to localstorage
-	module.switch('localstorage');
+	store.switch('localstorage');
 
-	return module; // finish
+	return store; // finish
 
 };
 
 },{}],11:[function(require,module,exports){
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Templates module for CylinderClass.
 	 * @exports templates
 	 */
-	var module = _.extend({}, _module);
+	var templates = cylinder.extend({}, module);
 
 	var add_counter = 0; // counts how many templates have been added
 	var replace_counter = 0; // counts how many templates have been replaced by using replace()
@@ -1894,7 +1902,7 @@ module.exports = function (cylinder, _module) {
 	 *                                           This method is called right before an added template is rendered, and is meant for applying optimizations.
 	 * @property {Function}       render       - Callback for rendering a template. Receives a template object, which always has an `html` string parameter.
 	 */
-	module.options = {
+	templates.options = {
 		fire_events: true,
 		detach: false,
 		dom_prefix: '#template_',
@@ -1908,7 +1916,7 @@ module.exports = function (cylinder, _module) {
 	 *
 	 * @type {Object}
 	 */
-	module.defaults = {};
+	templates.defaults = {};
 
 	/**
 	 * Adds a template to the local cache.
@@ -1919,7 +1927,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Object} [partials] - Included partial templates.
 	 * @return {Object} Returns the generated internal template module's object.
 	 */
-	module.add = function (id, template, defaults, partials) {
+	templates.add = function (id, template, defaults, partials) {
 		var o = {
 			id: id || 'temp' + add_counter,
 			defaults: _.isObject(defaults) ? defaults : {},
@@ -1931,7 +1939,7 @@ module.exports = function (cylinder, _module) {
 		};
 
 		cache_templates[id] = o; // add to collection
-		cache_partials = _.object(_.keys(cache_templates), _.pluck(cache_templates, 'html')); // generate partial templates
+		cache_partials[id] = o.html; // generate partial templates
 		add_counter++; // add counter
 
 		return o;
@@ -1944,11 +1952,11 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Function} [iterator] - If a function is passed, the method will use it to iterate the object.
 	 * @return {Object} Returns the object with the same keys but with each value replaced by the actual template object added into the module.
 	 */
-	module.importFromObject = function (parent, iterator) {
+	templates.importFromObject = function (parent, iterator) {
 		if (typeof iterator !== 'function') {
 			iterator = function (template, index) {
 				var result = typeof template === 'function' ? template() : template;
-				return module.add(index, template); // add the template
+				return templates.add(index, template); // add the template
 			};
 		}
 
@@ -1965,16 +1973,16 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String}   [id] - The ID of the template you wish to fetch from the DOM.
 	 * @return {Object[]} Returns an array of generated template objects.
 	 */
-	module.importFromDOM = function (id) {
+	templates.importFromDOM = function (id) {
 		var selector = typeof id === 'string' && id.length > 0
-			? module.options.dom_prefix + id.replace(/[\/\\]/g, '_') // replaces all slashes
+			? templates.options.dom_prefix + id.replace(/[\/\\]/g, '_') // replaces all slashes
 			: '';
 
-		return cylinder.$(module.options.dom_selector + selector).map(function () {
+		return cylinder.$(templates.options.dom_selector + selector).map(function () {
 			// try to get default values.
 			// if fail, it will return an empty object.
 			var $el = cylinder.$(this);
-			var name = $el.prop('id').replace(module.options.dom_prefix.replace(/[#.]/g, ''), '');
+			var name = $el.prop('id').replace(templates.options.dom_prefix.replace(/[#.]/g, ''), '');
 			var html = cylinder.s.trim($el.html());
 			var defaults = {};
 
@@ -1987,7 +1995,7 @@ module.exports = function (cylinder, _module) {
 
 			$el.remove(); // remove from DOM to reduce memory footprint...
 			if (selector && name.length === 0) name = id; // if no name, then use the ID...
-			return module.add(name, html, defaults); // and return the template!
+			return templates.add(name, html, defaults); // and return the template!
 		});
 	};
 
@@ -1997,7 +2005,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String}  id - The template's unique identifier.
 	 * @return {Boolean}
 	 */
-	module.has = function (id) {
+	templates.has = function (id) {
 		return cache_templates[id] != null;
 	};
 
@@ -2007,7 +2015,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String}      id - The template's unique identifier.
 	 * @return {Object|Null} Returns the template object, or null if not found.
 	 */
-	module.get = function (id) {
+	templates.get = function (id) {
 		return cache_templates[id] || null;
 	};
 
@@ -2026,7 +2034,7 @@ module.exports = function (cylinder, _module) {
 
 	// helper function to detach elements from an element
 	function detachAllChildrenFromElement ($el) {
-		if (module.options.detach) {
+		if (templates.options.detach) {
 			// attempt to detach all children,
 			// so that events are not lost
 			$el.children().detach();
@@ -2046,9 +2054,9 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Boolean}     [trigger]  - If false, the method won't fire any events.
 	 * @return {String|Null} Returns the rendered template.
 	 */
-	module.render = function (id, options, partials, trigger) {
+	templates.render = function (id, options, partials, trigger) {
 		var result = null;
-		var template = module.get(id) || {
+		var template = templates.get(id) || {
 			error: true,
 			parsed: true,
 			html: '!! Template "' + id + '" not found !!'
@@ -2056,24 +2064,24 @@ module.exports = function (cylinder, _module) {
 
 		// before actually rendering the result,
 		// we'll attempt to run a parse process on the template
-		if (!template.parsed && typeof module.options.parse === 'function') {
-			module.options.parse(template);
+		if (!template.parsed && typeof templates.options.parse === 'function') {
+			templates.options.parse(template);
 			template.parsed = true;
 		}
 
 		// and now we'll actually attempt to render the template,
 		// using the specified options and partials, along with defaults
-		if (!template.error && typeof module.options.render === 'function') {
-			result = module.options.render(
+		if (!template.error && typeof templates.options.render === 'function') {
+			result = templates.options.render(
 				template,
-				_.extend({}, module.defaults, template.defaults, options),
-				_.extend({}, cache_partials, template.partials, partials)
+				cylinder.extend({}, templates.defaults, template.defaults, options),
+				cylinder.extend({}, cache_partials, template.partials, partials)
 			);
 		}
 
 		// and in the end, fire events if trigger !== false
 		// and the global option is enabled and no error occurred
-		if (module.options.fire_events && trigger !== false && result !== null) {
+		if (templates.options.fire_events && trigger !== false && result !== null) {
 			var parts = id.split('/');
 			_.reduce(parts, function (memo, part) {
 				// trigger specific events...
@@ -2098,7 +2106,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Object}       [partials] - The object of partials the template can use.
 	 * @return {jQueryObject} Returns the provided jQuery object.
 	 */
-	module.apply = function ($el, id, options, partials) {
+	templates.apply = function ($el, id, options, partials) {
 		// many times we'd apply stuff to an element that would not yet exist.
 		// this time, we'll warn the developer that such element should not be null!
 		$el = getElementFromVariable($el);
@@ -2119,10 +2127,10 @@ module.exports = function (cylinder, _module) {
 			cylinder.trigger(name, $el, id, options, partials); // and then trigger the generic event!
 		};
 
-		if (module.options.fire_events) ev('beforeapply'); // before applying, call "beforeapply" events...
+		if (templates.options.fire_events) ev('beforeapply'); // before applying, call "beforeapply" events...
 		detachAllChildrenFromElement($el); // detach every children first so they don't lose any data or events...
-		$el.html(module.render(id, options, partials, false)); // render the template...
-		if (module.options.fire_events) ev('apply'); // and call "apply" events, just to finish!
+		$el.html(templates.render(id, options, partials, false)); // render the template...
+		if (templates.options.fire_events) ev('apply'); // and call "apply" events, just to finish!
 
 		return $el;
 	};
@@ -2138,7 +2146,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Object}       [partials] - The object of partials the template can use.
 	 * @return {jQueryObject} Returns the provided jQuery object.
 	 */
-	module.replace = function ($el, options, partials) {
+	templates.replace = function ($el, options, partials) {
 		// many times we'd apply stuff to an element that would not yet exist.
 		// this time, we'll warn the developer that such element should not be null!
 		$el = getElementFromVariable($el);
@@ -2153,7 +2161,7 @@ module.exports = function (cylinder, _module) {
 		};
 
 		// call "beforereplace" events before replacing...
-		if (module.options.fire_events) ev('beforereplace');
+		if (templates.options.fire_events) ev('beforereplace');
 
 		// these will hold the final html to apply and the ID
 		var template = '';
@@ -2176,43 +2184,58 @@ module.exports = function (cylinder, _module) {
 		detachAllChildrenFromElement($el);
 
 		// render the HTML
-		if (typeof module.options.render === 'function') {
-			result = module.options.render(
+		if (typeof templates.options.render === 'function') {
+			result = templates.options.render(
 				{ id: id, parsed: true, html: template },
-				_.extend({}, module.defaults, options),
-				_.extend({}, cache_partials, partials)
+				cylinder.extend({}, templates.defaults, options),
+				cylinder.extend({}, cache_partials, partials)
 			);
 		}
 
 		$el.html(result); // apply template...
-		if (module.options.fire_events) ev('replace'); // and call "replace" events, just to finish!
+		if (templates.options.fire_events) ev('replace'); // and call "replace" events, just to finish!
 
 		return $el;
 	};
 
-	return module; // finish
+	return templates; // finish
 
 };
 
 },{}],12:[function(require,module,exports){
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Utilities module for CylinderClass.
 	 * @exports utils
 	 */
-	var module = _.extend({}, _module);
+	var utils = cylinder.extend({}, module);
 
 	/**
-	 * Removes all HTML from a string.
+	 * Transforms an object into a string.<br /><br />
+	 * This method is based on the implementation from underscore.string.<br />
+	 * <a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/helper/makeString.js">https://github.com/epeli/underscore.string/blob/master/helper/makeString.js</a>
+	 *
+	 * @param  {Any}    obj - The object to transform.
+	 * @return {String} The new string.
+	 */
+	utils.string = function (obj) {
+		if (obj === null || obj === undefined) return '';
+		return '' + obj;
+	};
+
+	/**
+	 * Removes all HTML from a string.<br /><br />
+	 * This method is based on the implementation from underscore.string.<br />
+	 * <a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/stripTags.js">https://github.com/epeli/underscore.string/blob/master/stripTags.js</a>
 	 *
 	 * @param  {String} str - The string to clean.
 	 * @return {String} The string without HTML.
 	 */
-	module.text = function (str) {
-		return cylinder.$('<div>').html(str).text();
+	utils.text = function (str) {
+		return utils.string(str).replace(/<\/?[^>]+>/g, '');
 	};
 
 	/**
@@ -2220,11 +2243,11 @@ module.exports = function (cylinder, _module) {
 	 * This method is based on the implementation by Bruce Kirkpatrick.<br />
 	 * <a target="_blank" href="https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581">https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581</a>
 	 *
-	 * @param  {String} string - The serialized object.
-	 * @return {Object} - The string, unserialized into an object.
+	 * @param  {String} str - The serialized object.
+	 * @return {Object} The string, unserialized into an object.
 	 */
-	module.unserialize = function (string) {
-		var str = decodeURI(string);
+	utils.unserialize = function (str) {
+		var str = decodeURI(str);
 		var pairs = str.split('&');
 		var regex = /\+/g;
 		var obj = {}, p, idx;
@@ -2251,13 +2274,13 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String}      [serialized] - The string to extract from. If null, the method will use the browser's query string.
 	 * @return {String|Null} The value in form of a string, or <code>null</code> if it doesn't exist.
 	 */
-	module.query = function (key, serialized) {
+	utils.query = function (key, serialized) {
 		var query = serialized || window.location.search.substring(1);
-		var vars = module.unserialize(query);
+		var vars = utils.unserialize(query);
 		return key in vars ? vars[key] : null;
 	};
 
-	return module; // finish
+	return utils; // finish
 
 };
 

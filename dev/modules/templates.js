@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Templates module for CylinderClass.
 	 * @exports templates
 	 */
-	var module = _.extend({}, _module);
+	var templates = cylinder.extend({}, module);
 
 	var add_counter = 0; // counts how many templates have been added
 	var replace_counter = 0; // counts how many templates have been replaced by using replace()
@@ -26,7 +26,7 @@ module.exports = function (cylinder, _module) {
 	 *                                           This method is called right before an added template is rendered, and is meant for applying optimizations.
 	 * @property {Function}       render       - Callback for rendering a template. Receives a template object, which always has an `html` string parameter.
 	 */
-	module.options = {
+	templates.options = {
 		fire_events: true,
 		detach: false,
 		dom_prefix: '#template_',
@@ -40,7 +40,7 @@ module.exports = function (cylinder, _module) {
 	 *
 	 * @type {Object}
 	 */
-	module.defaults = {};
+	templates.defaults = {};
 
 	/**
 	 * Adds a template to the local cache.
@@ -51,7 +51,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Object} [partials] - Included partial templates.
 	 * @return {Object} Returns the generated internal template module's object.
 	 */
-	module.add = function (id, template, defaults, partials) {
+	templates.add = function (id, template, defaults, partials) {
 		var o = {
 			id: id || 'temp' + add_counter,
 			defaults: _.isObject(defaults) ? defaults : {},
@@ -63,7 +63,7 @@ module.exports = function (cylinder, _module) {
 		};
 
 		cache_templates[id] = o; // add to collection
-		cache_partials = _.object(_.keys(cache_templates), _.pluck(cache_templates, 'html')); // generate partial templates
+		cache_partials[id] = o.html; // generate partial templates
 		add_counter++; // add counter
 
 		return o;
@@ -76,11 +76,11 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Function} [iterator] - If a function is passed, the method will use it to iterate the object.
 	 * @return {Object} Returns the object with the same keys but with each value replaced by the actual template object added into the module.
 	 */
-	module.importFromObject = function (parent, iterator) {
+	templates.importFromObject = function (parent, iterator) {
 		if (typeof iterator !== 'function') {
 			iterator = function (template, index) {
 				var result = typeof template === 'function' ? template() : template;
-				return module.add(index, template); // add the template
+				return templates.add(index, template); // add the template
 			};
 		}
 
@@ -97,16 +97,16 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String}   [id] - The ID of the template you wish to fetch from the DOM.
 	 * @return {Object[]} Returns an array of generated template objects.
 	 */
-	module.importFromDOM = function (id) {
+	templates.importFromDOM = function (id) {
 		var selector = typeof id === 'string' && id.length > 0
-			? module.options.dom_prefix + id.replace(/[\/\\]/g, '_') // replaces all slashes
+			? templates.options.dom_prefix + id.replace(/[\/\\]/g, '_') // replaces all slashes
 			: '';
 
-		return cylinder.$(module.options.dom_selector + selector).map(function () {
+		return cylinder.$(templates.options.dom_selector + selector).map(function () {
 			// try to get default values.
 			// if fail, it will return an empty object.
 			var $el = cylinder.$(this);
-			var name = $el.prop('id').replace(module.options.dom_prefix.replace(/[#.]/g, ''), '');
+			var name = $el.prop('id').replace(templates.options.dom_prefix.replace(/[#.]/g, ''), '');
 			var html = cylinder.s.trim($el.html());
 			var defaults = {};
 
@@ -119,7 +119,7 @@ module.exports = function (cylinder, _module) {
 
 			$el.remove(); // remove from DOM to reduce memory footprint...
 			if (selector && name.length === 0) name = id; // if no name, then use the ID...
-			return module.add(name, html, defaults); // and return the template!
+			return templates.add(name, html, defaults); // and return the template!
 		});
 	};
 
@@ -129,7 +129,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String}  id - The template's unique identifier.
 	 * @return {Boolean}
 	 */
-	module.has = function (id) {
+	templates.has = function (id) {
 		return cache_templates[id] != null;
 	};
 
@@ -139,7 +139,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String}      id - The template's unique identifier.
 	 * @return {Object|Null} Returns the template object, or null if not found.
 	 */
-	module.get = function (id) {
+	templates.get = function (id) {
 		return cache_templates[id] || null;
 	};
 
@@ -158,7 +158,7 @@ module.exports = function (cylinder, _module) {
 
 	// helper function to detach elements from an element
 	function detachAllChildrenFromElement ($el) {
-		if (module.options.detach) {
+		if (templates.options.detach) {
 			// attempt to detach all children,
 			// so that events are not lost
 			$el.children().detach();
@@ -178,9 +178,9 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Boolean}     [trigger]  - If false, the method won't fire any events.
 	 * @return {String|Null} Returns the rendered template.
 	 */
-	module.render = function (id, options, partials, trigger) {
+	templates.render = function (id, options, partials, trigger) {
 		var result = null;
-		var template = module.get(id) || {
+		var template = templates.get(id) || {
 			error: true,
 			parsed: true,
 			html: '!! Template "' + id + '" not found !!'
@@ -188,24 +188,24 @@ module.exports = function (cylinder, _module) {
 
 		// before actually rendering the result,
 		// we'll attempt to run a parse process on the template
-		if (!template.parsed && typeof module.options.parse === 'function') {
-			module.options.parse(template);
+		if (!template.parsed && typeof templates.options.parse === 'function') {
+			templates.options.parse(template);
 			template.parsed = true;
 		}
 
 		// and now we'll actually attempt to render the template,
 		// using the specified options and partials, along with defaults
-		if (!template.error && typeof module.options.render === 'function') {
-			result = module.options.render(
+		if (!template.error && typeof templates.options.render === 'function') {
+			result = templates.options.render(
 				template,
-				_.extend({}, module.defaults, template.defaults, options),
-				_.extend({}, cache_partials, template.partials, partials)
+				cylinder.extend({}, templates.defaults, template.defaults, options),
+				cylinder.extend({}, cache_partials, template.partials, partials)
 			);
 		}
 
 		// and in the end, fire events if trigger !== false
 		// and the global option is enabled and no error occurred
-		if (module.options.fire_events && trigger !== false && result !== null) {
+		if (templates.options.fire_events && trigger !== false && result !== null) {
 			var parts = id.split('/');
 			_.reduce(parts, function (memo, part) {
 				// trigger specific events...
@@ -230,7 +230,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Object}       [partials] - The object of partials the template can use.
 	 * @return {jQueryObject} Returns the provided jQuery object.
 	 */
-	module.apply = function ($el, id, options, partials) {
+	templates.apply = function ($el, id, options, partials) {
 		// many times we'd apply stuff to an element that would not yet exist.
 		// this time, we'll warn the developer that such element should not be null!
 		$el = getElementFromVariable($el);
@@ -251,10 +251,10 @@ module.exports = function (cylinder, _module) {
 			cylinder.trigger(name, $el, id, options, partials); // and then trigger the generic event!
 		};
 
-		if (module.options.fire_events) ev('beforeapply'); // before applying, call "beforeapply" events...
+		if (templates.options.fire_events) ev('beforeapply'); // before applying, call "beforeapply" events...
 		detachAllChildrenFromElement($el); // detach every children first so they don't lose any data or events...
-		$el.html(module.render(id, options, partials, false)); // render the template...
-		if (module.options.fire_events) ev('apply'); // and call "apply" events, just to finish!
+		$el.html(templates.render(id, options, partials, false)); // render the template...
+		if (templates.options.fire_events) ev('apply'); // and call "apply" events, just to finish!
 
 		return $el;
 	};
@@ -270,7 +270,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Object}       [partials] - The object of partials the template can use.
 	 * @return {jQueryObject} Returns the provided jQuery object.
 	 */
-	module.replace = function ($el, options, partials) {
+	templates.replace = function ($el, options, partials) {
 		// many times we'd apply stuff to an element that would not yet exist.
 		// this time, we'll warn the developer that such element should not be null!
 		$el = getElementFromVariable($el);
@@ -285,7 +285,7 @@ module.exports = function (cylinder, _module) {
 		};
 
 		// call "beforereplace" events before replacing...
-		if (module.options.fire_events) ev('beforereplace');
+		if (templates.options.fire_events) ev('beforereplace');
 
 		// these will hold the final html to apply and the ID
 		var template = '';
@@ -308,20 +308,20 @@ module.exports = function (cylinder, _module) {
 		detachAllChildrenFromElement($el);
 
 		// render the HTML
-		if (typeof module.options.render === 'function') {
-			result = module.options.render(
+		if (typeof templates.options.render === 'function') {
+			result = templates.options.render(
 				{ id: id, parsed: true, html: template },
-				_.extend({}, module.defaults, options),
-				_.extend({}, cache_partials, partials)
+				cylinder.extend({}, templates.defaults, options),
+				cylinder.extend({}, cache_partials, partials)
 			);
 		}
 
 		$el.html(result); // apply template...
-		if (module.options.fire_events) ev('replace'); // and call "replace" events, just to finish!
+		if (templates.options.fire_events) ev('replace'); // and call "replace" events, just to finish!
 
 		return $el;
 	};
 
-	return module; // finish
+	return templates; // finish
 
 };

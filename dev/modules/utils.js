@@ -1,21 +1,36 @@
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Utilities module for CylinderClass.
 	 * @exports utils
 	 */
-	var module = _.extend({}, _module);
+	var utils = cylinder.extend({}, module);
 
 	/**
-	 * Removes all HTML from a string.
+	 * Transforms an object into a string.<br /><br />
+	 * This method is based on the implementation from underscore.string.<br />
+	 * <a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/helper/makeString.js">https://github.com/epeli/underscore.string/blob/master/helper/makeString.js</a>
+	 *
+	 * @param  {Any}    obj - The object to transform.
+	 * @return {String} The new string.
+	 */
+	utils.string = function (obj) {
+		if (obj === null || obj === undefined) return '';
+		return '' + obj;
+	};
+
+	/**
+	 * Removes all HTML from a string.<br /><br />
+	 * This method is based on the implementation from underscore.string.<br />
+	 * <a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/stripTags.js">https://github.com/epeli/underscore.string/blob/master/stripTags.js</a>
 	 *
 	 * @param  {String} str - The string to clean.
 	 * @return {String} The string without HTML.
 	 */
-	module.text = function (str) {
-		return cylinder.$('<div>').html(str).text();
+	utils.text = function (str) {
+		return utils.string(str).replace(/<\/?[^>]+>/g, '');
 	};
 
 	/**
@@ -23,11 +38,11 @@ module.exports = function (cylinder, _module) {
 	 * This method is based on the implementation by Bruce Kirkpatrick.<br />
 	 * <a target="_blank" href="https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581">https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581</a>
 	 *
-	 * @param  {String} string - The serialized object.
-	 * @return {Object} - The string, unserialized into an object.
+	 * @param  {String} str - The serialized object.
+	 * @return {Object} The string, unserialized into an object.
 	 */
-	module.unserialize = function (string) {
-		var str = decodeURI(string);
+	utils.unserialize = function (str) {
+		var str = decodeURI(str);
 		var pairs = str.split('&');
 		var regex = /\+/g;
 		var obj = {}, p, idx;
@@ -54,12 +69,12 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String}      [serialized] - The string to extract from. If null, the method will use the browser's query string.
 	 * @return {String|Null} The value in form of a string, or <code>null</code> if it doesn't exist.
 	 */
-	module.query = function (key, serialized) {
+	utils.query = function (key, serialized) {
 		var query = serialized || window.location.search.substring(1);
-		var vars = module.unserialize(query);
+		var vars = utils.unserialize(query);
 		return key in vars ? vars[key] : null;
 	};
 
-	return module; // finish
+	return utils; // finish
 
 };
