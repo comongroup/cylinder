@@ -57,7 +57,6 @@ function CylinderClass () {
 	 * // you can also specify objects if you want a cleaner exception output.
 	 *
 	 * Cylinder.dependency(
-	 *     'async',
 	 *     'jQuery',
 	 *     { package: '_', name: 'underscore.js' },
 	 *     { package: 's', name: 'underscore.string', scope: window, optional: true },
@@ -106,12 +105,11 @@ function CylinderClass () {
 	// If we don't do this, the framework will just
 	// die in the water. We don't want to die like that.
 	this.dependency(
-		'async',
 		'jQuery',
 		{ package: '_', name: 'underscore.js' },
 		{ package: 's', name: 'underscore.string' },
 		'Backbone',
-		true
+		true // crash the framework due to missing dependencies
 	);
 
 	var extensions = []; // initializable extensions!
