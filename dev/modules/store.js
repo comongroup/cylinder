@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function (cylinder, _module) {
+module.exports = function (cylinder, module) {
 
 	/**
 	 * Store module for CylinderClass.
 	 * @exports store
 	 */
-	var module = _.extend({}, _module);
+	var store = cylinder.extend({}, module);
 
 	// registered models list
 	// and current store context
@@ -72,7 +72,7 @@ module.exports = function (cylinder, _module) {
 	 * Cylinder.store.switch('localstorage');
 	 * Cylinder.store.set('abc', 123);
 	 */
-	module.Model = Backbone.Model.extend({
+	store.Model = Backbone.Model.extend({
 		initialize: function () {
 			// on this barebones initialize method,
 			// we'll make the model save itself when something changes
@@ -96,7 +96,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Model|Object} obj  - The model to add.
 	 * @return {Model} Returns the model itself after being added and initialized.
 	 */
-	module.use = function (name, obj) {
+	store.use = function (name, obj) {
 		var model = null;
 
 		if (obj instanceof Backbone.Model) {
@@ -107,13 +107,13 @@ module.exports = function (cylinder, _module) {
 		else if (obj.constructor === Backbone.Model.constructor) {
 			// we have a backbone model, uninstanced
 			// so we'll start a new instance and add it!
-			model = new obj;
+			model = new obj();
 		}
 		else if (!_.isEmpty(obj)) {
 			// we have a plain old object
 			// so we create a new model with its properties
-			var objmodel = module.Model.extend(obj);
-			model = new objmodel;
+			var objmodel = store.Model.extend(obj);
+			model = new objmodel();
 		}
 
 		models[name] = model;
@@ -125,7 +125,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {String} name - The name of the data model to remove.
 	 * @return {Model} Returns the model itself after being removed.
 	 */
-	module.unuse = function (name) {
+	store.unuse = function (name) {
 		// we're gonna have to check
 		// if the model exists or not
 		if (!_.has(models, name)) {
@@ -151,7 +151,7 @@ module.exports = function (cylinder, _module) {
 	 * Returns a list of existing models.
 	 * @return {Array}
 	 */
-	module.models = function () {
+	store.models = function () {
 		return _.mapObject(models, function (model, name) {
 			return model;
 		});
@@ -164,7 +164,7 @@ module.exports = function (cylinder, _module) {
 	 * @param  {Boolean} exception - If false, the method won't throw an exception if the model is not found.
 	 * @return {Model} Returns the model itself, or null if it's not found and <code>exception</code> is <code>false</code>.
 	 */
-	module.with = function (name, exception) {
+	store.with = function (name, exception) {
 		// we're gonna have to check
 		// if the model exists or not
 		if (!_.has(models, name)) {
@@ -199,8 +199,8 @@ module.exports = function (cylinder, _module) {
 	 * Cylinder.store.set('abc', 123); // sets 'abc' on localStorage
 	 * Cylinder.store.get('abc'); // => 123
 	 */
-	module.switch = function (name) {
-		var model = module.with(name, false);
+	store.switch = function (name) {
+		var model = store.with(name, false);
 
 		// we're gonna have to check
 		// if the model exists or not
@@ -209,27 +209,27 @@ module.exports = function (cylinder, _module) {
 		}
 
 		// override module main methods
-		module.fetch = _.bind(model.fetch, model);
-		module.save = _.bind(model.save, model);
-		module.destroy = _.bind(model.destroy, model);
+		store.fetch = _.bind(model.fetch, model);
+		store.save = _.bind(model.save, model);
+		store.destroy = _.bind(model.destroy, model);
 
 		// overwrite module operation methods
-		module.get = _.bind(model.get, model);
-		module.escape = _.bind(model.escape, model);
-		module.set = _.bind(model.set, model);
-		module.has = _.bind(model.has, model);
-		module.unset = _.bind(model.unset, model);
-		module.clear = _.bind(model.clear, model);
-		module.toJSON = _.bind(model.toJSON, model);
+		store.get = _.bind(model.get, model);
+		store.escape = _.bind(model.escape, model);
+		store.set = _.bind(model.set, model);
+		store.has = _.bind(model.has, model);
+		store.unset = _.bind(model.unset, model);
+		store.clear = _.bind(model.clear, model);
+		store.toJSON = _.bind(model.toJSON, model);
 
 		// override module event methods
-		module.on = _.bind(model.on, model);
-		module.off = _.bind(model.off, model);
-		module.trigger = _.bind(model.trigger, model);
-		module.once = _.bind(model.once, model);
-		module.listenTo = _.bind(model.listenTo, model);
-		module.stopListening = _.bind(model.stopListening, model);
-		module.listenToOnce = _.bind(model.listenToOnce, model);
+		store.on = _.bind(model.on, model);
+		store.off = _.bind(model.off, model);
+		store.trigger = _.bind(model.trigger, model);
+		store.once = _.bind(model.once, model);
+		store.listenTo = _.bind(model.listenTo, model);
+		store.stopListening = _.bind(model.stopListening, model);
+		store.listenToOnce = _.bind(model.listenToOnce, model);
 
 		// apply the new context
 		context = model;
@@ -239,14 +239,12 @@ module.exports = function (cylinder, _module) {
 
 	// based on the Model interface above,
 	// we'll create a new one for localstorage
-	module.use('localstorage', {
-
+	store.use('localstorage', {
 		namespace: 'cylinder_data', // namespace to which we'll save all data
-
 		fetch: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
-			if (cylinder.dependency('localStorage', false)) {
+			if (cylinder.dependency('localStorage')) {
 				// only get values from localstorage
 				// if we have localstorage enabled.
 				var collection = JSON.parse(localStorage.getItem(model.namespace));
@@ -260,11 +258,10 @@ module.exports = function (cylinder, _module) {
 			}
 			return deferred;
 		},
-
 		save: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
-			if (cylinder.dependency('localStorage', false)) {
+			if (cylinder.dependency('localStorage')) {
 				// only save values to localstorage
 				// if we have localstorage enabled.
 				var collection = model.toJSON();
@@ -279,12 +276,11 @@ module.exports = function (cylinder, _module) {
 			}
 			return deferred;
 		}
-
 	});
 
 	// now switch context to localstorage
-	module.switch('localstorage');
+	store.switch('localstorage');
 
-	return module; // finish
+	return store; // finish
 
 };

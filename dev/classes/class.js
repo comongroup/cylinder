@@ -25,51 +25,72 @@ function CylinderClass () {
 	this.initialized = function () { return initialized; };
 
 	/**
+	 * Performs a shallow copy of all properties in the **source** objects over to the **destination** object.
+	 * Any nested objects or arrays will not be duplicated.
+	 * The method respects the order of the given objects, so the last object's properties will always prevail over previous source objects.
+	 *
+	 * @param  {Object}    destination - Object to be extended.
+	 * @param  {...Object} sources     - Objects to extend the destination object with.
+	 * @return {Object} The same object passed in destination, but with properties from sources.
+	 */
+	this.extend = function () {
+		var destination = arguments[0] || {};
+		for (var i = 1; i < arguments.length; i++) {
+			for (var key in arguments[i]) {
+				if (arguments[i].hasOwnProperty(key)) {
+					destination[key] = arguments[i][key];
+				}
+			}
+		}
+		return destination;
+	};
+
+	/**
 	 * Validate if a variable or a dependency exists.
 	 * The framework will check if it exists in the global scope.
 	 *
 	 * @param  {...(String|Object)} dependencies - The names of the dependencies to be checked.
-	 * @param  {Boolean}            [silent]     - If true, the method will not throw an exception when a mandatory dependency is not found.
-	 * @return {Boolean} Returns true if it exists, and throws an exception if it doesn't (unless the last argument is <code>true</code>).
+	 * @param  {Boolean}            [loud]       - If `true`, the method will throw an exception when a specified dependency is not found.
+	 * @return {Boolean} Returns true or false depending whether the dependency exists. If `loud` is `true`, it throws an exception if the dependency doesn't exist.
 	 *
 	 * @example
-	 * // throws an exception because "asdf" is not declared.
-	 * // you can also specify objects for a cleaner exception output.
+	 * // you can check if a dependency exists or not,
+	 * // so you can gracefully handle missing dependencies
 	 *
-	 * Cylinder.dependency(
-	 *     'async',
-	 *     'jQuery',
-	 *     { package: '_', name: 'underscore.js' },
-	 *     { package: 's', name: 'underscore.string', scope: window, optional: true },
-	 *     'Backbone',
-	 *     'asdf'
-	 * );
-	 *
-	 * @example
-	 * // you can check for dependencies inside a variable
-	 * // and the whole family tree will be checked from top-level
-	 *
-	 * Cylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
-	 *
-	 * @example
-	 * // if `true` is sent at the end, the method doesn't throw an exception
-	 * // and allows the programmer to gracefully handle missing dependencies
-	 *
-	 * if (Cylinder.dependency('$.fn.velocity', true)) {
+	 * if (Cylinder.dependency('$.fn.velocity')) {
 	 *     // velocity is present
 	 *     $('#element').velocity({ top: 0 });
 	 * }
 	 * else {
 	 *     // velocity.js is not defined
-	 *     // so the programmer can use a fallback
+	 *     // so you can use a fallback
 	 *     $('#element').animate({ top: 0 });
 	 * }
+	 *
+	 * @example
+	 * // you can check for dependencies inside a variable,
+	 * // and the whole family tree will be checked from top-level
+	 *
+	 * var everyDependency = Cylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
+	 *
+	 * @example
+	 * // you can also throw an exception if you pass `true` at the end.
+	 * // you can also specify objects if you want a cleaner exception output.
+	 *
+	 * Cylinder.dependency(
+	 *     'jQuery',
+	 *     { package: '_', name: 'underscore.js' },
+	 *     { package: 's', name: 'underscore.string', scope: window, optional: true },
+	 *     'Backbone',
+	 *     'asdf', // imagine this variable doesn't exist
+	 *     true
+	 * );
 	 */
 	this.dependency = function () {
 		var args = Array.prototype.slice.call(arguments); // make a copy of all received arguments!
-		var loud = true; // this will make sure it will either throw an exception or just output a boolean.
+		var loud = false; // this will make sure it will either throw an exception or just output a boolean.
 		if (args.length > 0 && typeof args[args.length - 1] === 'boolean') {
-			loud = !args[args.length - 1]; // the last argument IS a boolean, so store its value.
+			loud = args[args.length - 1]; // the last argument IS a boolean, so store its value.
 			args.pop(); // in order to not have trash in our checks, remove the last argument!
 		}
 
@@ -105,11 +126,11 @@ function CylinderClass () {
 	// If we don't do this, the framework will just
 	// die in the water. We don't want to die like that.
 	this.dependency(
-		'async',
 		'jQuery',
 		{ package: '_', name: 'underscore.js' },
 		{ package: 's', name: 'underscore.string' },
-		'Backbone'
+		'Backbone',
+		true // crash the framework due to missing dependencies
 	);
 
 	var extensions = []; // initializable extensions!
@@ -136,19 +157,19 @@ function CylinderClass () {
 	// We'll mix in the underscore and underscore.string modules,
 	// so that we don't have to mess with external files.
 	// We'll also add event handling to Cylinder.
-	_.extend(this._, { str: this.s }); // add underscore.string to underscore
-	_.extend(this, Backbone.Events); // add events
+	this.extend(this._, { str: this.s }); // add underscore.string to underscore (legacy)
+	this.extend(this, Backbone.Events); // add events
 
 	/**
-	 * Extends the framework's core.<br />
-	 * If <code>extendOnInit</code> is true, then the framework won't be extended until properly initialized.
+	 * Extends the framework's core with an object or the result of a callback.<br />
+	 * If <code>mixOnInit</code> is true, then the framework won't be mixed until properly initialized.
 	 *
-	 * @param  {Function|Object} func           - The extension's constructor.
-	 * @param  {Boolean}         [extendOnInit] - If true, the framework will only add 'func' after 'init' is called.
+	 * @param  {Function|Object} func        - The extension's constructor.
+	 * @param  {Boolean}         [mixOnInit] - If true, the framework will only add 'func' after 'init' is called.
 	 * @return {Mixed} Returns the result of 'func' after evaluated.
 	 *
 	 * @example
-	 * Cylinder.extend(function (cl) {
+	 * Cylinder.mix(function (cl) {
 	 *     var extension = {};
 	 *     extension.abc = 123;
 	 *     extension.dfg = 456;
@@ -158,15 +179,15 @@ function CylinderClass () {
 	 * console.log(Cylinder.abc); // 123
 	 * console.log(Cylinder.dfg); // 456
 	 */
-	this.extend = function (func, extendOnInit) {
-		if (!initialized && extendOnInit) {
+	this.mix = function (func, mixOnInit) {
+		if (!initialized && mixOnInit) {
 			if (!_.contains(extensions, func)) extensions.push(func); // add extension to cache
 			return instance; // return the framework instance!
 		}
 
 		if (typeof func == 'function') func = func(instance); // run the function first...
-		if (arguments.length < 3) instance.trigger('extend', func); // trigger an event for when extended...
-		_.extend(instance, func); // add it to the framework...
+		if (arguments.length < 3 || arguments[2] === true) instance.trigger('mix', func); // trigger an event for when mixed...
+		instance.extend(instance, func); // add it to the framework...
 		return func; // and return the object itself!
 	};
 
@@ -177,7 +198,7 @@ function CylinderClass () {
 	 *
 	 * @param  {String}   name - The module's name.
 	 * @param  {Function} func - The module's constructor.
-	 * @return {Mixed} Returns the result of 'func' after evaluated.
+	 * @return {Any} Returns the result of 'func' after evaluated.
 	 *
 	 * @example
 	 * Cylinder.module('mymodule', function (cl, module) {
@@ -212,9 +233,9 @@ function CylinderClass () {
 
 		var obj = {}; // the final object to extend with the framework.
 		obj[name] = result; // apply to the instance...
-		instance.extend(obj, true, false); // add it to the framework...
-		instance.trigger('module', name, result); // trigger a global event for when extended...
-		instance.trigger('module:' + name, result); // trigger a specific event for when extended...
+		instance.mix(obj, true, false); // add it to the framework...
+		instance.trigger('module', name, result); // trigger a global event for when mixed...
+		instance.trigger('module:' + name, result); // trigger a specific event for when mixed...
 		return result; // and return the module itself!
 	};
 
@@ -230,7 +251,7 @@ function CylinderClass () {
 
 	/**
 	 * Properly initializes the framework and all of the modules and extensions added to it.<br />
-	 * Keep in mind that modules will be initialized before any extensions whose <code>extendOnInit</code> property is true.<br />
+	 * Keep in mind that modules will be initialized before any extensions whose <code>mixOnInit</code> property is true.<br />
 	 * This method is based on jQuery's <code>$(document).ready()</code> shorthand.
 	 *
 	 * @param  {Function} [callback] - Function to run after initialization.
@@ -258,7 +279,7 @@ function CylinderClass () {
 			// runs through each initializable extension
 			// and finally initializes it!
 			_.each(extensions, function (func) {
-				instance.extend(func);
+				instance.mix(func);
 			});
 
 			// call event so other parts of the app

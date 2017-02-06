@@ -4,7 +4,7 @@
 
 Cylinder is a Javascript framework created by [comOn group](http://www.comon.pt/) for our front-end applications.
 
-It gathers and uses multiple **popular libraries** that we've used on our websites - like [jQuery](http://jquery.com/), [Underscore.js](http://underscorejs.org/), [Backbone.js](http://backbonejs.org/) and [Mustache.js](https://github.com/janl/mustache.js), - gathers their functionalities and builds upon them, creating **modules** such as Router, Templates and Store.
+It gathers and uses multiple **popular libraries** that we've used on our websites - like [jQuery](http://jquery.com/), [Underscore.js](http://underscorejs.org/), and [Backbone.js](http://backbonejs.org/), - and builds upon them, creating **modules** such as Router, Templates and Store.
 
 ## Extensions, models and controllers
 
@@ -19,19 +19,19 @@ var cl = Cylinder.init(function () {
     cl.$container = $('#container');
 
     // changing module-related stuff
-    cl.store.switch('localstorage');
-    cl.store.fetch();
-    cl.store.set('start', Date.now());
-    cl.templates.options.load = true;
-    cl.templates.defaults['hello'] = function () { return 'world'; };
-    cl.router.options.push = true;
+    cl.store.switch('localstorage'); // change store's default storage method
+    cl.store.fetch(); // load all data from localstorage to the store (after switching)
+    cl.store.set('start', Date.now()); // save a variable to the store
+    cl.templates.options.parse = function (t) { Mustache.parse(t.html); }; // if mustache is included, you can have a template parser
+    cl.templates.options.render = function (t, o, p) { return Mustache.render(t.html, o, p); }; // if mustache is included, you can render a template
+    cl.templates.defaults['hello'] = function () { return 'world'; }; // default variable for all templates
+    cl.router.options.push = true; // use pushState provided by Backbone.Router
 
     // starting controllers
     cl.initControllers(function () {
-        // stuff after initializing controllers,
-        // like telling the router to start processing the window location
-        cl.router.addHandler();
-        cl.router.start();
+        // stuff after initializing all controllers
+        cl.router.addHandler(); // add default click handler for all internal links
+        cl.router.start(); // start processing all of the navigation, including the current location
     });
 });
 ```
@@ -64,11 +64,9 @@ Cylinder.controller('Todo', function (cl, controller) {
 
 ## Dependencies used
 
-Cylinder uses these libraries for common functionality. Some are only used on certain modules and not on the core framework itself, so they can be removed if those modules are not included.
+Cylinder uses these libraries for common functionality:
 
-- async - https://github.com/caolan/async
 - jQuery - http://jquery.com/
 - Underscore - http://underscorejs.org/
 - Underscore.string - http://epeli.github.io/underscore.string/
 - Backbone - http://backbonejs.org/
-- Mustache - https://github.com/janl/mustache.js

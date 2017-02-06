@@ -3,14 +3,6 @@ module.exports = {
 	vendor: {
 		files: [
 
-			// copy async
-			{
-				expand: true,
-				cwd: '<%= project.bower %>/async/dist/',
-				src: [ 'async.min.js', 'async.min.map' ],
-				dest: '<%= project.dist_vendor %>'
-			},
-
 			// copy underscore (and map)
 			{
 				expand: true,
@@ -41,14 +33,6 @@ module.exports = {
 				cwd: '<%= project.bower %>/backbone/',
 				src: [ 'backbone-min.js', 'backbone-min.map' ],
 				dest: '<%= project.dist_vendor %>'
-			},
-
-			// copy mustache.js
-			{
-				expand: true,
-				cwd: '<%= project.bower %>/mustache.js/',
-				src: [ 'mustache.min.js' ],
-				dest: '<%= project.dist_vendor %>'
 			}
 
 		]
@@ -56,12 +40,14 @@ module.exports = {
 
 	docs_vendor: {
 		files: [
+
 			{
 				expand: true,
 				cwd: '<%= project.dist %>',
-				src: [ 'vendor/*', 'cylinder.min.js', 'cylinder.min.js.map' ],
+				src: [ 'vendor/*', 'cylinder.js' ],
 				dest: '<%= project.docs_vendor %>'
 			}
+
 		]
 	}
 

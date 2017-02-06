@@ -5,9 +5,33 @@ Utilities module for CylinderClass.
 
 
 * [utils](#module_utils)
+    * [.string(obj)](#module_utils.string) ⇒ <code>String</code>
     * [.text(str)](#module_utils.text) ⇒ <code>String</code>
-    * [.unserialize(string)](#module_utils.unserialize) ⇒ <code>Object</code>
+    * [.unserialize(str)](#module_utils.unserialize) ⇒ <code>Object</code>
     * [.query(key, [serialized])](#module_utils.query) ⇒ <code>String</code> &#124; <code>Null</code>
+
+
+* * *
+
+<a name="module_utils.string"></a>
+
+### utils.string(obj) ⇒ <code>String</code>
+Transforms an object into a string.<br /><br />This method is based on the implementation from underscore.string.<br /><a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/helper/makeString.js">https://github.com/epeli/underscore.string/blob/master/helper/makeString.js</a>
+
+**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Returns**: <code>String</code> - The new string.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>obj</td><td><code>Any</code></td><td><p>The object to transform.</p>
+</td>
+    </tr>  </tbody>
+</table>
 
 
 * * *
@@ -15,7 +39,7 @@ Utilities module for CylinderClass.
 <a name="module_utils.text"></a>
 
 ### utils.text(str) ⇒ <code>String</code>
-Removes all HTML from a string.
+Removes all HTML from a string.<br /><br />This method is based on the implementation from underscore.string.<br /><a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/stripTags.js">https://github.com/epeli/underscore.string/blob/master/stripTags.js</a>
 
 **Kind**: static method of <code>[utils](#module_utils)</code>  
 **Returns**: <code>String</code> - The string without HTML.  
@@ -37,11 +61,11 @@ Removes all HTML from a string.
 
 <a name="module_utils.unserialize"></a>
 
-### utils.unserialize(string) ⇒ <code>Object</code>
+### utils.unserialize(str) ⇒ <code>Object</code>
 Unserializes a string into an object.<br /><br />This method is based on the implementation by Bruce Kirkpatrick.<br /><a target="_blank" href="https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581">https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581</a>
 
 **Kind**: static method of <code>[utils](#module_utils)</code>  
-**Returns**: <code>Object</code> - - The string, unserialized into an object.  
+**Returns**: <code>Object</code> - The string, unserialized into an object.  
 <table>
   <thead>
     <tr>
@@ -50,7 +74,7 @@ Unserializes a string into an object.<br /><br />This method is based on the im
   </thead>
   <tbody>
 <tr>
-    <td>string</td><td><code>String</code></td><td><p>The serialized object.</p>
+    <td>str</td><td><code>String</code></td><td><p>The serialized object.</p>
 </td>
     </tr>  </tbody>
 </table>

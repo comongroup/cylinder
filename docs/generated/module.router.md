@@ -13,19 +13,19 @@ Router module for CylinderClass.
     * [.previous_url](#module_router.previous_url) : <code>String</code>
     * [.previous_route](#module_router.previous_route) : <code>String</code>
     * [.previous_args](#module_router.previous_args) : <code>Array</code>
-    * [.reload([delay])](#module_router.reload)
-    * [.setup([domain], [root])](#module_router.setup) ⇒ <code>router</code>
     * [.domain()](#module_router.domain) ⇒ <code>String</code>
     * [.root()](#module_router.root) ⇒ <code>String</code>
     * [.path()](#module_router.path) ⇒ <code>String</code>
+    * [.setup([domain], [root])](#module_router.setup) ⇒ <code>router</code>
     * [.start([silent])](#module_router.start) ⇒ <code>router</code>
     * [.stop()](#module_router.stop) ⇒ <code>router</code>
-    * [.go([url], [options], [prefix])](#module_router.go) ⇒ <code>router</code>
-    * [.add([name], syntax, ...middleware)](#module_router.add)
-    * [.use(func)](#module_router.use) ⇒ <code>router</code>
-    * [.unuse(func)](#module_router.unuse) ⇒ <code>router</code>
+    * [.use(...functions)](#module_router.use) ⇒ <code>router</code>
+    * [.unuse(...functions)](#module_router.unuse) ⇒ <code>router</code>
+    * [.add([name], syntax, ...callbacks)](#module_router.add)
     * [.addHandler([selector])](#module_router.addHandler) ⇒ <code>router</code>
     * [.removeHandler([selector])](#module_router.removeHandler) ⇒ <code>router</code>
+    * [.go([url], [options], [prefix])](#module_router.go) ⇒ <code>router</code>
+    * [.reload([delay])](#module_router.reload)
 
 
 * * *
@@ -131,25 +131,30 @@ Previous route arguments.
 
 * * *
 
-<a name="module_router.reload"></a>
+<a name="module_router.domain"></a>
 
-### router.reload([delay])
-Reloads the page instantaneously, unless a delay is set.
+### router.domain() ⇒ <code>String</code>
+Returns the current router's domain.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
-<table>
-  <thead>
-    <tr>
-      <th>Param</th><th>Type</th><th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-<tr>
-    <td>[delay]</td><td><code>Number</code></td><td><p>The delay of the reload, in seconds.</p>
-</td>
-    </tr>  </tbody>
-</table>
 
+* * *
+
+<a name="module_router.root"></a>
+
+### router.root() ⇒ <code>String</code>
+Returns the current router's root path.
+
+**Kind**: static method of <code>[router](#module_router)</code>  
+
+* * *
+
+<a name="module_router.path"></a>
+
+### router.path() ⇒ <code>String</code>
+Returns the current router's full path (domain + root).
+
+**Kind**: static method of <code>[router](#module_router)</code>  
 
 * * *
 
@@ -176,33 +181,6 @@ Sets up the domain and root this router will operate on.
     </tr>  </tbody>
 </table>
 
-
-* * *
-
-<a name="module_router.domain"></a>
-
-### router.domain() ⇒ <code>String</code>
-Returns the current router's domain.
-
-**Kind**: static method of <code>[router](#module_router)</code>  
-
-* * *
-
-<a name="module_router.root"></a>
-
-### router.root() ⇒ <code>String</code>
-Returns the current router's root path.
-
-**Kind**: static method of <code>[router](#module_router)</code>  
-
-* * *
-
-<a name="module_router.path"></a>
-
-### router.path() ⇒ <code>String</code>
-Returns the current router's full path (domain + root).
-
-**Kind**: static method of <code>[router](#module_router)</code>  
 
 * * *
 
@@ -239,66 +217,9 @@ Stops the router.
 
 * * *
 
-<a name="module_router.go"></a>
-
-### router.go([url], [options], [prefix]) ⇒ <code>router</code>
-Changes the current URL to the one specified.<br />If <code>start()</code> wasn't called, then it will change URL location natively instead of going through the router's methods.
-
-**Kind**: static method of <code>[router](#module_router)</code>  
-**Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
-<table>
-  <thead>
-    <tr>
-      <th>Param</th><th>Type</th><th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-<tr>
-    <td>[url]</td><td><code>String</code></td><td><p>The URL to navigate to. If null, it will navigate to the same page by forcing options.trigger to <code>true</code>.</p>
-</td>
-    </tr><tr>
-    <td>[options]</td><td><code>Boolean</code></td><td><p>Options to pass to Backbone.Router&#39;s method.</p>
-</td>
-    </tr><tr>
-    <td>[prefix]</td><td><code>Boolean</code></td><td><p>Should the method include the prefix set in the module&#39;s <code>options.prefix</code>?</p>
-</td>
-    </tr>  </tbody>
-</table>
-
-
-* * *
-
-<a name="module_router.add"></a>
-
-### router.add([name], syntax, ...middleware)
-Adds a handler to the router.This handler will be triggered every time the URL matches the syntax provided.
-
-**Kind**: static method of <code>[router](#module_router)</code>  
-<table>
-  <thead>
-    <tr>
-      <th>Param</th><th>Type</th><th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-<tr>
-    <td>[name]</td><td><code>String</code></td><td><p>Name of the handler for identification purposes inside added middleware. This name will be slugified once added.</p>
-</td>
-    </tr><tr>
-    <td>syntax</td><td><code>String</code></td><td><p>The URL syntax that will be hash mapped to the handler.</p>
-</td>
-    </tr><tr>
-    <td>...middleware</td><td><code>function</code></td><td><p>Callback functions specific to this handler. They will be executed in the order they&#39;re provided.</p>
-</td>
-    </tr>  </tbody>
-</table>
-
-
-* * *
-
 <a name="module_router.use"></a>
 
-### router.use(func) ⇒ <code>router</code>
+### router.use(...functions) ⇒ <code>router</code>
 Adds a middleware layer to the global router.The provided callback will be executed every time the URL changes.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
@@ -311,17 +232,27 @@ Adds a middleware layer to the global router.The provided callback will be exec
   </thead>
   <tbody>
 <tr>
-    <td>func</td><td><code>function</code></td><td><p>The middleware function to add.</p>
+    <td>...functions</td><td><code>function</code></td><td><p>The callbacks to add.<br />
+                                  The methods themselves will receive the name of the route and an array of arguments, along with a
+                                  <code>next</code> callback at the end, in order to skip to the next function in the chain.</p>
 </td>
     </tr>  </tbody>
 </table>
 
+**Example**  
+```js
+// this middleware can be used to check stuff in the new path.// for example, to update something in the app everytime the route changesCylinder.router.use(function (name, args, next) {    console.log(name); // name of the matched route, ex: "my-route"    console.log(args); // array of matched arguments, ex: ["hey", "john"]    next(); // keep the chain going.});
+```
+**Example**  
+```js
+// one good example of middleware is for authentication purposes,// for instance, if you probably need all of your routes protected,// so let's check if there's tokens and whatnotvar userData = null; // would be an object if logged invar userToken = null; // would be a stringvar unprotectedRoutes = ['login', 'register']; // routes that don't need login, but shouldn't be accessed if there is loginvar urlToRedirectAfterLogin = null; // URL to redirect the user after loginCylinder.router.use(function (name, args, next) {    if (unprotectedRoutes.indexOf(name) > -1) {        // we entered an unprotected route that shouldn't        // be entered unless we're logged out        if (userToken !== null) {            Cylinder.router.go('home');  // login has been made, so go to next            return; // stop processing here        }    }    if (userToken === null) {        // no login, let's redirect to the login page        urlToRedirectAfterLogin = Cylinder.router.url;        Cylinder.router.go('login');        return;    }    // no issues encountered?    // then let the user through!    next();});
+```
 
 * * *
 
 <a name="module_router.unuse"></a>
 
-### router.unuse(func) ⇒ <code>router</code>
+### router.unuse(...functions) ⇒ <code>router</code>
 Removes a middleware layer from the global router.You must provide the same callback you provided in <code>add()</code>, otherwise this method will do no good.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
@@ -334,11 +265,48 @@ Removes a middleware layer from the global router.You must provide the same cal
   </thead>
   <tbody>
 <tr>
-    <td>func</td><td><code>function</code></td><td><p>The middleware function to add.</p>
+    <td>...functions</td><td><code>function</code></td><td><p>The callbacks to remove.</p>
 </td>
     </tr>  </tbody>
 </table>
 
+
+* * *
+
+<a name="module_router.add"></a>
+
+### router.add([name], syntax, ...callbacks)
+Adds a handler to the router.This handler will be triggered every time the URL matches the syntax provided.
+
+**Kind**: static method of <code>[router](#module_router)</code>  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>[name]</td><td><code>String</code></td><td><p>Name of the handler for identification purposes inside added middleware.
+                                 This name will be slugified once added, so be careful when setting this to avoid mismatching.</p>
+</td>
+    </tr><tr>
+    <td>syntax</td><td><code>String</code></td><td><p>The URL syntax that will be hash mapped to the handler.
+                                 See <a href="http://backbonejs.org/#Router-routes" target="_blank">http://backbonejs.org/#Router-routes</a>
+                                 to learn more about how this syntax can be set.</p>
+</td>
+    </tr><tr>
+    <td>...callbacks</td><td><code>function</code></td><td><p>Callback functions specific to this handler. They will be executed in the order they&#39;re provided.<br />
+                                 The methods themselves will receive all of the arguments passed into the syntax, along with a
+                                 <code>next</code> callback at the end, in order to skip to the next function in the callback list.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+**Example**  
+```js
+// route with multiple callbacks,// in order to keep stuff organizedCylinder.router.add(    'my-route',    'test/:abc/:def',    function (abc, def, next) {        // intermediate function in chain,        // this can be used to validate something        if (abc === 'hey') {            throw 'You cannot hey me!';        }        next(); // no errors? keep going    },    function (abc, def) {        // final callback in chain,        // ...    });
+```
 
 * * *
 
@@ -383,6 +351,58 @@ Removes the event handler added by <code>addHandler()</code>.
 <tr>
     <td>[selector]</td><td><code>String</code></td><td><p>Previously provided selector to override the default one provided to jQuery, in order to target custom elements.<br />
                               If empty, the method will provide the selector from <code>options.selector</code>.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
+<a name="module_router.go"></a>
+
+### router.go([url], [options], [prefix]) ⇒ <code>router</code>
+Changes the current URL to the one specified.<br />If <code>start()</code> wasn't called, then it will change URL location natively instead of going through the router's methods.
+
+**Kind**: static method of <code>[router](#module_router)</code>  
+**Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>[url]</td><td><code>String</code></td><td><p>The URL to navigate to. If null, it will navigate to the same page by forcing options.trigger to <code>true</code>.</p>
+</td>
+    </tr><tr>
+    <td>[options]</td><td><code>Boolean</code></td><td><p>Options to pass to Backbone.Router&#39;s method.</p>
+</td>
+    </tr><tr>
+    <td>[prefix]</td><td><code>Boolean</code></td><td><p>Should the method include the prefix set in the module&#39;s <code>options.prefix</code>?</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
+<a name="module_router.reload"></a>
+
+### router.reload([delay])
+Reloads the page instantaneously, unless a delay is set.
+
+**Kind**: static method of <code>[router](#module_router)</code>  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>[delay]</td><td><code>Number</code> | <code>Boolean</code></td><td><p>The delay of the reload, in seconds.
+                                  If &quot;false&quot; is passed, the timeout will be cancelled and the page won&#39;t be reloaded.</p>
 </td>
     </tr>  </tbody>
 </table>

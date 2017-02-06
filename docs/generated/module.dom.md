@@ -44,7 +44,7 @@ The options taken by the module.
 <a name="module_dom.$window"></a>
 
 ### dom.$window : <code>jQueryObject</code>
-The cached jQuery element for the <code>window</code> DOM object.
+The cached element for the <code>window</code> DOM object.
 
 **Kind**: static property of <code>[dom](#module_dom)</code>  
 
@@ -53,7 +53,7 @@ The cached jQuery element for the <code>window</code> DOM object.
 <a name="module_dom.$document"></a>
 
 ### dom.$document : <code>jQueryObject</code>
-The cached jQuery element for the <code>document</code> DOM object.
+The cached element for the <code>document</code> DOM object.
 
 **Kind**: static property of <code>[dom](#module_dom)</code>  
 
@@ -62,7 +62,7 @@ The cached jQuery element for the <code>document</code> DOM object.
 <a name="module_dom.$html"></a>
 
 ### dom.$html : <code>jQueryObject</code>
-The cached jQuery element for <code>&lt;html&gt;</code>.
+The cached element for <code>&lt;html&gt;</code>.
 
 **Kind**: static property of <code>[dom](#module_dom)</code>  
 
@@ -71,7 +71,7 @@ The cached jQuery element for <code>&lt;html&gt;</code>.
 <a name="module_dom.$head"></a>
 
 ### dom.$head : <code>jQueryObject</code>
-The cached jQuery element for <code>&lt;head&gt;</code>.
+The cached element for <code>&lt;head&gt;</code>.
 
 **Kind**: static property of <code>[dom](#module_dom)</code>  
 
@@ -80,7 +80,7 @@ The cached jQuery element for <code>&lt;head&gt;</code>.
 <a name="module_dom.$body"></a>
 
 ### dom.$body : <code>jQueryObject</code>
-The cached jQuery element for <code>&lt;body&gt;</code>.
+The cached element for <code>&lt;body&gt;</code>.
 
 **Kind**: static property of <code>[dom](#module_dom)</code>  
 
