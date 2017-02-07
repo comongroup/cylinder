@@ -1,5 +1,5 @@
 /*
- * cylinder v1.0.0-alpha.1 (2017-02-06 16:39:00)
+ * cylinder v1.0.0-alpha.2 (2017-02-07 11:35:51)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -23,7 +23,7 @@ function CylinderClass () {
 	 * Framework version.
 	 * @return {String}
 	 */
-	this.version = '1.0.0-alpha.1';
+	this.version = '1.0.0-alpha.2';
 
 	/**
 	 * Checks if the framework has been initialized.
@@ -1956,7 +1956,7 @@ module.exports = function (cylinder, module) {
 		if (typeof iterator !== 'function') {
 			iterator = function (template, index) {
 				var result = typeof template === 'function' ? template() : template;
-				return templates.add(index, template); // add the template
+				return templates.add(index, result); // add the template
 			};
 		}
 

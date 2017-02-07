@@ -80,7 +80,7 @@ module.exports = function (cylinder, module) {
 		if (typeof iterator !== 'function') {
 			iterator = function (template, index) {
 				var result = typeof template === 'function' ? template() : template;
-				return templates.add(index, template); // add the template
+				return templates.add(index, result); // add the template
 			};
 		}
 
