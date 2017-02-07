@@ -9,15 +9,16 @@
  * @param {Number}   options.width_max  - The maximum width.
  * @param {Number}   options.height_min - The mininum height.
  * @param {Number}   options.height_max - The maximum height.
- * @param {Function} options.callback<Number,Number,CylinderResizeRule> - A callback function defining the rule given a width and height. Must return a boolean.
+ * @param {Function} [options.callback<Number,Number,CylinderResizeRule>] - A callback function defining the rule given a width and height. Must return a boolean.
+ *                                                                          If not defined, the default callback (evaluating width only) is used.
  *
  * @example
  * // creates a new rule
  * var rule = new CylinderResizeRule({
- *     min_width: 0,
- *     max_width: 767,
+ *     width_min: 0,
+ *     width_max: 767,
  *     callback: function (width, height, rule) {
- *         return width >= rule.min_width && width <= rule.min_height;
+ *         return width >= rule.width_min && width <= rule.width_max;
  *     }
  * });
  *

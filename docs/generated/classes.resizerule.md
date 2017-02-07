@@ -38,14 +38,15 @@ Creates a new rule to be used with the Cylinder/Resize module.
     <td>options.height_max</td><td><code>Number</code></td><td><p>The maximum height.</p>
 </td>
     </tr><tr>
-    <td>options.callback<Number,Number,CylinderResizeRule></td><td><code>function</code></td><td><p>A callback function defining the rule given a width and height. Must return a boolean.</p>
+    <td>[options.callback<Number,Number,CylinderResizeRule>]</td><td><code>function</code></td><td><p>A callback function defining the rule given a width and height. Must return a boolean.
+                                                                         If not defined, the default callback (evaluating width only) is used.</p>
 </td>
     </tr>  </tbody>
 </table>
 
 **Example**  
 ```js
-// creates a new rulevar rule = new CylinderResizeRule({    min_width: 0,    max_width: 767,    callback: function (width, height, rule) {        return width >= rule.min_width && width <= rule.min_height;    }});// adds the rule into the moduleCylinder.resize.addRule('layout-xs', rule);// on a resize, if the callback returns true,// the name of the rule will be added as a class to the <body> element// example: <body class="layout-xs">
+// creates a new rulevar rule = new CylinderResizeRule({    width_min: 0,    width_max: 767,    callback: function (width, height, rule) {        return width >= rule.width_min && width <= rule.width_max;    }});// adds the rule into the moduleCylinder.resize.addRule('layout-xs', rule);// on a resize, if the callback returns true,// the name of the rule will be added as a class to the <body> element// example: <body class="layout-xs">
 ```
 
 * * *
