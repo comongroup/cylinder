@@ -1,5 +1,5 @@
 /*
- * cylinder v1.0.0-alpha.3 (2017-02-07 17:21:40)
+ * cylinder v1.0.0-alpha.3 (2017-02-12 10:51:21)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -2336,6 +2336,18 @@ module.exports = function (cylinder, module) {
 		var query = serialized || window.location.search.substring(1);
 		var vars = utils.unserialize(query);
 		return key in vars ? vars[key] : null;
+	};
+
+	/**
+	 * Clamps a numeric value.
+	 *
+	 * @param  {Number} min   - Minimum value.
+	 * @param  {Number} value - Value to clamp.
+	 * @param  {Number} max   - Maximum value.
+	 * @return {Number} The final clamped value.
+	 */
+	utils.clamp = function (min, value, max) {
+		return Math.max(min, Math.min(max, value));
 	};
 
 	return utils; // finish

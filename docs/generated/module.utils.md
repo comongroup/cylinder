@@ -9,6 +9,7 @@ Utilities module for CylinderClass.
     * [.text(str)](#module_utils.text) ⇒ <code>String</code>
     * [.unserialize(str)](#module_utils.unserialize) ⇒ <code>Object</code>
     * [.query(key, [serialized])](#module_utils.query) ⇒ <code>String</code> &#124; <code>Null</code>
+    * [.clamp(min, value, max)](#module_utils.clamp) ⇒ <code>Number</code>
 
 
 * * *
@@ -101,6 +102,35 @@ Extracts a named variable from a string.
 </td>
     </tr><tr>
     <td>[serialized]</td><td><code>String</code></td><td><p>The string to extract from. If null, the method will use the browser&#39;s query string.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
+<a name="module_utils.clamp"></a>
+
+### utils.clamp(min, value, max) ⇒ <code>Number</code>
+Clamps a numeric value.
+
+**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Returns**: <code>Number</code> - The final clamped value.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>min</td><td><code>Number</code></td><td><p>Minimum value.</p>
+</td>
+    </tr><tr>
+    <td>value</td><td><code>Number</code></td><td><p>Value to clamp.</p>
+</td>
+    </tr><tr>
+    <td>max</td><td><code>Number</code></td><td><p>Maximum value.</p>
 </td>
     </tr>  </tbody>
 </table>

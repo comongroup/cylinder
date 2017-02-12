@@ -75,6 +75,18 @@ module.exports = function (cylinder, module) {
 		return key in vars ? vars[key] : null;
 	};
 
+	/**
+	 * Clamps a numeric value.
+	 *
+	 * @param  {Number} min   - Minimum value.
+	 * @param  {Number} value - Value to clamp.
+	 * @param  {Number} max   - Maximum value.
+	 * @return {Number} The final clamped value.
+	 */
+	utils.clamp = function (min, value, max) {
+		return Math.max(min, Math.min(max, value));
+	};
+
 	return utils; // finish
 
 };
