@@ -1,5 +1,5 @@
 /*
- * cylinder v1.0.0-alpha.3 (2017-02-12 10:51:21)
+ * cylinder v1.0.0-alpha.3 (2017-02-14 18:08:52)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -934,10 +934,12 @@ module.exports = function (cylinder, module) {
 		})();
 	};
 
-	function middlewareGlobal (composition, args, finish) {
+	function middlewareGlobal (composition, args, options, finish) {
 		// this runs through every function in the global middleware!
 		// if there's no middleware, ignore.
-		if (middleware.length < 1) {
+		finish = typeof finish === 'function' ? finish : function () { };
+
+		if (options.exec === false || middleware.length < 1) {
 			return finish();
 		}
 
@@ -949,10 +951,12 @@ module.exports = function (cylinder, module) {
 		});
 	};
 
-	function middlewareSpecific (composition, args, finish) {
+	function middlewareSpecific (composition, args, options, finish) {
 		// this runs through every function in the route's specific middleware!
 		// if there's no middleware, ignore.
-		if (composition.middleware.length < 1) {
+		finish = typeof finish === 'function' ? finish : function () {};
+
+		if (options.exec === false || composition.middleware.length < 1) {
 			return finish();
 		}
 
@@ -966,6 +970,7 @@ module.exports = function (cylinder, module) {
 
 	function execute (callback, args, name) {
 		var composition = routes[name]; // current composed route
+		var options = this.options || {}; // store the last used options
 
 		// trim the argument list,
 		// since it always returns a "null" element
@@ -973,7 +978,7 @@ module.exports = function (cylinder, module) {
 
 		// here we run through potential global middleware,
 		// and then specific middleware, followed by the actual route callback!
-		return middlewareGlobal(composition, args, function () {
+		return middlewareGlobal(composition, args, options, function () {
 			router.previous_route = router.route; // save the previous route...
 			router.route = name; // set the current route...
 
@@ -1006,7 +1011,7 @@ module.exports = function (cylinder, module) {
 			router.done = true;
 
 			// call the specific middleware now, and we're done!
-			return middlewareSpecific(composition, args);
+			return middlewareSpecific(composition, args, options);
 		});
 	};
 
@@ -1373,6 +1378,7 @@ module.exports = function (cylinder, module) {
 	 */
 	router.go = function (url, options, prefix) {
 		options = options || {}; // turn into a valid object
+		obj.options = options; // store last options
 
 		if (!_.isString(url)) {
 			var args = router.args.concat([ null ]);
