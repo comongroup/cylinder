@@ -1,5 +1,5 @@
 /*
- * cylinder v1.0.0-alpha.3 (2017-02-14 18:08:52)
+ * cylinder v1.0.0-alpha.3 (2017-02-15 15:49:47)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -2121,9 +2121,9 @@ module.exports = function (cylinder, module) {
 	templates.render = function (id, options, partials, trigger) {
 		var result = null;
 		var template = templates.get(id) || {
-			error: true,
 			parsed: true,
-			html: '!! Template "' + id + '" not found !!'
+			error: 'Template "' + id + '" not found',
+			html: id
 		};
 
 		// before actually rendering the result,
@@ -2135,7 +2135,7 @@ module.exports = function (cylinder, module) {
 
 		// and now we'll actually attempt to render the template,
 		// using the specified options and partials, along with defaults
-		if (!template.error && typeof templates.options.render === 'function') {
+		if (typeof templates.options.render === 'function') {
 			result = templates.options.render(
 				template,
 				cylinder.extend({}, templates.defaults, template.defaults, options),
