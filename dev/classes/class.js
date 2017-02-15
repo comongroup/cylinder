@@ -46,6 +46,69 @@ function CylinderClass () {
 	};
 
 	/**
+	 * Attempts to resolve a given path inside a parent object and returns its corresponding value.
+	 *
+	 * @example
+	 * // searching inside nested objects for a given property
+	 * // only having a path and not worrying about errors
+	 *
+	 * var famousPeople = {
+	 *     'e64d88': {
+	 *         name: 'Beyoncé',
+	 *         gender: 'female',
+	 *         dob: '1981/09/04',
+	 *         active: true,
+	 *         children: [
+	 *             {
+	 *                 name: 'Blue Ivy Carter',
+	 *                 gender: 'female',
+	 *                 dob: '2012/01/07'
+	 *             }
+	 *         ]
+	 *     },
+	 *     '13d46f': {
+	 *         name: 'John Mayer',
+	 *         gender: 'male',
+	 *         dob: '1977/10/16',
+	 *         active: true,
+	 *         children: []
+	 *     }
+	 * };
+	 *
+	 * // search for the given paths
+	 * // and attempt to find results
+	 *
+	 * Cylinder.resolve(famousPeople, '13d46f.dob'); // '1977/10/16'
+	 * Cylinder.resolve(famousPeople, 'e64d88.children.length'); // 1              (works with standard properties of other types)
+	 * Cylinder.resolve(famousPeople, 'e64d88.children.0.gender'); // 'female'     (dot notation works)
+	 * Cylinder.resolve(famousPeople, 'e64d88.children[0].gender'); // 'female'    (array notation also works)
+	 * Cylinder.resolve(famousPeople, 'f33581.children[2].name'); // undefined     (path wasn't found and default value not set)
+	 * Cylinder.resolve(famousPeople, 'f33581.children[2].name', false); // false  (path wasn't found but `returns` was set)
+	 *
+	 * @param  {Any}           parent              - The parent object where we should search.
+	 * @param  {String}        path                - The string symbolizing the path to the desired property.
+	 * @param  {Any}           [returns=undefined] - If given, the method will return this variable by default.
+	 * @return {Any|Undefined} Returns the value of the given path, or the value of `returns` if path is not found.
+	 */
+	this.resolve = function (parent, path, returns) {
+		// solver function, based on code from
+		// http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+		if (!path || typeof path !== 'string') return returns; // return straight away if path doesn't exist
+
+		path = s.trim(path.replace(/\[(\w+)\]/g, '.$1'), '.'); // convert indexes to properties, and strip dots on each end
+		var arr = path.split('.'); // separate to start solving vars
+		var result = parent; // solving result
+
+		for (var i = 0, total = arr.length; i < total; i++) {
+			var key = arr[i];
+			if (!(key in result)) return returns; // return undefined if not found
+			result = result[key]; // but if we have stuff, keep going
+		}
+
+		return result; // return the result
+	};
+
+	/**
 	 * Validate if a variable or a dependency exists.
 	 * The framework will check if it exists in the global scope.
 	 *
@@ -99,23 +162,17 @@ function CylinderClass () {
 			var dependency_object = typeof dependency == 'object';
 			var dependency_mandatory = !dependency_object || dependency.optional != true;
 
-			var scope = dependency_object ? (dependency.scope || root) : root;
 			var name = dependency_object ? dependency.name : dependency; // get the dependency name to output later
-			var tree = ('' + (dependency_object ? dependency.package : dependency)).split('.'); // split by dot
+			var scope = dependency_object && dependency.scope ? dependency.scope : root; // get the scope
 
-			// don't forget that any argument can be recursive,
-			// for example, "$.fn.velocity", so we have to drill down!
-			for (var j = 0; j < tree.length; j++) { // drill
-				var dependency = tree[j];
-				var exists = Object.prototype.hasOwnProperty.call(scope, dependency);
-				if (!exists) {
-					if (loud && dependency_mandatory) throw new CylinderException('Missing dependency "' + name + '"!');
-					return false; // and just return false for reasons!
-				}
-				scope = scope[dependency]; // the scope exists, go to next dependency
+			if (!this.resolve(scope, '' + (dependency_object ? dependency.package : dependency))) {
+				// `resolve` couldn't find the key deep enough,
+				// so we'll either return false straight away or throw an exception!
+				if (loud && dependency_mandatory) throw new CylinderException('Missing dependency "' + name + '"!');
+				return false;
 			}
 
-			// if we reach here, the dependency exists!
+			// if we reach this point, the dependency exists!
 			// go to the next one
 		}
 

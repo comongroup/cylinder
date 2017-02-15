@@ -11,6 +11,7 @@
     * [.s](#CylinderClass+s) : <code>UnderscoreString</code>
     * [.initialized()](#CylinderClass+initialized) ⇒ <code>Boolean</code>
     * [.extend(destination, ...sources)](#CylinderClass+extend) ⇒ <code>Object</code>
+    * [.resolve(parent, path, [returns])](#CylinderClass+resolve) ⇒ <code>Any</code> &#124; <code>Undefined</code>
     * [.dependency(...dependencies, [loud])](#CylinderClass+dependency) ⇒ <code>Boolean</code>
     * [.mix(func, [mixOnInit])](#CylinderClass+mix) ⇒ <code>Mixed</code>
     * [.module(name, func)](#CylinderClass+module) ⇒ <code>Any</code>
@@ -96,6 +97,39 @@ Performs a shallow copy of all properties in the **source** objects over to the 
     </tr>  </tbody>
 </table>
 
+
+* * *
+
+<a name="CylinderClass+resolve"></a>
+
+### cylinderClass.resolve(parent, path, [returns]) ⇒ <code>Any</code> &#124; <code>Undefined</code>
+Attempts to resolve a given path inside a parent object and returns its corresponding value.
+
+**Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
+**Returns**: <code>Any</code> &#124; <code>Undefined</code> - Returns the value of the given path, or the value of `returns` if path is not found.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>parent</td><td><code>Any</code></td><td><p>The parent object where we should search.</p>
+</td>
+    </tr><tr>
+    <td>path</td><td><code>String</code></td><td><p>The string symbolizing the path to the desired property.</p>
+</td>
+    </tr><tr>
+    <td>[returns]</td><td><code>Any</code></td><td><p>If given, the method will return this variable by default.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+**Example**  
+```js
+// searching inside nested objects for a given property// only having a path and not worrying about errorsvar famousPeople = {    'e64d88': {        name: 'Beyoncé',        gender: 'female',        dob: '1981/09/04',        active: true,        children: [            {                name: 'Blue Ivy Carter',                gender: 'female',                dob: '2012/01/07'            }        ]    },    '13d46f': {        name: 'John Mayer',        gender: 'male',        dob: '1977/10/16',        active: true,        children: []    }};// search for the given paths// and attempt to find resultsCylinder.resolve(famousPeople, '13d46f.dob'); // '1977/10/16'Cylinder.resolve(famousPeople, 'e64d88.children.length'); // 1              (works with standard properties of other types)Cylinder.resolve(famousPeople, 'e64d88.children.0.gender'); // 'female'     (dot notation works)Cylinder.resolve(famousPeople, 'e64d88.children[0].gender'); // 'female'    (array notation also works)Cylinder.resolve(famousPeople, 'f33581.children[2].name'); // undefined     (path wasn't found and default value not set)Cylinder.resolve(famousPeople, 'f33581.children[2].name', false); // false  (path wasn't found but `returns` was set)
+```
 
 * * *
 

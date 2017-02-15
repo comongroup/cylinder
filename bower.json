@@ -17,12 +17,16 @@
   "homepage": "",
   "ignore": [
     "**/.*",
+    "dev",
     "docs",
+    "grunt",
     "node_modules",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "gruntfile.js",
+    "jsdoc.json"
   ],
   "dependencies": {
     "jquery": "^3.1.1",

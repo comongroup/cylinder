@@ -1,5 +1,5 @@
 /*
- * cylinder v1.0.0-alpha.2 (2017-02-07 11:35:51)
+ * cylinder v1.0.0-alpha.3 (2017-02-15 15:49:47)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -23,7 +23,7 @@ function CylinderClass () {
 	 * Framework version.
 	 * @return {String}
 	 */
-	this.version = '1.0.0-alpha.2';
+	this.version = '1.0.0-alpha.3';
 
 	/**
 	 * Checks if the framework has been initialized.
@@ -50,6 +50,69 @@ function CylinderClass () {
 			}
 		}
 		return destination;
+	};
+
+	/**
+	 * Attempts to resolve a given path inside a parent object and returns its corresponding value.
+	 *
+	 * @example
+	 * // searching inside nested objects for a given property
+	 * // only having a path and not worrying about errors
+	 *
+	 * var famousPeople = {
+	 *     'e64d88': {
+	 *         name: 'Beyoncé',
+	 *         gender: 'female',
+	 *         dob: '1981/09/04',
+	 *         active: true,
+	 *         children: [
+	 *             {
+	 *                 name: 'Blue Ivy Carter',
+	 *                 gender: 'female',
+	 *                 dob: '2012/01/07'
+	 *             }
+	 *         ]
+	 *     },
+	 *     '13d46f': {
+	 *         name: 'John Mayer',
+	 *         gender: 'male',
+	 *         dob: '1977/10/16',
+	 *         active: true,
+	 *         children: []
+	 *     }
+	 * };
+	 *
+	 * // search for the given paths
+	 * // and attempt to find results
+	 *
+	 * Cylinder.resolve(famousPeople, '13d46f.dob'); // '1977/10/16'
+	 * Cylinder.resolve(famousPeople, 'e64d88.children.length'); // 1              (works with standard properties of other types)
+	 * Cylinder.resolve(famousPeople, 'e64d88.children.0.gender'); // 'female'     (dot notation works)
+	 * Cylinder.resolve(famousPeople, 'e64d88.children[0].gender'); // 'female'    (array notation also works)
+	 * Cylinder.resolve(famousPeople, 'f33581.children[2].name'); // undefined     (path wasn't found and default value not set)
+	 * Cylinder.resolve(famousPeople, 'f33581.children[2].name', false); // false  (path wasn't found but `returns` was set)
+	 *
+	 * @param  {Any}           parent              - The parent object where we should search.
+	 * @param  {String}        path                - The string symbolizing the path to the desired property.
+	 * @param  {Any}           [returns=undefined] - If given, the method will return this variable by default.
+	 * @return {Any|Undefined} Returns the value of the given path, or the value of `returns` if path is not found.
+	 */
+	this.resolve = function (parent, path, returns) {
+		// solver function, based on code from
+		// http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+		if (!path || typeof path !== 'string') return returns; // return straight away if path doesn't exist
+
+		path = s.trim(path.replace(/\[(\w+)\]/g, '.$1'), '.'); // convert indexes to properties, and strip dots on each end
+		var arr = path.split('.'); // separate to start solving vars
+		var result = parent; // solving result
+
+		for (var i = 0, total = arr.length; i < total; i++) {
+			var key = arr[i];
+			if (!(key in result)) return returns; // return undefined if not found
+			result = result[key]; // but if we have stuff, keep going
+		}
+
+		return result; // return the result
 	};
 
 	/**
@@ -106,23 +169,17 @@ function CylinderClass () {
 			var dependency_object = typeof dependency == 'object';
 			var dependency_mandatory = !dependency_object || dependency.optional != true;
 
-			var scope = dependency_object ? (dependency.scope || root) : root;
 			var name = dependency_object ? dependency.name : dependency; // get the dependency name to output later
-			var tree = ('' + (dependency_object ? dependency.package : dependency)).split('.'); // split by dot
+			var scope = dependency_object && dependency.scope ? dependency.scope : root; // get the scope
 
-			// don't forget that any argument can be recursive,
-			// for example, "$.fn.velocity", so we have to drill down!
-			for (var j = 0; j < tree.length; j++) { // drill
-				var dependency = tree[j];
-				var exists = Object.prototype.hasOwnProperty.call(scope, dependency);
-				if (!exists) {
-					if (loud && dependency_mandatory) throw new CylinderException('Missing dependency "' + name + '"!');
-					return false; // and just return false for reasons!
-				}
-				scope = scope[dependency]; // the scope exists, go to next dependency
+			if (!this.resolve(scope, '' + (dependency_object ? dependency.package : dependency))) {
+				// `resolve` couldn't find the key deep enough,
+				// so we'll either return false straight away or throw an exception!
+				if (loud && dependency_mandatory) throw new CylinderException('Missing dependency "' + name + '"!');
+				return false;
 			}
 
-			// if we reach here, the dependency exists!
+			// if we reach this point, the dependency exists!
 			// go to the next one
 		}
 
@@ -356,15 +413,16 @@ module.exports = CylinderException;
  * @param {Number}   options.width_max  - The maximum width.
  * @param {Number}   options.height_min - The mininum height.
  * @param {Number}   options.height_max - The maximum height.
- * @param {Function} options.callback<Number,Number,CylinderResizeRule> - A callback function defining the rule given a width and height. Must return a boolean.
+ * @param {Function} [options.callback<Number,Number,CylinderResizeRule>] - A callback function defining the rule given a width and height. Must return a boolean.
+ *                                                                          If not defined, the default callback (evaluating width only) is used.
  *
  * @example
  * // creates a new rule
  * var rule = new CylinderResizeRule({
- *     min_width: 0,
- *     max_width: 767,
+ *     width_min: 0,
+ *     width_max: 767,
  *     callback: function (width, height, rule) {
- *         return width >= rule.min_width && width <= rule.min_height;
+ *         return width >= rule.width_min && width <= rule.width_max;
  *     }
  * });
  *
@@ -876,10 +934,12 @@ module.exports = function (cylinder, module) {
 		})();
 	};
 
-	function middlewareGlobal (composition, args, finish) {
+	function middlewareGlobal (composition, args, options, finish) {
 		// this runs through every function in the global middleware!
 		// if there's no middleware, ignore.
-		if (middleware.length < 1) {
+		finish = typeof finish === 'function' ? finish : function () { };
+
+		if (options.exec === false || middleware.length < 1) {
 			return finish();
 		}
 
@@ -891,10 +951,12 @@ module.exports = function (cylinder, module) {
 		});
 	};
 
-	function middlewareSpecific (composition, args, finish) {
+	function middlewareSpecific (composition, args, options, finish) {
 		// this runs through every function in the route's specific middleware!
 		// if there's no middleware, ignore.
-		if (composition.middleware.length < 1) {
+		finish = typeof finish === 'function' ? finish : function () {};
+
+		if (options.exec === false || composition.middleware.length < 1) {
 			return finish();
 		}
 
@@ -908,6 +970,7 @@ module.exports = function (cylinder, module) {
 
 	function execute (callback, args, name) {
 		var composition = routes[name]; // current composed route
+		var options = this.options || {}; // store the last used options
 
 		// trim the argument list,
 		// since it always returns a "null" element
@@ -915,7 +978,7 @@ module.exports = function (cylinder, module) {
 
 		// here we run through potential global middleware,
 		// and then specific middleware, followed by the actual route callback!
-		return middlewareGlobal(composition, args, function () {
+		return middlewareGlobal(composition, args, options, function () {
 			router.previous_route = router.route; // save the previous route...
 			router.route = name; // set the current route...
 
@@ -948,7 +1011,7 @@ module.exports = function (cylinder, module) {
 			router.done = true;
 
 			// call the specific middleware now, and we're done!
-			return middlewareSpecific(composition, args);
+			return middlewareSpecific(composition, args, options);
 		});
 	};
 
@@ -1315,6 +1378,7 @@ module.exports = function (cylinder, module) {
 	 */
 	router.go = function (url, options, prefix) {
 		options = options || {}; // turn into a valid object
+		obj.options = options; // store last options
 
 		if (!_.isString(url)) {
 			var args = router.args.concat([ null ]);
@@ -2057,9 +2121,9 @@ module.exports = function (cylinder, module) {
 	templates.render = function (id, options, partials, trigger) {
 		var result = null;
 		var template = templates.get(id) || {
-			error: true,
 			parsed: true,
-			html: '!! Template "' + id + '" not found !!'
+			error: 'Template "' + id + '" not found',
+			html: id
 		};
 
 		// before actually rendering the result,
@@ -2071,7 +2135,7 @@ module.exports = function (cylinder, module) {
 
 		// and now we'll actually attempt to render the template,
 		// using the specified options and partials, along with defaults
-		if (!template.error && typeof templates.options.render === 'function') {
+		if (typeof templates.options.render === 'function') {
 			result = templates.options.render(
 				template,
 				cylinder.extend({}, templates.defaults, template.defaults, options),
@@ -2278,6 +2342,18 @@ module.exports = function (cylinder, module) {
 		var query = serialized || window.location.search.substring(1);
 		var vars = utils.unserialize(query);
 		return key in vars ? vars[key] : null;
+	};
+
+	/**
+	 * Clamps a numeric value.
+	 *
+	 * @param  {Number} min   - Minimum value.
+	 * @param  {Number} value - Value to clamp.
+	 * @param  {Number} max   - Maximum value.
+	 * @return {Number} The final clamped value.
+	 */
+	utils.clamp = function (min, value, max) {
+		return Math.max(min, Math.min(max, value));
 	};
 
 	return utils; // finish
