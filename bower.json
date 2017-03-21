@@ -21,15 +21,16 @@
     "docs",
     "grunt",
     "node_modules",
-    "node_modules",
     "bower_components",
+    ".vscode",
     "test",
     "tests",
+    "debug.log",
     "gruntfile.js",
     "jsdoc.json"
   ],
   "dependencies": {
-    "jquery": "^3.1.1",
+    "jquery": "^3.2.1",
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4",
     "backbone": "^1.3.3"
