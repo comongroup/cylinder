@@ -10,6 +10,8 @@ Utilities module for CylinderClass.
     * [.unserialize(str)](#module_utils.unserialize) ⇒ <code>Object</code>
     * [.query(key, [serialized])](#module_utils.query) ⇒ <code>String</code> &#124; <code>Null</code>
     * [.clamp(min, value, max)](#module_utils.clamp) ⇒ <code>Number</code>
+    * [.lerp(start, end, t)](#module_utils.lerp) ⇒ <code>Number</code>
+    * [.vlerp(arr, t)](#module_utils.vlerp) ⇒ <code>Number</code>
 
 
 * * *
@@ -131,6 +133,61 @@ Clamps a numeric value.
 </td>
     </tr><tr>
     <td>max</td><td><code>Number</code></td><td><p>Maximum value.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
+<a name="module_utils.lerp"></a>
+
+### utils.lerp(start, end, t) ⇒ <code>Number</code>
+Lerps between two given values.
+
+**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Returns**: <code>Number</code> - The final lerped value.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>start</td><td><code>Number</code></td><td><p>Starting value.</p>
+</td>
+    </tr><tr>
+    <td>end</td><td><code>Number</code></td><td><p>Ending value.</p>
+</td>
+    </tr><tr>
+    <td>t</td><td><code>Number</code></td><td><p>Lerp progress, should be between 0 and 1.</p>
+</td>
+    </tr>  </tbody>
+</table>
+
+
+* * *
+
+<a name="module_utils.vlerp"></a>
+
+### utils.vlerp(arr, t) ⇒ <code>Number</code>
+Lerps between the first two numeric values in an array.
+
+**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Returns**: <code>Number</code> - The final lerped value.  
+<table>
+  <thead>
+    <tr>
+      <th>Param</th><th>Type</th><th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr>
+    <td>arr</td><td><code>Number</code></td><td><p>Array with numeric values.</p>
+</td>
+    </tr><tr>
+    <td>t</td><td><code>Number</code></td><td><p>Lerp progress, should be between 0 and 1.</p>
 </td>
     </tr>  </tbody>
 </table>
