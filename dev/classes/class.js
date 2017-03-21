@@ -214,7 +214,6 @@ function CylinderClass () {
 	// We'll mix in the underscore and underscore.string modules,
 	// so that we don't have to mess with external files.
 	// We'll also add event handling to Cylinder.
-	this.extend(this._, { str: this.s }); // add underscore.string to underscore (legacy)
 	this.extend(this, Backbone.Events); // add events
 
 	/**

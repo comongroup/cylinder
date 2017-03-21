@@ -1,5 +1,5 @@
 /*
- * cylinder v1.0.0-alpha.3 (2017-02-15 15:49:47)
+ * cylinder v1.0.0-alpha.4 (2017-03-21 20:52:56)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -23,7 +23,7 @@ function CylinderClass () {
 	 * Framework version.
 	 * @return {String}
 	 */
-	this.version = '1.0.0-alpha.3';
+	this.version = '1.0.0-alpha.4';
 
 	/**
 	 * Checks if the framework has been initialized.
@@ -221,7 +221,6 @@ function CylinderClass () {
 	// We'll mix in the underscore and underscore.string modules,
 	// so that we don't have to mess with external files.
 	// We'll also add event handling to Cylinder.
-	this.extend(this._, { str: this.s }); // add underscore.string to underscore (legacy)
 	this.extend(this, Backbone.Events); // add events
 
 	/**
@@ -2354,6 +2353,33 @@ module.exports = function (cylinder, module) {
 	 */
 	utils.clamp = function (min, value, max) {
 		return Math.max(min, Math.min(max, value));
+	};
+
+	/**
+	 * Lerps between two given values.
+	 *
+	 * @param  {Number} start - Starting value.
+	 * @param  {Number} end   - Ending value.
+	 * @param  {Number} t     - Lerp progress, should be between 0 and 1.
+	 * @return {Number} The final lerped value.
+	 */
+	utils.lerp = function (start, end, t) {
+		return start + t * (end - start);
+	};
+
+	/**
+	 * Lerps between the first two numeric values in an array.
+	 *
+	 * @param  {Number} arr - Array with numeric values.
+	 * @param  {Number} t   - Lerp progress, should be between 0 and 1.
+	 * @return {Number} The final lerped value.
+	 */
+	utils.vlerp = function (arr, t) {
+		return utils.lerp(
+			typeof arr[0] === 'number' ? arr[0] : 0,
+			typeof arr[1] === 'number' ? arr[1] : 0,
+			t
+		);
 	};
 
 	return utils; // finish

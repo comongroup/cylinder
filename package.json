@@ -1,6 +1,6 @@
 {
   "name": "cylinder",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "HTML and Javascript framework for web applications",
   "repository": {
     "type": "git",
@@ -17,9 +17,9 @@
     "grunt-contrib-compress": "^1.4.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-uglify": "^2.2.0",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-jsdoc-to-markdown": "^2.0.0",
+    "grunt-jsdoc-to-markdown": "^3.0.0",
     "grunt-mustache-render": "^1.9.0",
     "load-grunt-config": "^0.19.1",
     "time-grunt": "^1.4.0"
