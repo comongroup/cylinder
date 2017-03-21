@@ -87,6 +87,33 @@ module.exports = function (cylinder, module) {
 		return Math.max(min, Math.min(max, value));
 	};
 
+	/**
+	 * Lerps between two given values.
+	 *
+	 * @param  {Number} start - Starting value.
+	 * @param  {Number} end   - Ending value.
+	 * @param  {Number} t     - Lerp progress, should be between 0 and 1.
+	 * @return {Number} The final lerped value.
+	 */
+	utils.lerp = function (start, end, t) {
+		return start + t * (end - start);
+	};
+
+	/**
+	 * Lerps between the first two numeric values in an array.
+	 *
+	 * @param  {Number} arr - Array with numeric values.
+	 * @param  {Number} t   - Lerp progress, should be between 0 and 1.
+	 * @return {Number} The final lerped value.
+	 */
+	utils.vlerp = function (arr, t) {
+		return utils.lerp(
+			typeof arr[0] === 'number' ? arr[0] : 0,
+			typeof arr[1] === 'number' ? arr[1] : 0,
+			t
+		);
+	};
+
 	return utils; // finish
 
 };
