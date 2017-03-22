@@ -1,5 +1,5 @@
 /*
- * cylinder v1.0.0-alpha.4 (2017-03-21 20:52:56)
+ * cylinder v1.0.0-alpha.5 (2017-03-22 21:50:08)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -23,7 +23,7 @@ function CylinderClass () {
 	 * Framework version.
 	 * @return {String}
 	 */
-	this.version = '1.0.0-alpha.4';
+	this.version = '1.0.0-alpha.5';
 
 	/**
 	 * Checks if the framework has been initialized.
@@ -100,6 +100,7 @@ function CylinderClass () {
 	this.resolve = function (parent, path, returns) {
 		// solver function, based on code from
 		// http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+		if (!parent) return returns; // return straight away if parent is falsy
 		if (!path || typeof path !== 'string') return returns; // return straight away if path doesn't exist
 
 		path = s.trim(path.replace(/\[(\w+)\]/g, '.$1'), '.'); // convert indexes to properties, and strip dots on each end
