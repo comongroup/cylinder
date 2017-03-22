@@ -93,8 +93,8 @@ function CylinderClass () {
 	this.resolve = function (parent, path, returns) {
 		// solver function, based on code from
 		// http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
-		if (!parent) return returns; // return straight away if parent is falsy
-		if (!path || typeof path !== 'string') return returns; // return straight away if path doesn't exist
+		if (parent == null) return returns; // return straight away if parent is falsy
+		if (path == null || typeof path !== 'string') return returns; // return straight away if path doesn't exist
 
 		path = s.trim(path.replace(/\[(\w+)\]/g, '.$1'), '.'); // convert indexes to properties, and strip dots on each end
 		var arr = path.split('.'); // separate to start solving vars
@@ -102,8 +102,9 @@ function CylinderClass () {
 
 		for (var i = 0, total = arr.length; i < total; i++) {
 			var key = arr[i];
-			if (!(key in result)) return returns; // return undefined if not found
-			result = result[key]; // but if we have stuff, keep going
+			var value = result[key];
+			if (value == null) return returns; // return undefined if not found
+			result = value; // but if we have stuff, keep going
 		}
 
 		return result; // return the result
