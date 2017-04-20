@@ -1,7 +1,7 @@
 <a name="module_CylinderControllers"></a>
 
 ## CylinderControllers ⇐ <code>CylinderClass</code>
-**Extends:** <code>CylinderClass</code>  
+**Extends**: <code>CylinderClass</code>  
 
 * [CylinderControllers](#module_CylinderControllers) ⇐ <code>CylinderClass</code>
     * [.controller(name, func)](#module_CylinderControllers.controller) ⇒ <code>Mixed</code>
