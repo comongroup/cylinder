@@ -237,7 +237,7 @@ module.exports = function (cylinder, _module) {
 		fetch: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
-			if (cylinder.dependency('localStorage', false)) {
+			if (cylinder.dependency('localStorage', true)) {
 				// only get values from localstorage
 				// if we have localstorage enabled.
 				var collection = JSON.parse(localStorage.getItem(model.namespace));
@@ -255,7 +255,7 @@ module.exports = function (cylinder, _module) {
 		save: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
-			if (cylinder.dependency('localStorage', false)) {
+			if (cylinder.dependency('localStorage', true)) {
 				// only save values to localstorage
 				// if we have localstorage enabled.
 				var collection = model.toJSON();
