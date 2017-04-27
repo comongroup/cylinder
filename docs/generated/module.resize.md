@@ -123,7 +123,8 @@ Returns a collection of names and their CylinderResizeRules.
 <a name="module_resize.trigger"></a>
 
 ### resize.trigger()
-Triggers a <code>resize</code> event on the instance this module is running on,providing it the current width and height of the window.
+Triggers a <code>resize</code> event on the instance this module is running on,
+providing it the current width and height of the window.
 
 **Kind**: static method of <code>[resize](#module_resize)</code>  
 

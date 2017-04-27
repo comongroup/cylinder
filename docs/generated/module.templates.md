@@ -153,7 +153,9 @@ Returns a template if it exists, and attempts to fetch from the local DOM if it 
 <a name="module_templates.load"></a>
 
 ### templates.load(...ids, [request]) ⇒ <code>Promise</code>
-Attempts to load a remote template.<br />If multiple strings are provided, the method will call <code>Promise.fail(err)</code> if one of them fails to load, regardless of whether others succeeded.<br /><br />Notice: this method should be considered and used as an asynchronous method.
+Attempts to load a remote template.<br />
+If multiple strings are provided, the method will call <code>Promise.fail(err)</code> if one of them fails to load, regardless of whether others succeeded.<br /><br />
+Notice: this method should be considered and used as an asynchronous method.
 
 **Kind**: static method of <code>[templates](#module_templates)</code>  
 **Returns**: <code>Promise</code> - Returns a Promise object.  
@@ -208,7 +210,10 @@ Renders a template.
 <a name="module_templates.apply"></a>
 
 ### templates.apply($el, id, [options], [partials]) ⇒ <code>Promise</code>
-Renders a template and applies it to a jQuery element.<br /><br />If the element is not a jQuery element, it will throw an exception.<br />If the template does not exist and 'options.load' is enabled, then it will attempt to load the template first.<br /><br />Notice: this method should be considered and used as an asynchronous method.
+Renders a template and applies it to a jQuery element.<br /><br />
+If the element is not a jQuery element, it will throw an exception.<br />
+If the template does not exist and 'options.load' is enabled, then it will attempt to load the template first.<br /><br />
+Notice: this method should be considered and used as an asynchronous method.
 
 **Kind**: static method of <code>[templates](#module_templates)</code>  
 **Returns**: <code>Promise</code> - Returns a Promise object.  
@@ -240,7 +245,12 @@ Renders a template and applies it to a jQuery element.<br /><br />If the elemen
 <a name="module_templates.replace"></a>
 
 ### templates.replace($el, [options], [partials]) ⇒ <code>Promise</code>
-Replaces the entire HTML of an element with a rendered version of it.<br /><br />This method will store the original HTML of the selected element in cache.If replace is called again on the same element, it will reuse that HTML instead of rendering on top of that rendered result.<br />If the element is not a jQuery element, it will throw an exception.<br /><br />Notice: this method is synchronous, however it still returns a promise objectin order to keep consistency between it and <code>apply()</code>, and should be used as such.
+Replaces the entire HTML of an element with a rendered version of it.<br /><br />
+This method will store the original HTML of the selected element in cache.
+If replace is called again on the same element, it will reuse that HTML instead of rendering on top of that rendered result.<br />
+If the element is not a jQuery element, it will throw an exception.<br /><br />
+Notice: this method is synchronous, however it still returns a promise object
+in order to keep consistency between it and <code>apply()</code>, and should be used as such.
 
 **Kind**: static method of <code>[templates](#module_templates)</code>  
 **Returns**: <code>Promise</code> - Returns a Promise object.  

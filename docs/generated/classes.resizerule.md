@@ -45,7 +45,21 @@ Creates a new rule to be used with the Cylinder/Resize module.
 
 **Example**  
 ```js
-// creates a new rulevar rule = new CylinderResizeRule({    min_width: 0,    max_width: 767,    callback: function (width, height, rule) {        return width >= rule.min_width && width <= rule.min_height;    }});// adds the rule into the moduleCylinder.resize.addRule('layout-xs', rule);// on a resize, if the callback returns true,// the name of the rule will be added as a class to the <body> element// example: <body class="layout-xs">
+// creates a new rule
+var rule = new CylinderResizeRule({
+    min_width: 0,
+    max_width: 767,
+    callback: function (width, height, rule) {
+        return width >= rule.min_width && width <= rule.min_height;
+    }
+});
+
+// adds the rule into the module
+Cylinder.resize.addRule('layout-xs', rule);
+
+// on a resize, if the callback returns true,
+// the name of the rule will be added as a class to the <body> element
+// example: <body class="layout-xs">
 ```
 
 * * *

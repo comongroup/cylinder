@@ -1,7 +1,8 @@
 <a name="module_scroll"></a>
 
 ## scroll
-Scroll module for CylinderClass.<br />This module extends on <a target="_blank" href="http://backbonejs.org/#Events">Backbone.Events</a>.
+Scroll module for CylinderClass.<br />
+This module extends on <a target="_blank" href="http://backbonejs.org/#Events">Backbone.Events</a>.
 
 
 * [scroll](#module_scroll)
@@ -113,7 +114,9 @@ Previous element's height + scrollTop.
 <a name="module_scroll.go"></a>
 
 ### scroll.go(left, top, [duration])
-Scrolls the current element to given coordinates.<br />A jQuery object can also be given instead of <code>left</code> and <code>top</code>,and the module will make the element's contents scroll into that object's left and top.
+Scrolls the current element to given coordinates.<br />
+A jQuery object can also be given instead of <code>left</code> and <code>top</code>,
+and the module will make the element's contents scroll into that object's left and top.
 
 **Kind**: static method of <code>[scroll](#module_scroll)</code>  
 <table>

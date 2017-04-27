@@ -1,5 +1,5 @@
 /*
- * cylinder v0.13.5 (2016-09-07 10:59:24)
+ * cylinder v0.13.6 (2017-04-27 11:14:11)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -22,7 +22,7 @@ function CylinderClass () {
 	 * Framework version.
 	 * @return {String}
 	 */
-	this.version = '0.13.5';
+	this.version = '0.13.6';
 
 	/**
 	 * Checks if the framework has been initialized.
@@ -1761,7 +1761,7 @@ module.exports = function (cylinder, _module) {
 		fetch: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
-			if (cylinder.dependency('localStorage', false)) {
+			if (cylinder.dependency('localStorage', true)) {
 				// only get values from localstorage
 				// if we have localstorage enabled.
 				var collection = JSON.parse(localStorage.getItem(model.namespace));
@@ -1779,7 +1779,7 @@ module.exports = function (cylinder, _module) {
 		save: function () {
 			var model = this;
 			var deferred = cylinder.$.Deferred();
-			if (cylinder.dependency('localStorage', false)) {
+			if (cylinder.dependency('localStorage', true)) {
 				// only save values to localstorage
 				// if we have localstorage enabled.
 				var collection = model.toJSON();

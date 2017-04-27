@@ -22,7 +22,8 @@
 <a name="new_CylinderClass_new"></a>
 
 ### new CylinderClass()
-Main framework class.Extends upon [Backbone.Events](http://backbonejs.org/#Events).
+Main framework class.
+Extends upon [Backbone.Events](http://backbonejs.org/#Events).
 
 
 * * *
@@ -75,7 +76,8 @@ Checks if the framework has been initialized.
 <a name="CylinderClass+dependency"></a>
 
 ### cylinderClass.dependency(...dependencies, [silent]) ⇒ <code>Boolean</code>
-Validate if a variable or a dependency exists.The framework will check if it exists in the global scope.
+Validate if a variable or a dependency exists.
+The framework will check if it exists in the global scope.
 
 **Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
 **Returns**: <code>Boolean</code> - Returns true if it exists, and throws an exception if it doesn't (unless the last argument is <code>true</code>).  
@@ -97,15 +99,39 @@ Validate if a variable or a dependency exists.The framework will check if it ex
 
 **Example**  
 ```js
-// throws an exception because "asdf" is not declared.// you can also specify objects for a cleaner exception output.Cylinder.dependency(    'async',    'jQuery',    { package: '_', name: 'underscore.js' },    { package: 's', name: 'underscore.string', scope: window, optional: true },    'Backbone',    'asdf');
+// throws an exception because "asdf" is not declared.
+// you can also specify objects for a cleaner exception output.
+
+Cylinder.dependency(
+    'async',
+    'jQuery',
+    { package: '_', name: 'underscore.js' },
+    { package: 's', name: 'underscore.string', scope: window, optional: true },
+    'Backbone',
+    'asdf'
+);
 ```
 **Example**  
 ```js
-// you can check for dependencies inside a variable// and the whole family tree will be checked from top-levelCylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
+// you can check for dependencies inside a variable
+// and the whole family tree will be checked from top-level
+
+Cylinder.dependency('$.fn.slick', 'Cylinder.router', 'Cylinder.resize');
 ```
 **Example**  
 ```js
-// if `true` is sent at the end, the method doesn't throw an exception// and allows the programmer to gracefully handle missing dependenciesif (Cylinder.dependency('$.fn.velocity', true)) {    // velocity is present    $('#element').velocity({ top: 0 });}else {    // velocity.js is not defined    // so the programmer can use a fallback    $('#element').animate({ top: 0 });}
+// if `true` is sent at the end, the method doesn't throw an exception
+// and allows the programmer to gracefully handle missing dependencies
+
+if (Cylinder.dependency('$.fn.velocity', true)) {
+    // velocity is present
+    $('#element').velocity({ top: 0 });
+}
+else {
+    // velocity.js is not defined
+    // so the programmer can use a fallback
+    $('#element').animate({ top: 0 });
+}
 ```
 
 * * *
@@ -113,7 +139,8 @@ Validate if a variable or a dependency exists.The framework will check if it ex
 <a name="CylinderClass+extend"></a>
 
 ### cylinderClass.extend(func, [extendOnInit]) ⇒ <code>Mixed</code>
-Extends the framework's core.<br />If <code>extendOnInit</code> is true, then the framework won't be extended until properly initialized.
+Extends the framework's core.<br />
+If <code>extendOnInit</code> is true, then the framework won't be extended until properly initialized.
 
 **Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
 **Returns**: <code>Mixed</code> - Returns the result of 'func' after evaluated.  
@@ -135,7 +162,15 @@ Extends the framework's core.<br />If <code>extendOnInit</code> is true, then t
 
 **Example**  
 ```js
-Cylinder.extend(function (cl) {    var extension = {};    extension.abc = 123;    extension.dfg = 456;    return extension;});console.log(Cylinder.abc); // 123console.log(Cylinder.dfg); // 456
+Cylinder.extend(function (cl) {
+    var extension = {};
+    extension.abc = 123;
+    extension.dfg = 456;
+    return extension;
+});
+
+console.log(Cylinder.abc); // 123
+console.log(Cylinder.dfg); // 456
 ```
 
 * * *
@@ -143,7 +178,9 @@ Cylinder.extend(function (cl) {    var extension = {};    extension.abc = 123;
 <a name="CylinderClass+module"></a>
 
 ### cylinderClass.module(name, func) ⇒ <code>Mixed</code>
-Extends the framework with a specific named module.<br />The module won't be added until the framework is properly initialized.When, or if, <code>initialize()</code> is called, then the module will be added as well.
+Extends the framework with a specific named module.<br />
+The module won't be added until the framework is properly initialized.
+When, or if, <code>initialize()</code> is called, then the module will be added as well.
 
 **Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
 **Returns**: <code>Mixed</code> - Returns the result of 'func' after evaluated.  
@@ -165,7 +202,14 @@ Extends the framework with a specific named module.<br />The module won't be ad
 
 **Example**  
 ```js
-Cylinder.module('mymodule', function (cl, module) {    module.alert = function (str) {        alert('abc');    };    return module;});Cylinder.mymodule.alert('hello!');
+Cylinder.module('mymodule', function (cl, module) {
+    module.alert = function (str) {
+        alert('abc');
+    };
+    return module;
+});
+
+Cylinder.mymodule.alert('hello!');
 ```
 
 * * *
@@ -182,7 +226,9 @@ Returns a list of existing modules.
 <a name="CylinderClass+init"></a>
 
 ### cylinderClass.init([callback]) ⇒ <code>[CylinderClass](#CylinderClass)</code>
-Properly initializes the framework and all of the modules and extensions added to it.<br />Keep in mind that modules will be initialized before any extensions whose <code>extendOnInit</code> property is true.<br />This method is based on jQuery's <code>$(document).ready()</code> shorthand.
+Properly initializes the framework and all of the modules and extensions added to it.<br />
+Keep in mind that modules will be initialized before any extensions whose <code>extendOnInit</code> property is true.<br />
+This method is based on jQuery's <code>$(document).ready()</code> shorthand.
 
 **Kind**: instance method of <code>[CylinderClass](#CylinderClass)</code>  
 **Returns**: <code>[CylinderClass](#CylinderClass)</code> - Returns the instance itself.  
@@ -201,7 +247,12 @@ Properly initializes the framework and all of the modules and extensions added t
 
 **Example**  
 ```js
-// initialize the current instance// onto a new, more type-friendly, variablevar cl = Cylinder.init(function () {    console.log('cylinder is initialized!');    console.log('modules present:', cl.modules());});
+// initialize the current instance
+// onto a new, more type-friendly, variable
+var cl = Cylinder.init(function () {
+    console.log('cylinder is initialized!');
+    console.log('modules present:', cl.modules());
+});
 ```
 
 * * *

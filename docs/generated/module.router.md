@@ -209,7 +209,8 @@ Returns the current router's full path (domain + root).
 <a name="module_router.start"></a>
 
 ### router.start([silent]) ⇒ <code>router</code>
-Starts the router.It will automatically start processing URL changes.
+Starts the router.
+It will automatically start processing URL changes.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
@@ -242,7 +243,8 @@ Stops the router.
 <a name="module_router.go"></a>
 
 ### router.go([url], [options], [prefix]) ⇒ <code>router</code>
-Changes the current URL to the one specified.<br />If <code>start()</code> wasn't called, then it will change URL location natively instead of going through the router's methods.
+Changes the current URL to the one specified.<br />
+If <code>start()</code> wasn't called, then it will change URL location natively instead of going through the router's methods.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
@@ -271,7 +273,8 @@ Changes the current URL to the one specified.<br />If <code>start()</code> wasn
 <a name="module_router.add"></a>
 
 ### router.add([name], syntax, ...middleware)
-Adds a handler to the router.This handler will be triggered every time the URL matches the syntax provided.
+Adds a handler to the router.
+This handler will be triggered every time the URL matches the syntax provided.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
 <table>
@@ -299,7 +302,8 @@ Adds a handler to the router.This handler will be triggered every time the URL 
 <a name="module_router.use"></a>
 
 ### router.use(func) ⇒ <code>router</code>
-Adds a middleware layer to the global router.The provided callback will be executed every time the URL changes.
+Adds a middleware layer to the global router.
+The provided callback will be executed every time the URL changes.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
@@ -322,7 +326,8 @@ Adds a middleware layer to the global router.The provided callback will be exec
 <a name="module_router.unuse"></a>
 
 ### router.unuse(func) ⇒ <code>router</code>
-Removes a middleware layer from the global router.You must provide the same callback you provided in <code>add()</code>, otherwise this method will do no good.
+Removes a middleware layer from the global router.
+You must provide the same callback you provided in <code>add()</code>, otherwise this method will do no good.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
@@ -345,7 +350,8 @@ Removes a middleware layer from the global router.You must provide the same cal
 <a name="module_router.addHandler"></a>
 
 ### router.addHandler([selector]) ⇒ <code>router</code>
-Adds an event handler that will capture all clicks on internal site links, and calls the module's <code>go()</code> method.<br />The default selector will not capture clicks on hyperlinks with the [data-bypass] attribute.
+Adds an event handler that will capture all clicks on internal site links, and calls the module's <code>go()</code> method.<br />
+The default selector will not capture clicks on hyperlinks with the [data-bypass] attribute.
 
 **Kind**: static method of <code>[router](#module_router)</code>  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  

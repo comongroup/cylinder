@@ -38,7 +38,9 @@ Removes all HTML from a string.
 <a name="module_utils.unserialize"></a>
 
 ### utils.unserialize(string) ⇒ <code>Object</code>
-Unserializes a string into an object.<br /><br />This method is based on the implementation by Bruce Kirkpatrick.<br /><a target="_blank" href="https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581">https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581</a>
+Unserializes a string into an object.<br /><br />
+This method is based on the implementation by Bruce Kirkpatrick.<br />
+<a target="_blank" href="https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581">https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581</a>
 
 **Kind**: static method of <code>[utils](#module_utils)</code>  
 **Returns**: <code>Object</code> - - The string, unserialized into an object.  
