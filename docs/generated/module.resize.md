@@ -13,7 +13,7 @@ Resize module for CylinderClass.
     * [.rules()](#module_resize.rules) ⇒ <code>Array.&lt;CylinderResizeRule&gt;</code>
     * [.addRule(name, rule)](#module_resize.addRule)
     * [.getRule(name)](#module_resize.getRule) ⇒ <code>CylinderResizeRule</code>
-    * [.getCurrentRules(objects)](#module_resize.getCurrentRules) ⇒ <code>Array</code> &#124; <code>Object</code>
+    * [.getCurrentRules(objects)](#module_resize.getCurrentRules) ⇒ <code>Array</code> \| <code>Object</code>
     * [.removeRule(name)](#module_resize.removeRule)
     * [.trigger([triggerWindowResize])](#module_resize.trigger)
 
@@ -25,7 +25,7 @@ Resize module for CylinderClass.
 ### resize.done : <code>Boolean</code>
 Has the window been resized?
 
-**Kind**: static property of <code>[resize](#module_resize)</code>  
+**Kind**: static property of [<code>resize</code>](#module_resize)  
 
 * * *
 
@@ -34,7 +34,7 @@ Has the window been resized?
 ### resize.width : <code>Number</code>
 Current window width.
 
-**Kind**: static property of <code>[resize](#module_resize)</code>  
+**Kind**: static property of [<code>resize</code>](#module_resize)  
 
 * * *
 
@@ -43,7 +43,7 @@ Current window width.
 ### resize.height : <code>Number</code>
 Current window height.
 
-**Kind**: static property of <code>[resize](#module_resize)</code>  
+**Kind**: static property of [<code>resize</code>](#module_resize)  
 
 * * *
 
@@ -52,7 +52,7 @@ Current window height.
 ### resize.previous_width : <code>Number</code>
 Previous window width.
 
-**Kind**: static property of <code>[resize](#module_resize)</code>  
+**Kind**: static property of [<code>resize</code>](#module_resize)  
 
 * * *
 
@@ -61,7 +61,7 @@ Previous window width.
 ### resize.previous_height : <code>Number</code>
 Previous window height.
 
-**Kind**: static property of <code>[resize](#module_resize)</code>  
+**Kind**: static property of [<code>resize</code>](#module_resize)  
 
 * * *
 
@@ -70,7 +70,7 @@ Previous window height.
 ### resize.rules() ⇒ <code>Array.&lt;CylinderResizeRule&gt;</code>
 Returns a collection of names and their CylinderResizeRules.
 
-**Kind**: static method of <code>[resize](#module_resize)</code>  
+**Kind**: static method of [<code>resize</code>](#module_resize)  
 **Returns**: <code>Array.&lt;CylinderResizeRule&gt;</code> - The collection of rules.  
 
 * * *
@@ -80,7 +80,7 @@ Returns a collection of names and their CylinderResizeRules.
 ### resize.addRule(name, rule)
 Adds a rule to the module.
 
-**Kind**: static method of <code>[resize](#module_resize)</code>  
+**Kind**: static method of [<code>resize</code>](#module_resize)  
 <table>
   <thead>
     <tr>
@@ -105,7 +105,7 @@ Adds a rule to the module.
 ### resize.getRule(name) ⇒ <code>CylinderResizeRule</code>
 Returns a specific CylinderResizeRules instance from the module.
 
-**Kind**: static method of <code>[resize](#module_resize)</code>  
+**Kind**: static method of [<code>resize</code>](#module_resize)  
 **Returns**: <code>CylinderResizeRule</code> - Rule instance.  
 <table>
   <thead>
@@ -125,11 +125,13 @@ Returns a specific CylinderResizeRules instance from the module.
 
 <a name="module_resize.getCurrentRules"></a>
 
-### resize.getCurrentRules(objects) ⇒ <code>Array</code> &#124; <code>Object</code>
-Returns a list of currently applied rules.If `true` is passed to the method, it will return an objectmatching the names against the rules' instances themselves.
+### resize.getCurrentRules(objects) ⇒ <code>Array</code> \| <code>Object</code>
+Returns a list of currently applied rules.
+If `true` is passed to the method, it will return an object
+matching the names against the rules' instances themselves.
 
-**Kind**: static method of <code>[resize](#module_resize)</code>  
-**Returns**: <code>Array</code> &#124; <code>Object</code> - List (or dictionary) of currently applied rules.  
+**Kind**: static method of [<code>resize</code>](#module_resize)  
+**Returns**: <code>Array</code> \| <code>Object</code> - List (or dictionary) of currently applied rules.  
 <table>
   <thead>
     <tr>
@@ -151,7 +153,7 @@ Returns a list of currently applied rules.If `true` is passed to the method, it
 ### resize.removeRule(name)
 Removes a rule from the module.
 
-**Kind**: static method of <code>[resize](#module_resize)</code>  
+**Kind**: static method of [<code>resize</code>](#module_resize)  
 <table>
   <thead>
     <tr>
@@ -171,9 +173,10 @@ Removes a rule from the module.
 <a name="module_resize.trigger"></a>
 
 ### resize.trigger([triggerWindowResize])
-Triggers a <code>resize</code> event on the instance this module is running on,providing it the current width and height of the window.
+Triggers a <code>resize</code> event on the instance this module is running on,
+providing it the current width and height of the window.
 
-**Kind**: static method of <code>[resize](#module_resize)</code>  
+**Kind**: static method of [<code>resize</code>](#module_resize)  
 <table>
   <thead>
     <tr>

@@ -1,5 +1,5 @@
 /*
- * cylinder v1.0.0-alpha.5 (2017-03-22 22:12:55)
+ * cylinderjs v1.0.0-alpha.6 (2017-08-23 15:26:38)
  * @author Luís Soares <luis.soares@comon.pt>
  */
 
@@ -23,7 +23,7 @@ function CylinderClass () {
 	 * Framework version.
 	 * @return {String}
 	 */
-	this.version = '1.0.0-alpha.5';
+	this.version = '1.0.0-alpha.6';
 
 	/**
 	 * Checks if the framework has been initialized.

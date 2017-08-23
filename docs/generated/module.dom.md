@@ -22,7 +22,7 @@ DOM management module for CylinderClass.
 ### dom.options : <code>Object</code>
 The options taken by the module.
 
-**Kind**: static property of <code>[dom](#module_dom)</code>  
+**Kind**: static property of [<code>dom</code>](#module_dom)  
 **Properties**
 
 <table>
@@ -46,7 +46,7 @@ The options taken by the module.
 ### dom.$window : <code>jQueryObject</code>
 The cached element for the <code>window</code> DOM object.
 
-**Kind**: static property of <code>[dom](#module_dom)</code>  
+**Kind**: static property of [<code>dom</code>](#module_dom)  
 
 * * *
 
@@ -55,7 +55,7 @@ The cached element for the <code>window</code> DOM object.
 ### dom.$document : <code>jQueryObject</code>
 The cached element for the <code>document</code> DOM object.
 
-**Kind**: static property of <code>[dom](#module_dom)</code>  
+**Kind**: static property of [<code>dom</code>](#module_dom)  
 
 * * *
 
@@ -64,7 +64,7 @@ The cached element for the <code>document</code> DOM object.
 ### dom.$html : <code>jQueryObject</code>
 The cached element for <code>&lt;html&gt;</code>.
 
-**Kind**: static property of <code>[dom](#module_dom)</code>  
+**Kind**: static property of [<code>dom</code>](#module_dom)  
 
 * * *
 
@@ -73,7 +73,7 @@ The cached element for <code>&lt;html&gt;</code>.
 ### dom.$head : <code>jQueryObject</code>
 The cached element for <code>&lt;head&gt;</code>.
 
-**Kind**: static property of <code>[dom](#module_dom)</code>  
+**Kind**: static property of [<code>dom</code>](#module_dom)  
 
 * * *
 
@@ -82,7 +82,7 @@ The cached element for <code>&lt;head&gt;</code>.
 ### dom.$body : <code>jQueryObject</code>
 The cached element for <code>&lt;body&gt;</code>.
 
-**Kind**: static property of <code>[dom](#module_dom)</code>  
+**Kind**: static property of [<code>dom</code>](#module_dom)  
 
 * * *
 
@@ -91,7 +91,7 @@ The cached element for <code>&lt;body&gt;</code>.
 ### dom.title(value, override)
 Changes the tab's title and unescapes characters as needed.
 
-**Kind**: static method of <code>[dom](#module_dom)</code>  
+**Kind**: static method of [<code>dom</code>](#module_dom)  
 <table>
   <thead>
     <tr>
@@ -116,7 +116,7 @@ Changes the tab's title and unescapes characters as needed.
 ### dom.meta(obj)
 Changes meta tags.
 
-**Kind**: static method of <code>[dom](#module_dom)</code>  
+**Kind**: static method of [<code>dom</code>](#module_dom)  
 <table>
   <thead>
     <tr>

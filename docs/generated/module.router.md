@@ -35,7 +35,7 @@ Router module for CylinderClass.
 ### router.options : <code>Object</code>
 The options taken by the module.
 
-**Kind**: static property of <code>[router](#module_router)</code>  
+**Kind**: static property of [<code>router</code>](#module_router)  
 **Properties**
 
 <table>
@@ -73,7 +73,7 @@ The options taken by the module.
 ### router.done : <code>Boolean</code>
 Has the router triggered?
 
-**Kind**: static property of <code>[router](#module_router)</code>  
+**Kind**: static property of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -82,7 +82,7 @@ Has the router triggered?
 ### router.url : <code>String</code>
 Current router URL.
 
-**Kind**: static property of <code>[router](#module_router)</code>  
+**Kind**: static property of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -91,7 +91,7 @@ Current router URL.
 ### router.route : <code>String</code>
 Current route name.
 
-**Kind**: static property of <code>[router](#module_router)</code>  
+**Kind**: static property of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -100,7 +100,7 @@ Current route name.
 ### router.args : <code>Array</code>
 Current route arguments.
 
-**Kind**: static property of <code>[router](#module_router)</code>  
+**Kind**: static property of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -109,7 +109,7 @@ Current route arguments.
 ### router.previous_url : <code>String</code>
 Previous router URL.
 
-**Kind**: static property of <code>[router](#module_router)</code>  
+**Kind**: static property of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -118,7 +118,7 @@ Previous router URL.
 ### router.previous_route : <code>String</code>
 Previous route name.
 
-**Kind**: static property of <code>[router](#module_router)</code>  
+**Kind**: static property of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -127,7 +127,7 @@ Previous route name.
 ### router.previous_args : <code>Array</code>
 Previous route arguments.
 
-**Kind**: static property of <code>[router](#module_router)</code>  
+**Kind**: static property of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -136,7 +136,7 @@ Previous route arguments.
 ### router.domain() ⇒ <code>String</code>
 Returns the current router's domain.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -145,7 +145,7 @@ Returns the current router's domain.
 ### router.root() ⇒ <code>String</code>
 Returns the current router's root path.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -154,7 +154,7 @@ Returns the current router's root path.
 ### router.path() ⇒ <code>String</code>
 Returns the current router's full path (domain + root).
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 
 * * *
 
@@ -163,7 +163,7 @@ Returns the current router's full path (domain + root).
 ### router.setup([domain], [root]) ⇒ <code>router</code>
 Sets up the domain and root this router will operate on.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
 <table>
   <thead>
@@ -187,9 +187,10 @@ Sets up the domain and root this router will operate on.
 <a name="module_router.start"></a>
 
 ### router.start([silent]) ⇒ <code>router</code>
-Starts the router.It will automatically start processing URL changes.
+Starts the router.
+It will automatically start processing URL changes.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
 <table>
   <thead>
@@ -212,7 +213,7 @@ Starts the router.It will automatically start processing URL changes.
 ### router.stop() ⇒ <code>router</code>
 Stops the router.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
 
 * * *
@@ -220,9 +221,10 @@ Stops the router.
 <a name="module_router.use"></a>
 
 ### router.use(...functions) ⇒ <code>router</code>
-Adds a middleware layer to the global router.The provided callback will be executed every time the URL changes.
+Adds a middleware layer to the global router.
+The provided callback will be executed every time the URL changes.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
 <table>
   <thead>
@@ -241,11 +243,48 @@ Adds a middleware layer to the global router.The provided callback will be exec
 
 **Example**  
 ```js
-// this middleware can be used to check stuff in the new path.// for example, to update something in the app everytime the route changesCylinder.router.use(function (name, args, next) {    console.log(name); // name of the matched route, ex: "my-route"    console.log(args); // array of matched arguments, ex: ["hey", "john"]    next(); // keep the chain going.});
+// this middleware can be used to check stuff in the new path.
+// for example, to update something in the app everytime the route changes
+
+Cylinder.router.use(function (name, args, next) {
+    console.log(name); // name of the matched route, ex: "my-route"
+    console.log(args); // array of matched arguments, ex: ["hey", "john"]
+    next(); // keep the chain going.
+});
 ```
 **Example**  
 ```js
-// one good example of middleware is for authentication purposes,// for instance, if you probably need all of your routes protected,// so let's check if there's tokens and whatnotvar userData = null; // would be an object if logged invar userToken = null; // would be a stringvar unprotectedRoutes = ['login', 'register']; // routes that don't need login, but shouldn't be accessed if there is loginvar urlToRedirectAfterLogin = null; // URL to redirect the user after loginCylinder.router.use(function (name, args, next) {    if (unprotectedRoutes.indexOf(name) > -1) {        // we entered an unprotected route that shouldn't        // be entered unless we're logged out        if (userToken !== null) {            Cylinder.router.go('home');  // login has been made, so go to next            return; // stop processing here        }    }    if (userToken === null) {        // no login, let's redirect to the login page        urlToRedirectAfterLogin = Cylinder.router.url;        Cylinder.router.go('login');        return;    }    // no issues encountered?    // then let the user through!    next();});
+// one good example of middleware is for authentication purposes,
+// for instance, if you probably need all of your routes protected,
+// so let's check if there's tokens and whatnot
+
+var userData = null; // would be an object if logged in
+var userToken = null; // would be a string
+
+var unprotectedRoutes = ['login', 'register']; // routes that don't need login, but shouldn't be accessed if there is login
+var urlToRedirectAfterLogin = null; // URL to redirect the user after login
+
+Cylinder.router.use(function (name, args, next) {
+    if (unprotectedRoutes.indexOf(name) > -1) {
+        // we entered an unprotected route that shouldn't
+        // be entered unless we're logged out
+        if (userToken !== null) {
+            Cylinder.router.go('home');  // login has been made, so go to next
+            return; // stop processing here
+        }
+    }
+
+    if (userToken === null) {
+        // no login, let's redirect to the login page
+        urlToRedirectAfterLogin = Cylinder.router.url;
+        Cylinder.router.go('login');
+        return;
+    }
+
+    // no issues encountered?
+    // then let the user through!
+    next();
+});
 ```
 
 * * *
@@ -253,9 +292,10 @@ Adds a middleware layer to the global router.The provided callback will be exec
 <a name="module_router.unuse"></a>
 
 ### router.unuse(...functions) ⇒ <code>router</code>
-Removes a middleware layer from the global router.You must provide the same callback you provided in <code>add()</code>, otherwise this method will do no good.
+Removes a middleware layer from the global router.
+You must provide the same callback you provided in <code>add()</code>, otherwise this method will do no good.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
 <table>
   <thead>
@@ -276,9 +316,10 @@ Removes a middleware layer from the global router.You must provide the same cal
 <a name="module_router.add"></a>
 
 ### router.add([name], syntax, ...callbacks)
-Adds a handler to the router.This handler will be triggered every time the URL matches the syntax provided.
+Adds a handler to the router.
+This handler will be triggered every time the URL matches the syntax provided.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 <table>
   <thead>
     <tr>
@@ -305,7 +346,25 @@ Adds a handler to the router.This handler will be triggered every time the URL 
 
 **Example**  
 ```js
-// route with multiple callbacks,// in order to keep stuff organizedCylinder.router.add(    'my-route',    'test/:abc/:def',    function (abc, def, next) {        // intermediate function in chain,        // this can be used to validate something        if (abc === 'hey') {            throw 'You cannot hey me!';        }        next(); // no errors? keep going    },    function (abc, def) {        // final callback in chain,        // ...    });
+// route with multiple callbacks,
+// in order to keep stuff organized
+
+Cylinder.router.add(
+    'my-route',
+    'test/:abc/:def',
+    function (abc, def, next) {
+        // intermediate function in chain,
+        // this can be used to validate something
+        if (abc === 'hey') {
+            throw 'You cannot hey me!';
+        }
+        next(); // no errors? keep going
+    },
+    function (abc, def) {
+        // final callback in chain,
+        // ...
+    }
+);
 ```
 
 * * *
@@ -313,9 +372,10 @@ Adds a handler to the router.This handler will be triggered every time the URL 
 <a name="module_router.addHandler"></a>
 
 ### router.addHandler([selector]) ⇒ <code>router</code>
-Adds an event handler that will capture all clicks on internal site links, and calls the module's <code>go()</code> method.<br />The default selector will not capture clicks on hyperlinks with the [data-bypass] attribute.
+Adds an event handler that will capture all clicks on internal site links, and calls the module's <code>go()</code> method.<br />
+The default selector will not capture clicks on hyperlinks with the [data-bypass] attribute.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
 <table>
   <thead>
@@ -339,7 +399,7 @@ Adds an event handler that will capture all clicks on internal site links, and c
 ### router.removeHandler([selector]) ⇒ <code>router</code>
 Removes the event handler added by <code>addHandler()</code>.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
 <table>
   <thead>
@@ -361,9 +421,10 @@ Removes the event handler added by <code>addHandler()</code>.
 <a name="module_router.go"></a>
 
 ### router.go([url], [options], [prefix]) ⇒ <code>router</code>
-Changes the current URL to the one specified.<br />If <code>start()</code> wasn't called, then it will change URL location natively instead of going through the router's methods.
+Changes the current URL to the one specified.<br />
+If <code>start()</code> wasn't called, then it will change URL location natively instead of going through the router's methods.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 **Returns**: <code>router</code> - Returns the module itself, to ease chaining.  
 <table>
   <thead>
@@ -392,7 +453,7 @@ Changes the current URL to the one specified.<br />If <code>start()</code> wasn
 ### router.reload([delay])
 Reloads the page instantaneously, unless a delay is set.
 
-**Kind**: static method of <code>[router](#module_router)</code>  
+**Kind**: static method of [<code>router</code>](#module_router)  
 <table>
   <thead>
     <tr>

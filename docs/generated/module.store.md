@@ -18,9 +18,11 @@ Store module for CylinderClass.
 <a name="module_store.Model"></a>
 
 ### store.Model : <code>Model</code>
-Default model that can and should be used to create new data models.<br />The model is based on the standard <a href="http://backbonejs.org/#Model" target="_blank">Backbone.Model</a>, and uses the same methods.You are free to override what this module considers as the main data model methods: <code>fetch()</code>, <code>save()</code>, and <code>destroy()</code>.
+Default model that can and should be used to create new data models.<br />
+The model is based on the standard <a href="http://backbonejs.org/#Model" target="_blank">Backbone.Model</a>, and uses the same methods.
+You are free to override what this module considers as the main data model methods: <code>fetch()</code>, <code>save()</code>, and <code>destroy()</code>.
 
-**Kind**: static property of <code>[store](#module_store)</code>  
+**Kind**: static property of [<code>store</code>](#module_store)  
 **Properties**
 
 <table>
@@ -44,11 +46,53 @@ Default model that can and should be used to create new data models.<br />The m
 
 **Example**  
 ```js
-// the following example creates a new model that will// take advantage of the browser's local storage.// Notice: Cylinder.store comes with a localstorage model by default!var LocalStorageModel = Cylinder.store.Model.extend({    namespace: 'abc',    fetch: function () {        // load the object in localStorage to the model        this.set(window.localStorage[this.namespace]);    },    save: function () {        // save the model as a plain object to localStorage        window.localStorage[this.namespace] = this.toJSON();    }});// we now add the model to the moduleCylinder.store.use('localstorage', new LocalStorageModel);// we switch the store's context to always use it// and use the get/set/unset/clear methodsCylinder.store.switch('localstorage');Cylinder.store.set('abc', 123);// we can also fetch the model directly and chain operations without switching contexts.// just be wary that some operations may not return the model itself, like .get() or .toJSON().Cylinder.with('localstorage').set('def', 456).unset('abc').toJSON();
+// the following example creates a new model that will
+// take advantage of the browser's local storage.
+// Notice: Cylinder.store comes with a localstorage model by default!
+var LocalStorageModel = Cylinder.store.Model.extend({
+    namespace: 'abc',
+    fetch: function () {
+        // load the object in localStorage to the model
+        this.set(window.localStorage[this.namespace]);
+    },
+    save: function () {
+        // save the model as a plain object to localStorage
+        window.localStorage[this.namespace] = this.toJSON();
+    }
+});
+
+// we now add the model to the module
+Cylinder.store.use('localstorage', new LocalStorageModel);
+
+// we switch the store's context to always use it
+// and use the get/set/unset/clear methods
+Cylinder.store.switch('localstorage');
+Cylinder.store.set('abc', 123);
+
+// we can also fetch the model directly and chain operations without switching contexts.
+// just be wary that some operations may not return the model itself, like .get() or .toJSON().
+Cylinder.with('localstorage').set('def', 456).unset('abc').toJSON();
 ```
 **Example**  
 ```js
-// the following doesn't take advantage of the Model,// but is an example of how to simply register a new data model// without having to extend the default model, since .use() will// automatically detect the type of object and convert it.Cylinder.store.use('localstorage', {    namespace: 'abc',    fetch: function () {        // load the object in localStorage to the model        this.set(window.localStorage[this.namespace]);    },    save: function () {        // save the model as a plain object to localStorage        window.localStorage[this.namespace] = this.toJSON();    }});Cylinder.store.switch('localstorage');Cylinder.store.set('abc', 123);
+// the following doesn't take advantage of the Model,
+// but is an example of how to simply register a new data model
+// without having to extend the default model, since .use() will
+// automatically detect the type of object and convert it.
+Cylinder.store.use('localstorage', {
+    namespace: 'abc',
+    fetch: function () {
+        // load the object in localStorage to the model
+        this.set(window.localStorage[this.namespace]);
+    },
+    save: function () {
+        // save the model as a plain object to localStorage
+        window.localStorage[this.namespace] = this.toJSON();
+    }
+});
+
+Cylinder.store.switch('localstorage');
+Cylinder.store.set('abc', 123);
 ```
 
 * * *
@@ -56,9 +100,11 @@ Default model that can and should be used to create new data models.<br />The m
 <a name="module_store.use"></a>
 
 ### store.use(name, obj) ⇒ <code>Model</code>
-Adds a model to the data store.<br />The object provided can be either an already initialized instance of a data model,an uninstanced data model, or a plain object that will be converted to a new data model.
+Adds a model to the data store.<br />
+The object provided can be either an already initialized instance of a data model,
+an uninstanced data model, or a plain object that will be converted to a new data model.
 
-**Kind**: static method of <code>[store](#module_store)</code>  
+**Kind**: static method of [<code>store</code>](#module_store)  
 **Returns**: <code>Model</code> - Returns the model itself after being added and initialized.  
 <table>
   <thead>
@@ -84,7 +130,7 @@ Adds a model to the data store.<br />The object provided can be either an alrea
 ### store.unuse(name) ⇒ <code>Model</code>
 Removes a model from the data store.
 
-**Kind**: static method of <code>[store](#module_store)</code>  
+**Kind**: static method of [<code>store</code>](#module_store)  
 **Returns**: <code>Model</code> - Returns the model itself after being removed.  
 <table>
   <thead>
@@ -107,7 +153,7 @@ Removes a model from the data store.
 ### store.models() ⇒ <code>Array</code>
 Returns a list of existing models.
 
-**Kind**: static method of <code>[store](#module_store)</code>  
+**Kind**: static method of [<code>store</code>](#module_store)  
 
 * * *
 
@@ -116,7 +162,7 @@ Returns a list of existing models.
 ### store.with(name, exception) ⇒ <code>Model</code>
 Returns a previously registered data model.
 
-**Kind**: static method of <code>[store](#module_store)</code>  
+**Kind**: static method of [<code>store</code>](#module_store)  
 **Returns**: <code>Model</code> - Returns the model itself, or null if it's not found and <code>exception</code> is <code>false</code>.  
 <table>
   <thead>
@@ -140,9 +186,22 @@ Returns a previously registered data model.
 <a name="module_store.switch"></a>
 
 ### store.switch(name) ⇒ <code>Model</code>
-Switches store contexts to a previously registered data model.<br /><br />After switching, the following methods are available on the module:<br /><ul><li><a href="http://backbonejs.org/#Model-fetch" target="_blank">fetch()</a></li><li><a href="http://backbonejs.org/#Model-save" target="_blank">save()</a></li><li><a href="http://backbonejs.org/#Model-destroy" target="_blank">destroy()</a></li><li><a href="http://backbonejs.org/#Model-get" target="_blank">get()</a></li><li><a href="http://backbonejs.org/#Model-escape" target="_blank">escape()</a></li><li><a href="http://backbonejs.org/#Model-set" target="_blank">set()</a></li><li><a href="http://backbonejs.org/#Model-has" target="_blank">has()</a></li><li><a href="http://backbonejs.org/#Model-unset" target="_blank">unset()</a></li><li><a href="http://backbonejs.org/#Model-clear" target="_blank">clear()</a></li><li><a href="http://backbonejs.org/#Model-toJSON" target="_blank">toJSON()</a></li></ul>
+Switches store contexts to a previously registered data model.<br /><br />
+After switching, the following methods are available on the module:<br />
+<ul>
+<li><a href="http://backbonejs.org/#Model-fetch" target="_blank">fetch()</a></li>
+<li><a href="http://backbonejs.org/#Model-save" target="_blank">save()</a></li>
+<li><a href="http://backbonejs.org/#Model-destroy" target="_blank">destroy()</a></li>
+<li><a href="http://backbonejs.org/#Model-get" target="_blank">get()</a></li>
+<li><a href="http://backbonejs.org/#Model-escape" target="_blank">escape()</a></li>
+<li><a href="http://backbonejs.org/#Model-set" target="_blank">set()</a></li>
+<li><a href="http://backbonejs.org/#Model-has" target="_blank">has()</a></li>
+<li><a href="http://backbonejs.org/#Model-unset" target="_blank">unset()</a></li>
+<li><a href="http://backbonejs.org/#Model-clear" target="_blank">clear()</a></li>
+<li><a href="http://backbonejs.org/#Model-toJSON" target="_blank">toJSON()</a></li>
+</ul>
 
-**Kind**: static method of <code>[store](#module_store)</code>  
+**Kind**: static method of [<code>store</code>](#module_store)  
 **Returns**: <code>Model</code> - Returns the model itself after switching.  
 <table>
   <thead>
@@ -159,7 +218,9 @@ Switches store contexts to a previously registered data model.<br /><br />After
 
 **Example**  
 ```js
-Cylinder.store.switch('localstorage'); // switches the "Cylinder.store" contextCylinder.store.set('abc', 123); // sets 'abc' on localStorageCylinder.store.get('abc'); // => 123
+Cylinder.store.switch('localstorage'); // switches the "Cylinder.store" context
+Cylinder.store.set('abc', 123); // sets 'abc' on localStorage
+Cylinder.store.get('abc'); // => 123
 ```
 
 * * *

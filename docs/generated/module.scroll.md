@@ -1,7 +1,8 @@
 <a name="module_scroll"></a>
 
 ## scroll
-Scroll module for CylinderClass.<br />This module extends on <a target="_blank" href="http://backbonejs.org/#Events">Backbone.Events</a>.
+Scroll module for CylinderClass.<br />
+This module extends on <a target="_blank" href="http://backbonejs.org/#Events">Backbone.Events</a>.
 
 
 * [scroll](#module_scroll)
@@ -25,7 +26,7 @@ Scroll module for CylinderClass.<br />This module extends on <a target="_blank"
 ### scroll.$el : <code>jQueryObject</code>
 The main element being targeted.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -34,7 +35,7 @@ The main element being targeted.
 ### scroll.done : <code>Boolean</code>
 Has the element been scrolled?
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -43,7 +44,7 @@ Has the element been scrolled?
 ### scroll.left : <code>Number</code>
 Current element's scrollLeft.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -52,7 +53,7 @@ Current element's scrollLeft.
 ### scroll.top : <code>Number</code>
 Current element's scrollTop.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -61,7 +62,7 @@ Current element's scrollTop.
 ### scroll.right : <code>Number</code>
 Current element's width + scrollLeft.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -70,7 +71,7 @@ Current element's width + scrollLeft.
 ### scroll.bottom : <code>Number</code>
 Current element's height + scrollTop.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -79,7 +80,7 @@ Current element's height + scrollTop.
 ### scroll.previous_left : <code>Number</code>
 Previous element's scrollLeft.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -88,7 +89,7 @@ Previous element's scrollLeft.
 ### scroll.previous_top : <code>Number</code>
 Previous element's scrollTop.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -97,7 +98,7 @@ Previous element's scrollTop.
 ### scroll.previous_right : <code>Number</code>
 Previous element's width + scrollLeft.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
@@ -106,16 +107,18 @@ Previous element's width + scrollLeft.
 ### scroll.previous_bottom : <code>Number</code>
 Previous element's height + scrollTop.
 
-**Kind**: static property of <code>[scroll](#module_scroll)</code>  
+**Kind**: static property of [<code>scroll</code>](#module_scroll)  
 
 * * *
 
 <a name="module_scroll.go"></a>
 
 ### scroll.go(left, top, [duration])
-Scrolls the current element to given coordinates.<br />A jQuery object can also be given instead of <code>left</code> and <code>top</code>,and the module will make the element's contents scroll into that object's left and top.
+Scrolls the current element to given coordinates.<br />
+A jQuery object can also be given instead of <code>left</code> and <code>top</code>,
+and the module will make the element's contents scroll into that object's left and top.
 
-**Kind**: static method of <code>[scroll](#module_scroll)</code>  
+**Kind**: static method of [<code>scroll</code>](#module_scroll)  
 <table>
   <thead>
     <tr>
