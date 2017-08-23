@@ -1,14 +1,14 @@
 {
-  "name": "cylinder",
-  "version": "1.0.0-alpha.5",
+  "name": "cylinderjs",
+  "version": "1.0.0-alpha.6",
   "description": "Javascript framework for web applications",
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/comondev/cylinder.git"
+    "url": "git+https://github.com/comongroup/cylinderjs.git"
   },
   "author": "Luís Soares <luis.soares@comon.pt>",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/comondev/cylinder#readme",
+  "homepage": "https://comongroup.github.com/cylinderjs/",
   "devDependencies": {
     "bower": "^1.8.0",
     "grunt": "^1.0.1",

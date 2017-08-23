@@ -8,7 +8,7 @@ Utilities module for CylinderClass.
     * [.string(obj)](#module_utils.string) ⇒ <code>String</code>
     * [.text(str)](#module_utils.text) ⇒ <code>String</code>
     * [.unserialize(str)](#module_utils.unserialize) ⇒ <code>Object</code>
-    * [.query(key, [serialized])](#module_utils.query) ⇒ <code>String</code> &#124; <code>Null</code>
+    * [.query(key, [serialized])](#module_utils.query) ⇒ <code>String</code> \| <code>Null</code>
     * [.clamp(min, value, max)](#module_utils.clamp) ⇒ <code>Number</code>
     * [.lerp(start, end, t)](#module_utils.lerp) ⇒ <code>Number</code>
     * [.vlerp(arr, t)](#module_utils.vlerp) ⇒ <code>Number</code>
@@ -19,9 +19,11 @@ Utilities module for CylinderClass.
 <a name="module_utils.string"></a>
 
 ### utils.string(obj) ⇒ <code>String</code>
-Transforms an object into a string.<br /><br />This method is based on the implementation from underscore.string.<br /><a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/helper/makeString.js">https://github.com/epeli/underscore.string/blob/master/helper/makeString.js</a>
+Transforms an object into a string.<br /><br />
+This method is based on the implementation from underscore.string.<br />
+<a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/helper/makeString.js">https://github.com/epeli/underscore.string/blob/master/helper/makeString.js</a>
 
-**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Kind**: static method of [<code>utils</code>](#module_utils)  
 **Returns**: <code>String</code> - The new string.  
 <table>
   <thead>
@@ -42,9 +44,11 @@ Transforms an object into a string.<br /><br />This method is based on the impl
 <a name="module_utils.text"></a>
 
 ### utils.text(str) ⇒ <code>String</code>
-Removes all HTML from a string.<br /><br />This method is based on the implementation from underscore.string.<br /><a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/stripTags.js">https://github.com/epeli/underscore.string/blob/master/stripTags.js</a>
+Removes all HTML from a string.<br /><br />
+This method is based on the implementation from underscore.string.<br />
+<a target="_blank" href="https://github.com/epeli/underscore.string/blob/master/stripTags.js">https://github.com/epeli/underscore.string/blob/master/stripTags.js</a>
 
-**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Kind**: static method of [<code>utils</code>](#module_utils)  
 **Returns**: <code>String</code> - The string without HTML.  
 <table>
   <thead>
@@ -65,9 +69,11 @@ Removes all HTML from a string.<br /><br />This method is based on the implemen
 <a name="module_utils.unserialize"></a>
 
 ### utils.unserialize(str) ⇒ <code>Object</code>
-Unserializes a string into an object.<br /><br />This method is based on the implementation by Bruce Kirkpatrick.<br /><a target="_blank" href="https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581">https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581</a>
+Unserializes a string into an object.<br /><br />
+This method is based on the implementation by Bruce Kirkpatrick.<br />
+<a target="_blank" href="https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581">https://gist.github.com/brucekirkpatrick/7026682#gistcomment-1442581</a>
 
-**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Kind**: static method of [<code>utils</code>](#module_utils)  
 **Returns**: <code>Object</code> - The string, unserialized into an object.  
 <table>
   <thead>
@@ -87,11 +93,11 @@ Unserializes a string into an object.<br /><br />This method is based on the im
 
 <a name="module_utils.query"></a>
 
-### utils.query(key, [serialized]) ⇒ <code>String</code> &#124; <code>Null</code>
+### utils.query(key, [serialized]) ⇒ <code>String</code> \| <code>Null</code>
 Extracts a named variable from a string.
 
-**Kind**: static method of <code>[utils](#module_utils)</code>  
-**Returns**: <code>String</code> &#124; <code>Null</code> - The value in form of a string, or <code>null</code> if it doesn't exist.  
+**Kind**: static method of [<code>utils</code>](#module_utils)  
+**Returns**: <code>String</code> \| <code>Null</code> - The value in form of a string, or <code>null</code> if it doesn't exist.  
 <table>
   <thead>
     <tr>
@@ -116,7 +122,7 @@ Extracts a named variable from a string.
 ### utils.clamp(min, value, max) ⇒ <code>Number</code>
 Clamps a numeric value.
 
-**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Kind**: static method of [<code>utils</code>](#module_utils)  
 **Returns**: <code>Number</code> - The final clamped value.  
 <table>
   <thead>
@@ -145,7 +151,7 @@ Clamps a numeric value.
 ### utils.lerp(start, end, t) ⇒ <code>Number</code>
 Lerps between two given values.
 
-**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Kind**: static method of [<code>utils</code>](#module_utils)  
 **Returns**: <code>Number</code> - The final lerped value.  
 <table>
   <thead>
@@ -174,7 +180,7 @@ Lerps between two given values.
 ### utils.vlerp(arr, t) ⇒ <code>Number</code>
 Lerps between the first two numeric values in an array.
 
-**Kind**: static method of <code>[utils](#module_utils)</code>  
+**Kind**: static method of [<code>utils</code>](#module_utils)  
 **Returns**: <code>Number</code> - The final lerped value.  
 <table>
   <thead>

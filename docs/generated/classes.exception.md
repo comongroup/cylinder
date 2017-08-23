@@ -41,7 +41,7 @@ Creates a new CylinderException object.
 ### cylinderException.value : <code>Mixed</code>
 The exception's value.
 
-**Kind**: instance property of <code>[CylinderException](#CylinderException)</code>  
+**Kind**: instance property of [<code>CylinderException</code>](#CylinderException)  
 
 * * *
 
@@ -50,7 +50,7 @@ The exception's value.
 ### cylinderException.message : <code>String</code>
 The exception's message.
 
-**Kind**: instance property of <code>[CylinderException](#CylinderException)</code>  
+**Kind**: instance property of [<code>CylinderException</code>](#CylinderException)  
 
 * * *
 
@@ -59,7 +59,7 @@ The exception's message.
 ### cylinderException.toString() ⇒ <code>String</code>
 Turns the exception into a string.
 
-**Kind**: instance method of <code>[CylinderException](#CylinderException)</code>  
+**Kind**: instance method of [<code>CylinderException</code>](#CylinderException)  
 
 * * *
 

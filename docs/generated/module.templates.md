@@ -11,8 +11,8 @@ Templates module for CylinderClass.
     * [.importFromObject(parent, [iterator])](#module_templates.importFromObject) ⇒ <code>Object</code>
     * [.importFromDOM([id])](#module_templates.importFromDOM) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.has(id)](#module_templates.has) ⇒ <code>Boolean</code>
-    * [.get(id)](#module_templates.get) ⇒ <code>Object</code> &#124; <code>Null</code>
-    * [.render(id, [options], [partials], [trigger])](#module_templates.render) ⇒ <code>String</code> &#124; <code>Null</code>
+    * [.get(id)](#module_templates.get) ⇒ <code>Object</code> \| <code>Null</code>
+    * [.render(id, [options], [partials], [trigger])](#module_templates.render) ⇒ <code>String</code> \| <code>Null</code>
     * [.apply($el, id, [options], [partials])](#module_templates.apply) ⇒ <code>jQueryObject</code>
     * [.replace($el, [options], [partials])](#module_templates.replace) ⇒ <code>jQueryObject</code>
 
@@ -24,7 +24,7 @@ Templates module for CylinderClass.
 ### templates.options : <code>Object</code>
 The options taken by the module.
 
-**Kind**: static property of <code>[templates](#module_templates)</code>  
+**Kind**: static property of [<code>templates</code>](#module_templates)  
 **Properties**
 
 <table>
@@ -65,7 +65,7 @@ The options taken by the module.
 ### templates.defaults : <code>Object</code>
 Default properties for templates.
 
-**Kind**: static property of <code>[templates](#module_templates)</code>  
+**Kind**: static property of [<code>templates</code>](#module_templates)  
 
 * * *
 
@@ -74,7 +74,7 @@ Default properties for templates.
 ### templates.add(id, template, [defaults], [partials]) ⇒ <code>Object</code>
 Adds a template to the local cache.
 
-**Kind**: static method of <code>[templates](#module_templates)</code>  
+**Kind**: static method of [<code>templates</code>](#module_templates)  
 **Returns**: <code>Object</code> - Returns the generated internal template module's object.  
 <table>
   <thead>
@@ -106,7 +106,7 @@ Adds a template to the local cache.
 ### templates.importFromObject(parent, [iterator]) ⇒ <code>Object</code>
 Attempts to import templates from a parent variable.
 
-**Kind**: static method of <code>[templates](#module_templates)</code>  
+**Kind**: static method of [<code>templates</code>](#module_templates)  
 **Returns**: <code>Object</code> - Returns the object with the same keys but with each value replaced by the actual template object added into the module.  
 <table>
   <thead>
@@ -130,9 +130,13 @@ Attempts to import templates from a parent variable.
 <a name="module_templates.importFromDOM"></a>
 
 ### templates.importFromDOM([id]) ⇒ <code>Array.&lt;Object&gt;</code>
-Attempts to import templates from `<script type="text/template">` objects.By default, every slash will be converted with an underscore when looking for a specific template by ID.If no ID is provided, the module will attempt to look through every element that matches the selector in options.dom_selector,and attempts to fetch a template ID and default options through `data-id` and `data-defaults` attributes respectively.
+Attempts to import templates from `<script type="text/template">` objects.
 
-**Kind**: static method of <code>[templates](#module_templates)</code>  
+By default, every slash will be converted with an underscore when looking for a specific template by ID.
+If no ID is provided, the module will attempt to look through every element that matches the selector in options.dom_selector,
+and attempts to fetch a template ID and default options through `data-id` and `data-defaults` attributes respectively.
+
+**Kind**: static method of [<code>templates</code>](#module_templates)  
 **Returns**: <code>Array.&lt;Object&gt;</code> - Returns an array of generated template objects.  
 <table>
   <thead>
@@ -155,7 +159,7 @@ Attempts to import templates from `<script type="text/template">` objects.By d
 ### templates.has(id) ⇒ <code>Boolean</code>
 Checks if a template is in the local cache.
 
-**Kind**: static method of <code>[templates](#module_templates)</code>  
+**Kind**: static method of [<code>templates</code>](#module_templates)  
 <table>
   <thead>
     <tr>
@@ -174,11 +178,11 @@ Checks if a template is in the local cache.
 
 <a name="module_templates.get"></a>
 
-### templates.get(id) ⇒ <code>Object</code> &#124; <code>Null</code>
+### templates.get(id) ⇒ <code>Object</code> \| <code>Null</code>
 Returns a template if it exists, otherwise it'll return `null`.
 
-**Kind**: static method of <code>[templates](#module_templates)</code>  
-**Returns**: <code>Object</code> &#124; <code>Null</code> - Returns the template object, or null if not found.  
+**Kind**: static method of [<code>templates</code>](#module_templates)  
+**Returns**: <code>Object</code> \| <code>Null</code> - Returns the template object, or null if not found.  
 <table>
   <thead>
     <tr>
@@ -197,11 +201,11 @@ Returns a template if it exists, otherwise it'll return `null`.
 
 <a name="module_templates.render"></a>
 
-### templates.render(id, [options], [partials], [trigger]) ⇒ <code>String</code> &#124; <code>Null</code>
+### templates.render(id, [options], [partials], [trigger]) ⇒ <code>String</code> \| <code>Null</code>
 Renders a template with the given ID.
 
-**Kind**: static method of <code>[templates](#module_templates)</code>  
-**Returns**: <code>String</code> &#124; <code>Null</code> - Returns the rendered template.  
+**Kind**: static method of [<code>templates</code>](#module_templates)  
+**Returns**: <code>String</code> \| <code>Null</code> - Returns the rendered template.  
 <table>
   <thead>
     <tr>
@@ -230,9 +234,10 @@ Renders a template with the given ID.
 <a name="module_templates.apply"></a>
 
 ### templates.apply($el, id, [options], [partials]) ⇒ <code>jQueryObject</code>
-Renders a template and applies it to a jQuery element.<br /><br />If the element is not a jQuery element, it will throw an exception.
+Renders a template and applies it to a jQuery element.<br /><br />
+If the element is not a jQuery element, it will throw an exception.
 
-**Kind**: static method of <code>[templates](#module_templates)</code>  
+**Kind**: static method of [<code>templates</code>](#module_templates)  
 **Returns**: <code>jQueryObject</code> - Returns the provided jQuery object.  
 <table>
   <thead>
@@ -262,9 +267,12 @@ Renders a template and applies it to a jQuery element.<br /><br />If the elemen
 <a name="module_templates.replace"></a>
 
 ### templates.replace($el, [options], [partials]) ⇒ <code>jQueryObject</code>
-Replaces the entire HTML of an element with a rendered version of it.<br /><br />This method will store the original HTML of the selected element in cache.If replace is called again on the same element, it will reuse that HTML instead of rendering on top of that rendered result.<br />If the element is not a jQuery element, it will throw an exception.
+Replaces the entire HTML of an element with a rendered version of it.<br /><br />
+This method will store the original HTML of the selected element in cache.
+If replace is called again on the same element, it will reuse that HTML instead of rendering on top of that rendered result.<br />
+If the element is not a jQuery element, it will throw an exception.
 
-**Kind**: static method of <code>[templates](#module_templates)</code>  
+**Kind**: static method of [<code>templates</code>](#module_templates)  
 **Returns**: <code>jQueryObject</code> - Returns the provided jQuery object.  
 <table>
   <thead>
