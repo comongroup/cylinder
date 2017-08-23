@@ -4,7 +4,7 @@ Cylinder is a Javascript framework created by [comOn group](http://www.comon.pt/
 
 It gathers and uses multiple **popular libraries** that we've used on our websites - like [jQuery](http://jquery.com/), [Underscore.js](http://underscorejs.org/), and [Backbone.js](http://backbonejs.org/), - and builds upon them, creating **modules** such as Router, Templates and Store.
 
-Documentation, API reference and example app are here: http://comongroup.github.io/cylinder/
+Documentation, API reference and example app are here: https://comongroup.github.io/cylinderjs/
 
 ## Extensions, models and controllers
 
