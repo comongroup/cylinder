@@ -8,7 +8,7 @@
   },
   "author": "Luís Soares <luis.soares@comon.pt>",
   "license": "ISC",
-  "homepage": "https://comongroup.github.com/cylinderjs/",
+  "homepage": "https://comongroup.github.io/cylinderjs/",
   "devDependencies": {
     "bower": "^1.8.0",
     "grunt": "^1.0.1",
